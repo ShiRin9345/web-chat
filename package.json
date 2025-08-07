@@ -2,16 +2,16 @@
   "name": "tanstack-router",
   "private": true,
   "type": "module",
-  "main": "./server/server.js",
   "scripts": {
     "dev": "vite --port 3000",
-    "start": "nodemon ",
     "build": "vite build && tsc",
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
     "format": "prettier",
-    "check": "prettier --write . && eslint --fix"
+    "check": "prettier --write . && eslint --fix",
+    "migrate": "prisma migrate dev --name ",
+    "reset": "prisma migrate reset"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
