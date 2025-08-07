@@ -1,11 +1,16 @@
-import { PrismaClient } from '../../generated/prisma'
+import axios from 'axios'
 
-declare global {
-  var prisma: PrismaClient | undefined
-}
+export const db = {
+  message: {
+    findMany: async () => {
+      try {
+        const response = await axios.get('api/messages')
 
-export const db = globalThis.prisma || new PrismaClient()
-
-if (process.env.NODE_ENV !== 'production') {
-  globalThis.prisma = prisma
+        return response.data
+      } catch (e) {
+        console.error(e)
+        throw new Error('Failed to fetch messages.')
+      }
+    },
+  },
 }

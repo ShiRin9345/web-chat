@@ -1,17 +1,15 @@
 import { useForm } from '@tanstack/react-form'
+import { useQueryClient } from '@tanstack/react-query'
 import { Input } from '@/components/ui/input.tsx'
 import socket from '@/lib/socket.ts'
-import { useChatStore } from '@/store/chatStore.ts'
 
 const ChatInput = () => {
-  const addMessage = useChatStore((state) => state.addMessage)
   const form = useForm({
     defaultValues: {
       message: '',
     },
     onSubmit: ({ value }) => {
       socket.emit('send', value.message)
-      addMessage(value.message)
       form.reset()
     },
   })

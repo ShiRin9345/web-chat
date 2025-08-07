@@ -1,10 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import socket from '@/lib/socket.ts'
-import { useChatStore } from '@/store/chatStore.ts'
 import { db } from '@/lib/db.ts'
 
 export const Route = createFileRoute('/')({
@@ -26,19 +25,24 @@ export const Route = createFileRoute('/')({
 function Home() {
   const { chatMessagesQueryOptions } = Route.useRouteContext()
   const { data: messages } = useQuery(chatMessagesQueryOptions)
-  const addMessage = useChatStore((state) => state.addMessage)
+  const queryClient = useQueryClient()
   useEffect(() => {
-    socket.on('received', addMessage)
-    return () => {
-      socket.off('received', addMessage)
+    const handleReceivedMessage = (messageObj) => {
+      queryClient.setQueryData(['chat-messages'], (prev) => {
+        return [...(prev || []), messageObj]
+      })
     }
-  }, [addMessage])
+    socket.on('received', handleReceivedMessage)
+    return () => {
+      socket.off('received', handleReceivedMessage)
+    }
+  }, [])
   return (
     <main className="flex flex-col h-full">
       <ChatHeader />
       <div className="p-2 flex-1 h-full overflow-auto">
         {messages?.map((message) => (
-          <MessageItem>{message.content}</MessageItem>
+          <MessageItem key={message.id}>{message.content}</MessageItem>
         ))}
       </div>
       <div className="flex  items-center justify-center">
