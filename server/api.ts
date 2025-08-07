@@ -1,12 +1,13 @@
 import express from 'express'
-import db from './db.js'
+import db from './db.ts'
+
 const router = express.Router()
 
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   res.send('hello world')
 })
 
-router.get('/messages', async (req, res) => {
+router.get('/messages', async (_req, res) => {
   try {
     const messages = await db.message.findMany()
     res.json(messages)

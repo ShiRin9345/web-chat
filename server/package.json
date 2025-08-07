@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon",
+    "start": "nodemon --exec ts-node server.ts",
+    "buld": "tsc",
+    "dev": "ts-node server.ts",
     "migrate": "prisma migrate dev --name",
     "reset": "prisma migrate reset"
   },

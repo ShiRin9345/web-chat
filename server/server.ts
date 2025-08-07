@@ -1,10 +1,11 @@
 // server.js
+import { createServer } from 'node:http'
 import express from 'express'
-import { createServer } from 'http'
 import { Server } from 'socket.io'
 import dotenv from 'dotenv'
-import router from './api.js'
-import db from './db.js'
+import router from './api.ts'
+import db from './db.ts'
+
 dotenv.config()
 
 const app = express()
@@ -37,5 +38,4 @@ io.on('connection', (socket) => {
 
 server.listen(process.env.PORT, () => {
   console.log(`Listening on port ${server.address().port}`)
-  console.log(db.message.findMany)
 })
