@@ -18,3 +18,55 @@ model Message {
   id      String @id @default(uuid())
   content String
 }
+
+model User {
+  id                     String           @id @default(uuid())
+  userId                 String           @unique
+  groupMessage           GroupMessage[]
+  groups                 Group[]
+  sentPrivateMessage     PrivateMessage[] @relation("sender")
+  receivedPrivateMessage PrivateMessage[] @relation("receiver")
+  conversations          Conversation[]
+}
+
+model Group {
+  id            String         @id @default(uuid())
+  name          String
+  groupMessages GroupMessage[]
+  members       User[]
+
+  @@index(name)
+}
+
+model GroupMessage {
+  id       String @id @default(uuid())
+  content  String
+  Group    Group  @relation(fields: [groupId], references: [id])
+  groupId  String
+  sender   User   @relation(fields: [senderId], references: [id])
+  senderId String
+
+  @@index(groupId)
+  @@index(senderId)
+}
+
+model PrivateMessage {
+  id             String        @id @default(uuid())
+  content        String
+  senderId       String
+  sender         User          @relation("sender", fields: [senderId], references: [id])
+  receiverId     String
+  receiver       User          @relation("receiver", fields: [receiverId], references: [id])
+  Conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId String?
+
+  @@index(senderId)
+  @@index(receiverId)
+  @@index(conversationId)
+}
+
+model Conversation {
+  id       String           @id @default(uuid())
+  messages PrivateMessage[]
+  memebers User[]
+}
