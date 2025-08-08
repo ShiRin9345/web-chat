@@ -1,15 +1,23 @@
 import { useForm } from '@tanstack/react-form'
+import axios from 'axios'
 import { Input } from '@/components/ui/input.tsx'
-import socket from '@/lib/socket.ts'
 
 const ChatInput = () => {
   const form = useForm({
-    defaultValues: {
-      message: '',
+    onSubmit: async ({ value }) => {
+      try {
+        const content = value.content
+        console.log(content)
+        await axios.post('/api/messages', {
+          content,
+        })
+      } catch (e) {
+        console.error(e)
+        throw new Error('Error creating chat')
+      }
     },
-    onSubmit: ({ value }) => {
-      socket.emit('send', value.message)
-      form.reset()
+    defaultValues: {
+      content: '',
     },
   })
   return (
@@ -17,21 +25,21 @@ const ChatInput = () => {
       onSubmit={async (e) => {
         e.preventDefault()
         await form.handleSubmit()
+        form.reset()
       }}
-      className="w-1/2"
     >
-      {form.Field({
-        name: 'message',
-        children: (field) => (
+      <form.Field
+        name="content"
+        children={(field) => (
           <Input
-            value={field.state.value}
-            placeholder="Send your message..."
-            onChange={(e) => field.handleChange(e.target.value)}
             disabled={form.state.isSubmitting}
-            className="w-full  focus-visible:ring-0 focus-visible:ring-offset-0"
+            placeholder="Send your message"
+            className="bg-zinc-100 focus-visible:ring-0 focus-visible:ring-offset-0 border-none border-0"
+            value={field.state.value}
+            onChange={(e) => field.handleChange(e.target.value)}
           />
-        ),
-      })}
+        )}
+      />
     </form>
   )
 }

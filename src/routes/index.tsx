@@ -1,11 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect } from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import type { Message } from '@prisma/client'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
-import socket from '@/lib/socket.ts'
 import { db } from '@/lib/db.ts'
+import useChatSocket from '@/hooks/useChatSocket.tsx'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => ({
@@ -26,18 +25,7 @@ export const Route = createFileRoute('/')({
 function Home() {
   const { chatMessagesQueryOptions } = Route.useRouteContext()
   const { data: messages } = useQuery(chatMessagesQueryOptions)
-  const queryClient = useQueryClient()
-  useEffect(() => {
-    const handleReceivedMessage = (messageObj: Message) => {
-      queryClient.setQueryData(['chat-messages'], (prev: Array<Message>) => {
-        return [...prev, messageObj]
-      })
-    }
-    socket.on('received', handleReceivedMessage)
-    return () => {
-      socket.off('received', handleReceivedMessage)
-    }
-  }, [])
+  useChatSocket('group', ['chat-messages'])
   return (
     <main className="flex flex-col h-full">
       <ChatHeader />
