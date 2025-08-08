@@ -51,14 +51,14 @@ model GroupMessage {
 }
 
 model PrivateMessage {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   content        String
   senderId       String
-  sender         User          @relation("sender", fields: [senderId], references: [id])
+  sender         User         @relation("sender", fields: [senderId], references: [id])
   receiverId     String
-  receiver       User          @relation("receiver", fields: [receiverId], references: [id])
-  Conversation   Conversation? @relation(fields: [conversationId], references: [id])
-  conversationId String?
+  receiver       User         @relation("receiver", fields: [receiverId], references: [id])
+  Conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
 
   @@index(senderId)
   @@index(receiverId)
