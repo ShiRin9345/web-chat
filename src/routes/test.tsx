@@ -1,9 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,
@@ -12,15 +8,12 @@ export const Route = createFileRoute('/test')({
 function RouteComponent() {
   return (
     <>
-      <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel
-          defaultSize={25}
-          minSize={10}
-          maxSize={30}
-        ></ResizablePanel>
-        <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={75}></ResizablePanel>
-      </ResizablePanelGroup>
+      <Badge
+        className="w-fit rounded-full bg-emerald-500 text-white"
+        variant="secondary"
+      >
+        Online
+      </Badge>
     </>
   )
 }

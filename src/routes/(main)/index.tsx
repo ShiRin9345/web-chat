@@ -5,14 +5,8 @@ import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import { db } from '@/lib/db.ts'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from '@/components/ui/resizable.tsx'
-import { SidebarTrigger } from '@/components/ui/sidebar.tsx'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/(main)/')({
   beforeLoad: () => ({
     chatMessagesQueryOptions: {
       queryKey: ['chat-messages'],
@@ -33,25 +27,17 @@ function Home() {
   const { data: messages } = useQuery(chatMessagesQueryOptions)
   useChatSocket('group', ['chat-messages'])
   return (
-    <ResizablePanelGroup direction="horizontal">
-      <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
-        <SidebarTrigger />
-      </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel defaultSize={80}>
-        <div className="flex flex-col h-full">
-          <ChatHeader />
-          <div className="p-2 flex-1 h-full overflow-auto">
-            {messages?.map((message) => (
-              <MessageItem key={message.id}>{message.content}</MessageItem>
-            ))}
-          </div>
-          <div className="flex  items-center justify-center">
-            <ChatInput />
-          </div>
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+    <div className="flex flex-col h-full">
+      <ChatHeader />
+      <div className="p-2 flex-1 h-full overflow-auto">
+        {messages?.map((message) => (
+          <MessageItem key={message.id}>{message.content}</MessageItem>
+        ))}
+      </div>
+      <div className="flex  items-center justify-center">
+        <ChatInput />
+      </div>
+    </div>
   )
 }
 

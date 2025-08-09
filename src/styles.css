@@ -140,3 +140,9 @@ code {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .clerk-avatar-button {
+    @apply !size-12
+  }
+}
