@@ -10,10 +10,11 @@ const Avatar = () => {
         <span className="text-center  text-md font-semibold">
           {user?.fullName}
         </span>
-
         <Indicator />
       </div>
-      <HeaderUser />
+      <div className="flex-shrink-0">
+        <HeaderUser />
+      </div>
     </div>
   )
 }

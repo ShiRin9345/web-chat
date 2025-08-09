@@ -3,6 +3,7 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  RedirectToSignIn,
 } from '@clerk/clerk-react'
 
 export default function HeaderUser() {
@@ -12,13 +13,18 @@ export default function HeaderUser() {
         <UserButton
           appearance={{
             elements: {
-              userButtonAvatarBox: 'clerk-avatar-button',
+              userButtonAvatarBox: '!size-12',
+              userButtonPopoverFooter: '!hidden',
+              userButtonPopoverActionButton__manageAccount: '!hidden',
+              userPreview: '!hidden',
+              userButtonPopoverCard: '!w-[10rem] !shadow-accent !shadow-lg',
             },
+            layout: { shimmer: false },
           }}
         />
       </SignedIn>
       <SignedOut>
-        <SignInButton />
+        <RedirectToSignIn signInFallbackRedirectUrl="/signIn" />
       </SignedOut>
     </>
   )

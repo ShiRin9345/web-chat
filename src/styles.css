@@ -141,8 +141,6 @@ code {
   }
 }
 
-@layer components {
-  .clerk-avatar-button {
-    @apply !size-12
-  }
+.cl-internal-1dauvpw {
+  display: none
 }

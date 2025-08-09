@@ -7,10 +7,14 @@ const Indicator = () => {
   return (
     <Badge
       className={cn(
-        'w-fit rounded-full text-xs text-white',
+        'w-fit self-end rounded-full text-[0.6rem] text-white',
         isConnected ? 'bg-emerald-500' : 'bg-amber-500',
       )}
-      variant={cn(isConnected ? 'destructive' : 'secondary')}
+      variant={
+        cn(isConnected ? 'destructive' : 'secondary') as
+          | 'destructive'
+          | 'secondary'
+      }
     >
       {isConnected ? '在线' : '离线'}
     </Badge>

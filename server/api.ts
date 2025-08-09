@@ -1,5 +1,5 @@
 import express from 'express'
-import { requireAuth } from '@clerk/express'
+import { getAuth, requireAuth } from '@clerk/express'
 import db from './db.ts'
 import { getIo } from './io.ts'
 
@@ -30,6 +30,20 @@ router.post('/messages', requireAuth(), async (req, res) => {
     res.json(message)
   } catch (e) {
     console.error(e)
+  }
+})
+
+router.post('initialUser', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  try {
+    let user = await db.User.findUnique({
+      where: {
+        userId,
+      },
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('Something went wrong to initial user')
   }
 })
 

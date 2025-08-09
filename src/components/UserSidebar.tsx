@@ -3,7 +3,7 @@ import { AppSidebar, SidebarContent } from '@/components/ui/sidebar.tsx'
 const UserSidebar = () => {
   return (
     <AppSidebar>
-      <SidebarContent>Hello</SidebarContent>
+      <SidebarContent></SidebarContent>
     </AppSidebar>
   )
 }

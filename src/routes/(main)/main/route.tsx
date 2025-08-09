@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import UserSidebar from '@/components/UserSidebar.tsx'
 import {
   ResizableHandle,
@@ -8,7 +8,7 @@ import {
 import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 
-export const Route = createFileRoute('/(main)')({
+export const Route = createFileRoute('/(main)/main')({
   component: RouteComponent,
 })
 
@@ -19,7 +19,7 @@ function RouteComponent() {
         <UserSidebar />
         <main className="flex-1">
           <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={20} minSize={10} maxSize={30}>
+            <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
               <ChatSideBar />
             </ResizablePanel>
             <ResizableHandle />

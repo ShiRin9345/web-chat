@@ -8,10 +8,14 @@ const UserSidebarTrigger = () => {
     <Button
       variant="ghost"
       size="icon"
-      className="rounded-full p-0"
+      className="rounded-full"
       onClick={toggleSidebar}
     >
-      {open ? <PanelLeftClose /> : <PanelRightClose />}
+      {open ? (
+        <PanelLeftClose className="size-5" />
+      ) : (
+        <PanelRightClose className="size-5" />
+      )}
     </Button>
   )
 }

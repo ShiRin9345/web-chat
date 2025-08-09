@@ -6,7 +6,7 @@ import ChatInput from '@/components/chatInput.tsx'
 import { db } from '@/lib/db.ts'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 
-export const Route = createFileRoute('/(main)/')({
+export const Route = createFileRoute('/(main)/main/')({
   beforeLoad: () => ({
     chatMessagesQueryOptions: {
       queryKey: ['chat-messages'],
