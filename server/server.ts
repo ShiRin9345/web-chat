@@ -2,12 +2,14 @@
 import { createServer } from 'node:http'
 import express from 'express'
 import dotenv from 'dotenv'
+import { clerkMiddleware } from '@clerk/express'
 import router from './api.ts'
 import { initIo } from './io.ts'
 
 dotenv.config()
 
 const app = express()
+app.use(clerkMiddleware())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', router)

@@ -10,6 +10,7 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { SocketProvider } from '@/providers/socketProvider.tsx'
+import AppClerkProvider from '@/integrations/clerk/provider.tsx'
 
 // Create a new router instance
 
@@ -38,11 +39,13 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-        <SocketProvider>
-          <RouterProvider router={router} />
-        </SocketProvider>
-      </TanStackQueryProvider.Provider>
+      <AppClerkProvider>
+        <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+          <SocketProvider>
+            <RouterProvider router={router} />
+          </SocketProvider>
+        </TanStackQueryProvider.Provider>
+      </AppClerkProvider>
     </StrictMode>,
   )
 }

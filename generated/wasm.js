@@ -125,6 +125,35 @@ exports.Prisma.MessageScalarFieldEnum = {
   content: 'content'
 };
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId'
+};
+
+exports.Prisma.GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
+exports.Prisma.GroupMessageScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  groupId: 'groupId',
+  senderId: 'senderId'
+};
+
+exports.Prisma.PrivateMessageScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
+  conversationId: 'conversationId'
+};
+
+exports.Prisma.ConversationScalarFieldEnum = {
+  id: 'id'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -137,7 +166,12 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  Message: 'Message'
+  Message: 'Message',
+  User: 'User',
+  Group: 'Group',
+  GroupMessage: 'GroupMessage',
+  PrivateMessage: 'PrivateMessage',
+  Conversation: 'Conversation'
 };
 
 /**

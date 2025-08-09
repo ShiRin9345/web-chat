@@ -1,12 +1,9 @@
 import express from 'express'
+import { requireAuth } from '@clerk/express'
 import db from './db.ts'
 import { getIo } from './io.ts'
 
 const router = express.Router()
-
-router.get('/', (_req, res) => {
-  res.send('hello world')
-})
 
 router.get('/messages', async (_req, res) => {
   try {
@@ -18,7 +15,7 @@ router.get('/messages', async (_req, res) => {
   }
 })
 
-router.post('/messages', async (req, res) => {
+router.post('/messages', requireAuth(), async (req, res) => {
   const content = req.body.content
   try {
     const message = await db.message.create({

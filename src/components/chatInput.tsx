@@ -7,7 +7,6 @@ const ChatInput = () => {
     onSubmit: async ({ value }) => {
       try {
         const content = value.content
-        console.log(content)
         await axios.post('/api/messages', {
           content,
         })
