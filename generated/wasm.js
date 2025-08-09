@@ -120,11 +120,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.MessageScalarFieldEnum = {
-  id: 'id',
-  content: 'content'
-};
-
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   userId: 'userId'
@@ -166,7 +161,6 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  Message: 'Message',
   User: 'User',
   Group: 'Group',
   GroupMessage: 'GroupMessage',

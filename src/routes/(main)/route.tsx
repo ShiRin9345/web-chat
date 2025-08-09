@@ -1,4 +1,5 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { useAuth } from '@clerk/clerk-react'
 import UserSidebar from '@/components/UserSidebar.tsx'
 import {
   ResizableHandle,
@@ -8,11 +9,18 @@ import {
 import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 
-export const Route = createFileRoute('/(main)/main')({
+export const Route = createFileRoute('/(main)')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  const { isSignedIn, isLoaded } = useAuth()
+  if (!isLoaded) {
+    return <div>Loading...</div>
+  }
+  if (!isSignedIn) {
+    throw redirect({ to: '/signIn' })
+  }
   return (
     <>
       <UserSidebarProvider>

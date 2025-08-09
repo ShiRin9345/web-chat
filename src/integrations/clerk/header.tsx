@@ -1,9 +1,8 @@
 import {
-  SignInButton,
+  RedirectToSignIn,
   SignedIn,
   SignedOut,
   UserButton,
-  RedirectToSignIn,
 } from '@clerk/clerk-react'
 
 export default function HeaderUser() {

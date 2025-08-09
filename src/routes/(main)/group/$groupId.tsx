@@ -1,18 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import type { Message } from '@prisma/client'
+import axios from 'axios'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
-import { db } from '@/lib/db.ts'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 
-export const Route = createFileRoute('/(main)/main/')({
+export const Route = createFileRoute('/(main)/group/$groupId')({
   beforeLoad: () => ({
     chatMessagesQueryOptions: {
       queryKey: ['chat-messages'],
       queryFn: async () => {
-        const messages: Array<Message> = await db.message.findMany()
-        return messages
+        const response = await axios('/api/groupMessages')
+        return response.data
       },
     },
   }),
@@ -24,13 +23,13 @@ export const Route = createFileRoute('/(main)/main/')({
 
 function Home() {
   const { chatMessagesQueryOptions } = Route.useRouteContext()
-  const { data: messages } = useQuery(chatMessagesQueryOptions)
+  const { data: messages } = useQuery<Array<any>>(chatMessagesQueryOptions)
   useChatSocket('group', ['chat-messages'])
   return (
     <div className="flex flex-col h-full">
       <ChatHeader />
       <div className="p-2 flex-1 h-full overflow-auto">
-        {messages?.map((message) => (
+        {messages.map((message) => (
           <MessageItem key={message.id}>{message.content}</MessageItem>
         ))}
       </div>

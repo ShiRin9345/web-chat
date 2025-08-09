@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import axios from 'axios'
 
@@ -7,12 +8,18 @@ export const Route = createFileRoute('/(initial)/')({
 })
 
 function RouteComponent() {
-  const { user } = useUser()
+  const { user, isLoaded } = useUser()
   const navigate = useNavigate()
-  if (!user) {
-    navigate({ to: '/signIn' })
-  }
-  axios.post('initialUser')
-  navigate({ to: '/main' })
+  useEffect(() => {
+    if (!isLoaded) return
+    async function initial() {
+      if (!user) {
+        navigate({ to: '/signIn' })
+      }
+      await axios.post('/api/initialUser')
+      navigate({ to: '/start' })
+    }
+    initial()
+  }, [navigate, user])
   return <div>Hello "/(initial)/"!</div>
 }
