@@ -1,7 +1,7 @@
 import express from 'express'
 import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import db from './db.ts'
-import { getIo } from './io.ts'
+import { getIo, groupUsers } from './io.ts'
 
 const router = express.Router()
 
@@ -60,6 +60,10 @@ router.get('/groups', requireAuth(), async (req, res) => {
     console.error(e)
     res.status(500).send('Something went wrong to fetch groups')
   }
+})
+
+router.get('/groupCount', requireAuth(), async (req, res) => {
+  res.send(groupUsers.get(req.query.groupId))
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {
