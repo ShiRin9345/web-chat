@@ -19,7 +19,6 @@ const groupMessagesQueryOptions = (groupId: string) => ({
     return response.data
   },
 })
-
 export const Route = createFileRoute('/(main)/group/$groupId')({
   component: Home,
   loader: async ({ context, params }) => {

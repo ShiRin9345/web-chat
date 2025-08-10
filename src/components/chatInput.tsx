@@ -3,9 +3,11 @@ import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input.tsx'
 import EmojiPicker from '@/components/emojiPicker.tsx'
+import { useUser } from '@clerk/clerk-react'
 
 const ChatInput = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
+  const { user } = useUser()
   const form = useForm({
     onSubmit: async ({ value }) => {
       try {
@@ -13,6 +15,7 @@ const ChatInput = () => {
         await axios.post('/api/groupMessages', {
           content,
           groupId,
+          userId: user?.id,
         })
       } catch (e) {
         throw new Error('Error creating chat')

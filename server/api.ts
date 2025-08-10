@@ -12,7 +12,6 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
     const messages = await db.groupMessage.findMany({
       where: {
         groupId,
-        senderId: userId as string,
       },
     })
     res.json(messages)

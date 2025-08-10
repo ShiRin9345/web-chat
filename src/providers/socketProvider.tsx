@@ -36,6 +36,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsConnected(false)
     })
     setSocket(socketInstance)
+    socketInstance.emit('online')
+
     return () => {
       socketInstance.disconnect()
     }
