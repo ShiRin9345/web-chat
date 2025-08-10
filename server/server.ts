@@ -3,9 +3,9 @@ import { createServer } from 'node:http'
 import express from 'express'
 import dotenv from 'dotenv'
 import { clerkMiddleware } from '@clerk/express'
-import router from './api.ts'
-import io, { getIo, initIo } from './io.ts'
 import { instrument } from '@socket.io/admin-ui'
+import router from './api.ts'
+import { getIo, initIo } from './io.ts'
 
 dotenv.config()
 
