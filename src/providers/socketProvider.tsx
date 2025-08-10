@@ -29,8 +29,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         userId: user.id,
       },
     })
+    socketInstance.on('connect', () => {
+      setIsConnected(true)
+    })
+    socketInstance.on('disconnect', () => {
+      setIsConnected(false)
+    })
     setSocket(socketInstance)
-    setIsConnected(true)
     return () => {
       socketInstance.disconnect()
     }
