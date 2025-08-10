@@ -16,9 +16,14 @@ const SidebarList = () => {
   return (
     <>
       <Accordion type="single" collapsible>
+        <Link to="/">
+          <button className="w-full cursor-pointer text-lg text-md  text-left rounded-sm font-semibold transition duration-200 px-2 hover:bg-zinc-100 h-10">
+            Home
+          </button>
+        </Link>
         <AccordionItem value="groups">
-          <AccordionTrigger className="!no-underline cursor-pointer">
-            Groups
+          <AccordionTrigger className="!no-underline cursor-pointer ">
+            <span className="pl-2"> Groups</span>
           </AccordionTrigger>
           <AccordionContent>
             <GroupList groups={groups} />
@@ -39,10 +44,7 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
         groups.map((group) => (
           <React.Fragment key={group.id}>
             <Link to={`/group/${group.id}`}>
-              <button
-                className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10"
-                onClick={() => {}}
-              >
+              <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
                 {group.name}
               </button>
             </Link>

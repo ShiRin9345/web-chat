@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input.tsx'
+import EmojiPicker from '@/components/emojiPicker.tsx'
 
 const ChatInput = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
@@ -32,13 +33,22 @@ const ChatInput = () => {
       <form.Field
         name="content"
         children={(field) => (
-          <Input
-            disabled={form.state.isSubmitting}
-            placeholder="Send your message"
-            className="bg-zinc-100 focus-visible:ring-0 focus-visible:ring-offset-0 border-none border-0"
-            value={field.state.value}
-            onChange={(e) => field.handleChange(e.target.value)}
-          />
+          <div className="flex items-center justify-center ">
+            <Input
+              disabled={form.state.isSubmitting}
+              placeholder="Send your message"
+              className="bg-zinc-100 focus-visible:ring-0 focus-visible:ring-offset-0 border-none border-0"
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+            />
+            <div className="ml-5">
+              <EmojiPicker
+                onChange={(emoji: string) =>
+                  field.handleChange(`${field.state.value} ${emoji} `)
+                }
+              />
+            </div>
+          </div>
         )}
       />
     </form>

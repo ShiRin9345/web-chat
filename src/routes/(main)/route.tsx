@@ -10,6 +10,7 @@ import {
 import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
+import PendingPage from '@/components/pendingPage.tsx'
 
 export const Route = createFileRoute('/(main)')({
   component: RouteComponent,
@@ -30,7 +31,7 @@ export const Route = createFileRoute('/(main)')({
 function RouteComponent() {
   const { isSignedIn, isLoaded } = useCheckAuth()
   if (!isLoaded || !isSignedIn) {
-    return <div>Loading...</div>
+    return <PendingPage />
   }
   return (
     <>

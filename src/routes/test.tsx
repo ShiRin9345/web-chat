@@ -1,5 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Badge } from '@/components/ui/badge.tsx'
+import { Smile } from 'lucide-react'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover.tsx'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,
@@ -7,13 +14,19 @@ export const Route = createFileRoute('/test')({
 
 function RouteComponent() {
   return (
-    <>
-      <Badge
-        className="w-fit rounded-full bg-emerald-500 text-white"
-        variant="secondary"
-      >
-        Online
-      </Badge>
-    </>
+    <div className="flex items-center  justify-center w-full h-screen">
+      <Popover>
+        <PopoverTrigger>
+          <Smile />
+        </PopoverTrigger>
+        <PopoverContent
+          side="right"
+          sideOffset={40}
+          className="bg-transparent  border-none shadow-none"
+        >
+          <Picker data={data} />
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }

@@ -5,6 +5,7 @@ import type { GroupMessage } from 'generated/index.d.ts'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
+import pendingPage from '@/components/pendingPage.tsx'
 
 const groupMessagesQueryOptions = (groupId: string) => ({
   queryKey: [`${groupId}_messages`],
@@ -26,6 +27,7 @@ export const Route = createFileRoute('/(main)/group/$groupId')({
       groupMessagesQueryOptions(params.groupId),
     )
   },
+  pendingComponent: pendingPage,
 })
 
 function Home() {
