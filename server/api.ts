@@ -37,6 +37,28 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
   }
 })
 
+router.get('/groups', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  if (!userId) {
+    return res.status(401).send('Not authenticated')
+  }
+  try {
+    const groups = await db.group.findMany({
+      where: {
+        members: {
+          some: {
+            userId,
+          },
+        },
+      },
+    })
+    res.json(groups)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch groups')
+  }
+})
+
 router.post('/initialUser', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
   try {
@@ -58,6 +80,11 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     await db.group.create({
       data: {
         name: userName as string,
+        members: {
+          connect: {
+            id: user.id,
+          },
+        },
       },
     })
     return res.json(user)
