@@ -1,5 +1,4 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
-import { useAuth } from '@clerk/clerk-react'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import axios from 'axios'
 import type { Group } from '../../../generated/index.d.ts'
 import UserSidebar from '@/components/UserSidebar.tsx'
@@ -10,29 +9,28 @@ import {
 } from '@/components/ui/resizable.tsx'
 import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
+import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 
 export const Route = createFileRoute('/(main)')({
   component: RouteComponent,
-  loader: async () => {
-    try {
-      const response = await axios.get<Array<Group>>('/api/groups')
-      return response.data
-    } catch (e: any) {
-      if (e.response.status === 401) {
-        throw redirect({ to: '/signIn' })
-      }
-    }
+  beforeLoad: () => ({
+    sidebarListQueryOptions: {
+      queryKey: ['groups'],
+      queryFn: async () => {
+        const response = await axios.get<Array<Group>>('/api/groups')
+        return response.data
+      },
+    },
+  }),
+  loader: async ({ context }) => {
+    await context.queryClient.prefetchQuery(context.sidebarListQueryOptions)
   },
 })
 
 function RouteComponent() {
-  const { isSignedIn, isLoaded } = useAuth()
-  const groups = Route.useLoaderData()
-  if (!isLoaded) {
+  const { isSignedIn, isLoaded } = useCheckAuth()
+  if (!isLoaded || !isSignedIn) {
     return <div>Loading...</div>
-  }
-  if (isSignedIn !== undefined && !isSignedIn) {
-    throw redirect({ to: '/signIn' })
   }
   return (
     <>

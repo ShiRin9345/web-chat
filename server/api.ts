@@ -5,9 +5,16 @@ import { getIo } from './io.ts'
 
 const router = express.Router()
 
-router.get('/groupMessages', requireAuth(), async (_req, res) => {
+router.get('/groupMessages', requireAuth(), async (req, res) => {
   try {
-    const messages = await db.groupMessage.findMany()
+    const { userId } = getAuth(req)
+    const groupId = req.query.groupId as string
+    const messages = await db.groupMessage.findMany({
+      where: {
+        groupId,
+        senderId: userId as string,
+      },
+    })
     res.json(messages)
   } catch (e) {
     console.error(e)
@@ -17,7 +24,7 @@ router.get('/groupMessages', requireAuth(), async (_req, res) => {
 
 router.post('/groupMessages', requireAuth(), async (req, res) => {
   const content = req.body.content
-  const groupId = req.params.groupId
+  const groupId = req.body.groupId
   const { userId } = getAuth(req)
   try {
     const message = await db.groupMessage.create({
@@ -29,7 +36,7 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
     })
     const io = getIo()
 
-    io.emit('group', message)
+    io.emit(`${groupId}_add_messages`, message)
 
     res.json(message)
   } catch (e) {
@@ -39,15 +46,12 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
 
 router.get('/groups', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
-  if (!userId) {
-    return res.status(401).send('Not authenticated')
-  }
   try {
     const groups = await db.group.findMany({
       where: {
         members: {
           some: {
-            userId,
+            userId: userId as string,
           },
         },
       },

@@ -1,35 +1,44 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import type { GroupMessage } from 'generated/index.d.ts'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 
-export const Route = createFileRoute('/(main)/group/$groupId')({
-  beforeLoad: () => ({
-    chatMessagesQueryOptions: {
-      queryKey: ['chat-messages'],
-      queryFn: async () => {
-        const response = await axios('/api/groupMessages')
-        return response.data
+const groupMessagesQueryOptions = (groupId: string) => ({
+  queryKey: [`${groupId}_messages`],
+  queryFn: async () => {
+    const response = await axios.get<Array<GroupMessage>>(
+      '/api/groupMessages',
+      {
+        params: { groupId },
       },
-    },
-  }),
+    )
+    return response.data
+  },
+})
+
+export const Route = createFileRoute('/(main)/group/$groupId')({
   component: Home,
-  loader: ({ context }) => {
-    context.queryClient.prefetchQuery(context.chatMessagesQueryOptions)
+  loader: async ({ context, params }) => {
+    await context.queryClient.prefetchQuery(
+      groupMessagesQueryOptions(params.groupId),
+    )
   },
 })
 
 function Home() {
-  const { chatMessagesQueryOptions } = Route.useRouteContext()
-  const { data: messages } = useQuery<Array<any>>(chatMessagesQueryOptions)
-  useChatSocket('group', ['chat-messages'])
+  const { groupId } = useParams({ from: '/(main)/group/$groupId' })
+  const { data: messages } = useQuery<Array<GroupMessage>>(
+    groupMessagesQueryOptions(groupId),
+  )
+  useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
   return (
     <div className="flex flex-col h-full">
       <ChatHeader />
       <div className="p-2 flex-1 h-full overflow-auto">
-        {messages.map((message) => (
+        {messages?.map((message) => (
           <MessageItem key={message.id}>{message.content}</MessageItem>
         ))}
       </div>

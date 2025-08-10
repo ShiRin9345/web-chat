@@ -10,10 +10,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
-
 
 model User {
   id                     String           @id @default(uuid())
@@ -39,7 +39,7 @@ model GroupMessage {
   content  String
   Group    Group  @relation(fields: [groupId], references: [id])
   groupId  String
-  sender   User   @relation(fields: [senderId], references: [id])
+  sender   User   @relation(fields: [senderId], references: [userId])
   senderId String
 
   @@index(groupId)

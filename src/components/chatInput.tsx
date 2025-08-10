@@ -1,17 +1,19 @@
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
+import { useParams } from '@tanstack/react-router'
 import { Input } from '@/components/ui/input.tsx'
 
 const ChatInput = () => {
+  const { groupId } = useParams({ from: '/(main)/group/$groupId' })
   const form = useForm({
     onSubmit: async ({ value }) => {
       try {
         const content = value.content
-        await axios.post('/api/messages', {
+        await axios.post('/api/groupMessages', {
           content,
+          groupId,
         })
       } catch (e) {
-        console.error(e)
         throw new Error('Error creating chat')
       }
     },

@@ -4,7 +4,8 @@ import express from 'express'
 import dotenv from 'dotenv'
 import { clerkMiddleware } from '@clerk/express'
 import router from './api.ts'
-import { initIo } from './io.ts'
+import io, { getIo, initIo } from './io.ts'
+import { instrument } from '@socket.io/admin-ui'
 
 dotenv.config()
 
@@ -18,4 +19,8 @@ initIo(server)
 
 server.listen(process.env.PORT, () => {
   console.log(`Listening on port ${server.address().port}`)
+})
+
+instrument(getIo(), {
+  auth: false,
 })
