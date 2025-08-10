@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
+import { useUser } from '@clerk/clerk-react'
 
 type socketContextType = {
   socket: any | null
@@ -18,16 +19,22 @@ export const useSocket = () => {
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useUser()
   const [socket, setSocket] = useState<any | null>(null)
   const [isConnected, setIsConnected] = useState<boolean>(false)
   useEffect(() => {
-    const socketInstance = io('/')
+    if (!user) return
+    const socketInstance = io('/', {
+      auth: {
+        userId: user.id,
+      },
+    })
     setSocket(socketInstance)
     setIsConnected(true)
     return () => {
       socketInstance.disconnect()
     }
-  }, [])
+  }, [user])
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>
       {children}

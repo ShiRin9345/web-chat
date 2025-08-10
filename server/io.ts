@@ -1,6 +1,5 @@
 import { Server } from 'socket.io'
 import type { HttpServer } from 'vite'
-import { instrument } from '@socket.io/admin-ui'
 
 let io: Server
 
