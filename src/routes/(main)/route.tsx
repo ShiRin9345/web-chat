@@ -13,20 +13,10 @@ import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 
 export const Route = createFileRoute('/(main)')({
   component: RouteComponent,
-  beforeLoad: () => {
-    return {
-      sidebarListQueryOptions: {
-        queryKey: ['sidebarList'],
-        queryFn: async () => {
-          const response = await axios.get<Array<Group>>('/api/groups')
-          return response.data
-        },
-      },
-    }
-  },
-  loader: async ({ context }) => {
+  loader: async () => {
     try {
-      context.queryClient.prefetchQuery(context.sidebarListQueryOptions)
+      const response = await axios.get<Array<Group>>('/api/groups')
+      return response.data
     } catch (e: any) {
       if (e.response.status === 401) {
         throw redirect({ to: '/signIn' })
@@ -37,6 +27,7 @@ export const Route = createFileRoute('/(main)')({
 
 function RouteComponent() {
   const { isSignedIn, isLoaded } = useAuth()
+  const groups = Route.useLoaderData()
   if (!isLoaded) {
     return <div>Loading...</div>
   }
