@@ -1,7 +1,7 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 // import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { QueryClient } from '@tanstack/react-query'
-import TanStackQueryLayout from '@/integrations/tanstack-query/layout'
+// import TanStackQueryLayout from '@/integrations/tanstack-query/layout'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -12,7 +12,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <>
       <Outlet />
       {/* <TanStackRouterDevtools />*/}
-      <TanStackQueryLayout />
+      {/* <TanStackQueryLayout />*/}
     </>
   ),
   notFoundComponent: () => <div>This is page is not exists...</div>,

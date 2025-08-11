@@ -20,17 +20,15 @@ export default function Home() {
   )
   useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex relative flex-col h-screen">
       <ChatHeader />
-      <div className="p-2 flex-1 h-full overflow-auto">
+      <div className="p-2 flex-1 h-full overflow-auto scrollbar-none">
         {messages?.map &&
           messages.map((message) => (
             <MessageItem key={message.id}>{message.content}</MessageItem>
           ))}
       </div>
-      <div className="flex  items-center justify-center">
-        <ChatInput />
-      </div>
+      <ChatInput />
     </div>
   )
 }
@@ -41,7 +39,7 @@ interface MessageItemProps {
 
 const MessageItem: React.FC<MessageItemProps> = ({ children }) => {
   return (
-    <div className="w-full h-12 mt-2 bg-gray-50 flex items-center justify-start p-2">
+    <div className="w-full h-12 mt-2 bg-zinc-100 flex items-center justify-start p-2">
       {children}
     </div>
   )

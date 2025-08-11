@@ -15,7 +15,7 @@ const EmojiPicker: React.FC<Props> = ({ onChange }) => {
   return (
     <Popover>
       <PopoverTrigger>
-        <Smile className="cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500" />
+        <Smile className="chatInput_icon" />
       </PopoverTrigger>
       <PopoverContent
         side="top"

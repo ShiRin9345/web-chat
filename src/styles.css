@@ -141,6 +141,17 @@ code {
   }
 }
 
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+@layer components {
+  .chatInput_icon {
+    @apply cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500
+  }
+}
+
 .cl-internal-1dauvpw {
   display: none
 }
