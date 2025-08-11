@@ -1,6 +1,7 @@
 import { Link, useRouteContext } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import type { Group } from 'generated/index'
 import {
   Accordion,
@@ -9,9 +10,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
-import { useSocket } from '@/providers/socketProvider.tsx'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
-import axios from 'axios'
 
 const SidebarList = () => {
   const context = useRouteContext({ from: '/(main)' })
@@ -54,13 +53,17 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
   )
 }
 
-function LabelGroup(group: Group) {
-  const count = useCountSocket(group.group.id)
-  console.log(group.group)
+function LabelGroup({ group }: { group: Group }) {
+  const count = useCountSocket(group.id)
   return (
-    <Link to={`/group/${group.group.id}`}>
+    <Link
+      to="/group/$groupId"
+      params={{
+        groupId: group.id,
+      }}
+    >
       <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
-        {group.group.name} {count}
+        {group.name} {count}
       </button>
     </Link>
   )

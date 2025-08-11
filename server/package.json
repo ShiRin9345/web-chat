@@ -20,6 +20,7 @@
     "@prisma/client": "^6.13.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "@socket.io/admin-ui": "^0.5.1",
+    "ali-oss": "^6.23.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-session": "^1.18.2",

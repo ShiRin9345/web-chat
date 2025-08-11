@@ -40,11 +40,15 @@ const authSignInIndexRoute = authSignInIndexRouteImport.update({
   path: '/signIn/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport.update({
-  id: '/group/$groupId',
-  path: '/group/$groupId',
-  getParentRoute: () => mainRouteRoute,
-} as any)
+const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport
+  .update({
+    id: '/group/$groupId',
+    path: '/group/$groupId',
+    getParentRoute: () => mainRouteRoute,
+  } as any)
+  .lazy(() =>
+    import('./routes/(main)/group/$groupId.lazy').then((d) => d.Route),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute

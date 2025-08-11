@@ -2,6 +2,7 @@ import express from 'express'
 import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import db from './db.ts'
 import { getIo, groupUsers } from './io.ts'
+import { client, config } from './oss-client.ts'
 
 const router = express.Router()
 
@@ -62,7 +63,7 @@ router.get('/groups', requireAuth(), async (req, res) => {
 })
 
 router.get('/groupCount', requireAuth(), async (req, res) => {
-  res.send(groupUsers.get(req.query.groupId))
+  res.send(groupUsers.get(req.query.groupId as string))
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {
@@ -98,6 +99,18 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     console.log(e)
     res.status(500).send('Something went wrong to initial user')
   }
+})
+
+router.get('/oss-signature', requireAuth(), async (_req, res) => {
+  const date = new Date()
+  date.setDate(date.getDate() + 1)
+  const signature = client.calculatePostSignature({
+    expiration: date.toISOString(),
+    conditions: [['content-length-range', 0, 1024 * 1024 * 10]],
+  })
+  const location = (await client.getBucketLocation(config.bucket)).location
+  const host = `http://${config.bucket}.${location}.aliyuncs.com`
+  res.json({ ...signature, host })
 })
 
 export default router

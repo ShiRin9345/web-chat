@@ -1,9 +1,11 @@
 import { Server } from 'socket.io'
 import db from './db.ts'
+import type { Socket } from 'socket.io'
 import type { HttpServer } from 'vite'
 
 let io: Server
-export const onlineUsers = new Set<string>()
+// one user can open many tabs in a single window, so one userId can be used by many socket
+export const onlineUsers = new Map<string, number>()
 export const groupUsers = new Map<string, number>()
 
 export function initIo(server: HttpServer) {
@@ -16,40 +18,19 @@ export function initIo(server: HttpServer) {
 
   io.on('connection', (socket) => {
     socket.on('online', async () => {
-      onlineUsers.add(socket.handshake.auth.userId)
-      console.log(onlineUsers.size)
-      const groups = await db.group.findMany({
-        where: {
-          members: {
-            some: {
-              userId: socket.handshake.auth.userId,
-            },
-          },
-        },
-      })
-      for (const group of groups) {
-        const oldCount = groupUsers.get(group.id) || 0
-        groupUsers.set(group.id, oldCount + 1)
-        io.emit(`${group.id}_count`, oldCount + 1)
+      const newRefCount = changeUserReference(socket, 1)
+      if (newRefCount > 1) {
+        return
       }
+      await changeGroupOnlineCount(socket, 1)
     })
     socket.on('disconnect', async () => {
-      onlineUsers.delete(socket.handshake.auth.userId)
-      console.log(onlineUsers.size)
-      const groups = await db.group.findMany({
-        where: {
-          members: {
-            some: {
-              userId: socket.handshake.auth.userId,
-            },
-          },
-        },
-      })
-      for (const group of groups) {
-        const oldCount = groupUsers.get(group.id) || 0
-        groupUsers.set(group.id, oldCount - 1)
-        io.emit(`${group.id}_count`, oldCount - 1)
+      const newRefCount = changeUserReference(socket, -1)
+      if (newRefCount >= 1) {
+        return
       }
+      onlineUsers.delete(socket.handshake.auth.userId)
+      await changeGroupOnlineCount(socket, -1)
     })
     console.log(`socket ${socket.id} connected`)
   })
@@ -57,4 +38,30 @@ export function initIo(server: HttpServer) {
 export default io
 export function getIo() {
   return io
+}
+
+async function changeGroupOnlineCount(socket: Socket, changeNum: number) {
+  const userId = socket.handshake.auth.userId as string
+  const groups = await db.group.findMany({
+    where: {
+      members: {
+        some: {
+          userId,
+        },
+      },
+    },
+  })
+  for (const group of groups) {
+    const oldCount = groupUsers.get(group.id) || 0
+    groupUsers.set(group.id, oldCount + changeNum)
+    io.emit(`${group.id}_count`, oldCount + changeNum)
+  }
+}
+
+function changeUserReference(socket: Socket, changeNum: number) {
+  const oldRefCount = onlineUsers.get(socket.handshake.auth.userId) || 0
+  const newRefCount = oldRefCount + changeNum
+  const userId = socket.handshake.auth.userId as string
+  onlineUsers.set(userId, newRefCount)
+  return newRefCount
 }
