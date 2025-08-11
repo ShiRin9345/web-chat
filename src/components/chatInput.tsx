@@ -1,9 +1,9 @@
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
+import { useUser } from '@clerk/clerk-react'
 import { Input } from '@/components/ui/input.tsx'
 import EmojiPicker from '@/components/emojiPicker.tsx'
-import { useUser } from '@clerk/clerk-react'
 
 const ChatInput = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
