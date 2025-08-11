@@ -101,7 +101,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
   }
 })
 
-router.get('/oss-signature', requireAuth(), async (_req, res) => {
+router.get('/oss-signature', requireAuth(), async (req, res) => {
   const date = new Date()
   date.setDate(date.getDate() + 1)
   const signature = client.calculatePostSignature({
@@ -109,7 +109,7 @@ router.get('/oss-signature', requireAuth(), async (_req, res) => {
     conditions: [['content-length-range', 0, 1024 * 1024 * 10]],
   })
   const location = (await client.getBucketLocation(config.bucket)).location
-  const host = `http://${config.bucket}.${location}.aliyuncs.com`
+  const host = `https://${config.bucket}.${location}.aliyuncs.com`
   res.json({ ...signature, host })
 })
 
