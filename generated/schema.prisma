@@ -30,17 +30,21 @@ model Group {
   name          String
   groupMessages GroupMessage[]
   members       User[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   @@index(name)
 }
 
 model GroupMessage {
-  id       String @id @default(uuid())
-  content  String
-  Group    Group  @relation(fields: [groupId], references: [id])
-  groupId  String
-  sender   User   @relation(fields: [senderId], references: [userId])
-  senderId String
+  id        String   @id @default(uuid())
+  content   String
+  Group     Group    @relation(fields: [groupId], references: [id])
+  groupId   String
+  sender    User     @relation(fields: [senderId], references: [userId])
+  senderId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index(groupId)
   @@index(senderId)
@@ -55,6 +59,8 @@ model PrivateMessage {
   receiver       User         @relation("receiver", fields: [receiverId], references: [id])
   Conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index(senderId)
   @@index(receiverId)
@@ -62,7 +68,9 @@ model PrivateMessage {
 }
 
 model Conversation {
-  id       String           @id @default(uuid())
-  messages PrivateMessage[]
-  memebers User[]
+  id        String           @id @default(uuid())
+  messages  PrivateMessage[]
+  memebers  User[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }

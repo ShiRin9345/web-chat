@@ -8,11 +8,12 @@ const router = express.Router()
 
 router.get('/groupMessages', requireAuth(), async (req, res) => {
   try {
-    const groupId = req.query.groupId as string
+    const { groupId, cursor, limit } = req.body
     const messages = await db.groupMessage.findMany({
       where: {
         groupId,
       },
+      orderBy: { createdAt: 'desc' },
     })
     res.json(messages)
   } catch (e) {
@@ -23,7 +24,6 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
 
 router.post('/groupMessages', requireAuth(), async (req, res) => {
   const content = req.body.content
-  const groupId = req.body.groupId
   const { userId } = getAuth(req)
   try {
     const message = await db.groupMessage.create({

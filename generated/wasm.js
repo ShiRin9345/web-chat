@@ -127,14 +127,18 @@ exports.Prisma.UserScalarFieldEnum = {
 
 exports.Prisma.GroupScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.GroupMessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
   groupId: 'groupId',
-  senderId: 'senderId'
+  senderId: 'senderId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PrivateMessageScalarFieldEnum = {
@@ -142,11 +146,15 @@ exports.Prisma.PrivateMessageScalarFieldEnum = {
   content: 'content',
   senderId: 'senderId',
   receiverId: 'receiverId',
-  conversationId: 'conversationId'
+  conversationId: 'conversationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.ConversationScalarFieldEnum = {
-  id: 'id'
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
