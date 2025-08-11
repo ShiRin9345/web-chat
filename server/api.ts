@@ -101,7 +101,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
   }
 })
 
-router.get('/oss-signature', requireAuth(), async (req, res) => {
+router.get('/oss-signature', requireAuth(), async (_req, res) => {
   const date = new Date()
   date.setDate(date.getDate() + 1)
   const signature = client.calculatePostSignature({

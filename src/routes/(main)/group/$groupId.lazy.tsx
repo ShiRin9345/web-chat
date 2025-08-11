@@ -22,14 +22,12 @@ export default function Home() {
 
   useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
 
-  // 创建可滚动容器的 ref
   const parentRef = React.useRef<HTMLDivElement>(null)
 
-  // 创建虚拟器
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 55, // 每条消息的估算高度，根据实际调整
+    estimateSize: () => 55,
     overscan: 5,
   })
 
