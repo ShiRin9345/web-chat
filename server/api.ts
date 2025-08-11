@@ -7,7 +7,6 @@ const router = express.Router()
 
 router.get('/groupMessages', requireAuth(), async (req, res) => {
   try {
-    const { userId } = getAuth(req)
     const groupId = req.query.groupId as string
     const messages = await db.groupMessage.findMany({
       where: {

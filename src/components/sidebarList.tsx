@@ -58,7 +58,7 @@ function LabelGroup(group: Group) {
   const count = useCountSocket(group.group.id)
   console.log(group.group)
   return (
-    <Link to={`/group/${group.id}`}>
+    <Link to={`/group/${group.group.id}`}>
       <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
         {group.group.name} {count}
       </button>

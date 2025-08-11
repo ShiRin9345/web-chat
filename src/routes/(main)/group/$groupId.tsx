@@ -34,6 +34,7 @@ function Home() {
   const { data: messages } = useQuery<Array<GroupMessage>>(
     groupMessagesQueryOptions(groupId),
   )
+  console.log(messages)
   useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
   return (
     <div className="flex flex-col h-full">
