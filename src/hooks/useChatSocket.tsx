@@ -25,7 +25,7 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
         const lastIndex = newData.length - 1
         newData[lastIndex] = {
           ...newData[lastIndex],
-          messages: [...newData[lastIndex].messages, message],
+          messages: newData[lastIndex].messages.concat(message),
         }
         return {
           ...oldData,

@@ -51,7 +51,7 @@ export default function Home() {
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? messages.length + 1 : messages.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 55,
+    estimateSize: () => 64,
     overscan: 5,
   })
   useEffect(() => {
