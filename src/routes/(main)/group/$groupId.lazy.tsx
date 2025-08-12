@@ -1,35 +1,78 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { createLazyFileRoute, useParams } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import type { GroupMessage } from 'generated/index.d.ts'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
-import { groupMessagesQueryOptions } from '@/routes/(main)/group/$groupId.tsx'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
   pendingComponent: PendingPage,
 })
 
+type GroupMessageAndCursor = {
+  messages: Array<GroupMessage>
+  nextCursor: string
+}
+
 export default function Home() {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
-  const { data: messages = [] } = useQuery<Array<GroupMessage>>(
-    groupMessagesQueryOptions(groupId),
-  )
 
   useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
 
-  const parentRef = React.useRef<HTMLDivElement>(null)
+  const parentRef = useRef<HTMLDivElement>(null)
+  const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
+    useInfiniteQuery({
+      queryKey: [`${groupId}_messages`],
+      queryFn: async ({ pageParam }) => {
+        const response = await axios.get<GroupMessageAndCursor>(
+          '/api/groupMessages',
+          {
+            params: {
+              cursor: pageParam,
+              limit: 10,
+              groupId,
+            },
+          },
+        )
+        return response.data
+      },
+      getNextPageParam: (lastPage: GroupMessageAndCursor) => {
+        return lastPage.nextCursor
+      },
+      initialPageParam: undefined,
+    })
 
+  const messages = data ? data.pages.flatMap((page) => page.messages) : []
+  console.log(messages)
   const rowVirtualizer = useVirtualizer({
-    count: messages.length,
+    count: hasNextPage ? messages.length + 1 : messages.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 55,
     overscan: 5,
   })
+  useEffect(() => {
+    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse()
+    if (!lastItem) return
+    console.log(lastItem.index, messages.length - 1, hasNextPage)
+    if (
+      lastItem.index >= messages.length - 1 &&
+      hasNextPage &&
+      !isFetchingNextPage
+    ) {
+      fetchNextPage()
+    }
+  }, [
+    rowVirtualizer.getVirtualItems(),
+    hasNextPage,
+    isFetchingNextPage,
+    messages.length,
+    fetchNextPage,
+  ])
 
   return (
     <div className="flex relative flex-col h-screen">
@@ -46,25 +89,38 @@ export default function Home() {
           }}
           className={`h-[${rowVirtualizer.getTotalSize()}px] w-full relative`}
         >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const message = messages[virtualRow.index]
-            return (
-              <div
-                key={message.id}
-                className="w-full h-12 mt-2  flex items-center justify-start p-2"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                <MessageItem>{message.content}</MessageItem>
-              </div>
-            )
-          })}
+          {status === 'pending' ? (
+            <PendingPage />
+          ) : (
+            rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const message = messages[virtualRow.index]
+              const isLoaderRow = virtualRow.index > messages.length - 1
+              return (
+                <div
+                  key={virtualRow.key}
+                  className="w-full h-12 mt-2  flex items-center justify-start p-2"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  {isLoaderRow ? (
+                    hasNextPage ? (
+                      'Loading more...'
+                    ) : (
+                      'Nothing more to load...'
+                    )
+                  ) : (
+                    <MessageItem>{message?.content}</MessageItem>
+                  )}
+                </div>
+              )
+            })
+          )}
         </div>
       </div>
       <ChatInput />

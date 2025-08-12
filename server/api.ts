@@ -3,19 +3,48 @@ import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import db from './db.ts'
 import { getIo, groupUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
+import type { GroupMessage } from 'generated/index'
 
 const router = express.Router()
 
 router.get('/groupMessages', requireAuth(), async (req, res) => {
   try {
-    const { groupId, cursor, limit } = req.body
-    const messages = await db.groupMessage.findMany({
-      where: {
-        groupId,
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-    res.json(messages)
+    const { groupId, cursor, limit } = req.query
+    let messages: Array<GroupMessage> = []
+    if (cursor) {
+      messages = await db.groupMessage.findMany({
+        where: {
+          groupId: groupId as string,
+        },
+        cursor: { id: cursor },
+        skip: 1,
+        take: Number(limit),
+        orderBy: { createdAt: 'asc' },
+      })
+    } else {
+      if (limit) {
+        messages = await db.groupMessage.findMany({
+          where: {
+            groupId: groupId as string,
+          },
+          take: Number(limit),
+          orderBy: { createdAt: 'asc' },
+        })
+      } else {
+        messages = await db.groupMessage.findMany({
+          where: {
+            groupId: groupId as string,
+          },
+          orderBy: { createdAt: 'asc' },
+        })
+        return res.json(messages)
+      }
+    }
+    let nextCursor = null
+    if (messages.length === Number(limit)) {
+      nextCursor = messages[Number(limit) - 1].id
+    }
+    res.json({ messages, nextCursor })
   } catch (e) {
     console.error(e)
     res.status(500).send('Something went wrong to fetch messages')
@@ -23,7 +52,7 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
 })
 
 router.post('/groupMessages', requireAuth(), async (req, res) => {
-  const content = req.body.content
+  const { content, groupId } = req.body
   const { userId } = getAuth(req)
   try {
     const message = await db.groupMessage.create({
