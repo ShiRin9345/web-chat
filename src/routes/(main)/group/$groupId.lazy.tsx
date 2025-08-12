@@ -48,7 +48,6 @@ export default function Home() {
     })
 
   const messages = data ? data.pages.flatMap((page) => page.messages) : []
-  console.log(messages)
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? messages.length + 1 : messages.length,
     getScrollElement: () => parentRef.current,
@@ -58,7 +57,6 @@ export default function Home() {
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse()
     if (!lastItem) return
-    console.log(lastItem.index, messages.length - 1, hasNextPage)
     if (
       lastItem.index >= messages.length - 1 &&
       hasNextPage &&

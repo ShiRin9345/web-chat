@@ -11,9 +11,26 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
       return
     }
     const addCallback = async (message: GroupMessage | PrivateMessage) => {
-      console.log(addKey, queryKey)
-      queryClient.setQueryData(queryKey, (prev: Array<any> = []) => {
-        return [...prev, message]
+      queryClient.setQueryData(queryKey, (oldData: any) => {
+        if (!oldData || !oldData.pages || oldData.pages.length === 0) {
+          return {
+            pages: [
+              {
+                messages: [message],
+              },
+            ],
+          }
+        }
+        const newData = [...oldData.pages]
+        const lastIndex = newData.length - 1
+        newData[lastIndex] = {
+          ...newData[lastIndex],
+          messages: [...newData[lastIndex].messages, message],
+        }
+        return {
+          ...oldData,
+          pages: newData,
+        }
       })
     }
     socket.on(addKey, addCallback)
