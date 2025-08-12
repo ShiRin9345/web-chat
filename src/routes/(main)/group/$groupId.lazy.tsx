@@ -97,7 +97,6 @@ export default function Home() {
               return (
                 <div
                   key={virtualRow.key}
-                  className="w-full h-12 mt-2  flex items-center justify-start p-2"
                   style={{
                     position: 'absolute',
                     top: 0,
