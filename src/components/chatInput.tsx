@@ -44,9 +44,23 @@ const ChatInput = () => {
                 value={field.state.value}
                 disabled={form.state.isSubmitting}
                 onChange={(e) => field.handleChange(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault()
+                    if (field.state.value.trim()) {
+                      await form.handleSubmit()
+                      form.reset()
+                    }
+                  }
+                }}
                 className="bg-white resize-none  max-h-[10rem] focus-visible:ring-0! focus-visible:border-input"
               />
-              <Button variant="send" type="submit" className="self-end">
+              <Button
+                variant="send"
+                disabled={field.state.value === '' || form.state.isSubmitting}
+                type="submit"
+                className="self-end"
+              >
                 Send
               </Button>
             </div>

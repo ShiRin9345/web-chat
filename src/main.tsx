@@ -2,17 +2,24 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
+import * as Sentry from '@sentry/react'
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 
-// Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
 import './styles.css'
+
 import reportWebVitals from './reportWebVitals.ts'
 import { SocketProvider } from '@/providers/socketProvider.tsx'
 import AppClerkProvider from '@/integrations/clerk/provider.tsx'
 
-// Create a new router instance
+Sentry.init({
+  dsn: 'https://1ff094fd94f7eaee712de5d8fe7a5bf4@o4509829533204480.ingest.us.sentry.io/4509829534646272',
+  sendDefaultPii: true,
+  integrations: [Sentry.browserTracingIntegration()],
+  tracesSampleRate: 1.0,
+  tracePropagationTargets: ['localhost', /^http:\/\/localhost:3000\/api/],
+})
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
 const router = createRouter({
