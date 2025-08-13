@@ -24,7 +24,6 @@ export default function Home() {
 
   useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
 
-  const bottomRef = useRef<HTMLDivElement>(null)
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
     useInfiniteQuery({
@@ -120,7 +119,6 @@ export default function Home() {
             })
           )}
         </div>
-        <div ref={bottomRef}></div>
       </div>
       <ChatInput />
     </div>
