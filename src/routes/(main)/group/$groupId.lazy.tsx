@@ -11,6 +11,7 @@ import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { useUser } from '@clerk/clerk-react'
+import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -87,7 +88,7 @@ export default function Home() {
       <ChatHeader />
       <div
         ref={parentRef}
-        className="p-2 flex-1 h-full overflow-auto scrollbar-none relative "
+        className="p-2 flex-1 h-full overflow-auto bg-zinc-100 scrollbar-none relative "
       >
         <div
           style={{
@@ -152,28 +153,32 @@ const MessageItem: React.FC<MessageItemProps> = forwardRef((props, ref) => {
   return (
     <div
       data-index={props.index}
-      className="w-full mt-2 bg-zinc-100 flex p-2 rounded-sm items-start"
+      className="w-full mt-2  flex p-2 rounded-sm items-start space-x-2"
       ref={ref}
     >
-      <div className="flex items-start ">
+      <div className="flex items-start  ">
         <img
           src={props.user.imageUrl}
           alt="Avatar"
           className="rounded-full h-12"
         />
       </div>
-      <div className="flex w-full flex-col">
-        <div className="text-sm">{props.user.fullName}</div>
+      <div className="flex w-full space-y-2 flex-col">
+        <span className="font-semibold">{props.user.fullName}</span>
         {props.type === 'TEXT' && (
-          <p className="text-xs max-w-[20rem] break-words">{props.content}</p>
+          <p className="text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2  ">
+            {props.content}
+          </p>
         )}
         {props.type === 'IMAGE' && (
-          <img
-            src={props.content}
-            alt="image message"
-            className="max-h-[25rem] w-auto object-contain object-left max-w-1/2"
-            loading="lazy"
-          />
+          <ImageZoom zoomMargin={100}>
+            <img
+              src={props.content}
+              alt="image message"
+              className="max-h-[25rem] w-auto object-contain object-left max-w-1/2 rounded-md self-start"
+              loading="lazy"
+            />
+          </ImageZoom>
         )}
       </div>
     </div>
