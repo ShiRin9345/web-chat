@@ -40,6 +40,24 @@ export type PrivateMessage = $Result.DefaultSelection<Prisma.$PrivateMessagePayl
 export type Conversation = $Result.DefaultSelection<Prisma.$ConversationPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const MessageType: {
+  IMAGE: 'IMAGE',
+  TEXT: 'TEXT',
+  PDF: 'PDF'
+};
+
+export type MessageType = (typeof MessageType)[keyof typeof MessageType]
+
+}
+
+export type MessageType = $Enums.MessageType
+
+export const MessageType: typeof $Enums.MessageType
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -3632,6 +3650,7 @@ export namespace Prisma {
 
   export type GroupMessageMinAggregateOutputType = {
     id: string | null
+    type: $Enums.MessageType | null
     content: string | null
     groupId: string | null
     senderId: string | null
@@ -3641,6 +3660,7 @@ export namespace Prisma {
 
   export type GroupMessageMaxAggregateOutputType = {
     id: string | null
+    type: $Enums.MessageType | null
     content: string | null
     groupId: string | null
     senderId: string | null
@@ -3650,6 +3670,7 @@ export namespace Prisma {
 
   export type GroupMessageCountAggregateOutputType = {
     id: number
+    type: number
     content: number
     groupId: number
     senderId: number
@@ -3661,6 +3682,7 @@ export namespace Prisma {
 
   export type GroupMessageMinAggregateInputType = {
     id?: true
+    type?: true
     content?: true
     groupId?: true
     senderId?: true
@@ -3670,6 +3692,7 @@ export namespace Prisma {
 
   export type GroupMessageMaxAggregateInputType = {
     id?: true
+    type?: true
     content?: true
     groupId?: true
     senderId?: true
@@ -3679,6 +3702,7 @@ export namespace Prisma {
 
   export type GroupMessageCountAggregateInputType = {
     id?: true
+    type?: true
     content?: true
     groupId?: true
     senderId?: true
@@ -3761,6 +3785,7 @@ export namespace Prisma {
 
   export type GroupMessageGroupByOutputType = {
     id: string
+    type: $Enums.MessageType
     content: string
     groupId: string
     senderId: string
@@ -3787,6 +3812,7 @@ export namespace Prisma {
 
   export type GroupMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     content?: boolean
     groupId?: boolean
     senderId?: boolean
@@ -3798,6 +3824,7 @@ export namespace Prisma {
 
   export type GroupMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     content?: boolean
     groupId?: boolean
     senderId?: boolean
@@ -3809,6 +3836,7 @@ export namespace Prisma {
 
   export type GroupMessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    type?: boolean
     content?: boolean
     groupId?: boolean
     senderId?: boolean
@@ -3820,6 +3848,7 @@ export namespace Prisma {
 
   export type GroupMessageSelectScalar = {
     id?: boolean
+    type?: boolean
     content?: boolean
     groupId?: boolean
     senderId?: boolean
@@ -3827,7 +3856,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type GroupMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "groupId" | "senderId" | "createdAt" | "updatedAt", ExtArgs["result"]["groupMessage"]>
+  export type GroupMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "content" | "groupId" | "senderId" | "createdAt" | "updatedAt", ExtArgs["result"]["groupMessage"]>
   export type GroupMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Group?: boolean | GroupDefaultArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
@@ -3849,6 +3878,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      type: $Enums.MessageType
       content: string
       groupId: string
       senderId: string
@@ -4280,6 +4310,7 @@ export namespace Prisma {
    */
   interface GroupMessageFieldRefs {
     readonly id: FieldRef<"GroupMessage", 'String'>
+    readonly type: FieldRef<"GroupMessage", 'MessageType'>
     readonly content: FieldRef<"GroupMessage", 'String'>
     readonly groupId: FieldRef<"GroupMessage", 'String'>
     readonly senderId: FieldRef<"GroupMessage", 'String'>
@@ -6905,6 +6936,7 @@ export namespace Prisma {
 
   export const GroupMessageScalarFieldEnum: {
     id: 'id',
+    type: 'type',
     content: 'content',
     groupId: 'groupId',
     senderId: 'senderId',
@@ -6983,6 +7015,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType'
+   */
+  export type EnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType[]'
+   */
+  export type ListEnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType[]'>
     
 
 
@@ -7113,6 +7159,7 @@ export namespace Prisma {
     OR?: GroupMessageWhereInput[]
     NOT?: GroupMessageWhereInput | GroupMessageWhereInput[]
     id?: StringFilter<"GroupMessage"> | string
+    type?: EnumMessageTypeFilter<"GroupMessage"> | $Enums.MessageType
     content?: StringFilter<"GroupMessage"> | string
     groupId?: StringFilter<"GroupMessage"> | string
     senderId?: StringFilter<"GroupMessage"> | string
@@ -7124,6 +7171,7 @@ export namespace Prisma {
 
   export type GroupMessageOrderByWithRelationInput = {
     id?: SortOrder
+    type?: SortOrder
     content?: SortOrder
     groupId?: SortOrder
     senderId?: SortOrder
@@ -7138,6 +7186,7 @@ export namespace Prisma {
     AND?: GroupMessageWhereInput | GroupMessageWhereInput[]
     OR?: GroupMessageWhereInput[]
     NOT?: GroupMessageWhereInput | GroupMessageWhereInput[]
+    type?: EnumMessageTypeFilter<"GroupMessage"> | $Enums.MessageType
     content?: StringFilter<"GroupMessage"> | string
     groupId?: StringFilter<"GroupMessage"> | string
     senderId?: StringFilter<"GroupMessage"> | string
@@ -7149,6 +7198,7 @@ export namespace Prisma {
 
   export type GroupMessageOrderByWithAggregationInput = {
     id?: SortOrder
+    type?: SortOrder
     content?: SortOrder
     groupId?: SortOrder
     senderId?: SortOrder
@@ -7164,6 +7214,7 @@ export namespace Prisma {
     OR?: GroupMessageScalarWhereWithAggregatesInput[]
     NOT?: GroupMessageScalarWhereWithAggregatesInput | GroupMessageScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"GroupMessage"> | string
+    type?: EnumMessageTypeWithAggregatesFilter<"GroupMessage"> | $Enums.MessageType
     content?: StringWithAggregatesFilter<"GroupMessage"> | string
     groupId?: StringWithAggregatesFilter<"GroupMessage"> | string
     senderId?: StringWithAggregatesFilter<"GroupMessage"> | string
@@ -7404,6 +7455,7 @@ export namespace Prisma {
 
   export type GroupMessageCreateInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7413,6 +7465,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedCreateInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     groupId: string
     senderId: string
@@ -7422,6 +7475,7 @@ export namespace Prisma {
 
   export type GroupMessageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7431,6 +7485,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
@@ -7440,6 +7495,7 @@ export namespace Prisma {
 
   export type GroupMessageCreateManyInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     groupId: string
     senderId: string
@@ -7449,6 +7505,7 @@ export namespace Prisma {
 
   export type GroupMessageUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7456,6 +7513,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
@@ -7724,6 +7782,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
   export type GroupScalarRelationFilter = {
     is?: GroupWhereInput
     isNot?: GroupWhereInput
@@ -7736,6 +7801,7 @@ export namespace Prisma {
 
   export type GroupMessageCountOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     content?: SortOrder
     groupId?: SortOrder
     senderId?: SortOrder
@@ -7745,6 +7811,7 @@ export namespace Prisma {
 
   export type GroupMessageMaxOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     content?: SortOrder
     groupId?: SortOrder
     senderId?: SortOrder
@@ -7754,11 +7821,22 @@ export namespace Prisma {
 
   export type GroupMessageMinOrderByAggregateInput = {
     id?: SortOrder
+    type?: SortOrder
     content?: SortOrder
     groupId?: SortOrder
     senderId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
   }
 
   export type ConversationScalarRelationFilter = {
@@ -8116,6 +8194,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumMessageTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MessageType
+  }
+
   export type GroupUpdateOneRequiredWithoutGroupMessagesNestedInput = {
     create?: XOR<GroupCreateWithoutGroupMessagesInput, GroupUncheckedCreateWithoutGroupMessagesInput>
     connectOrCreate?: GroupCreateOrConnectWithoutGroupMessagesInput
@@ -8321,8 +8403,26 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
+  }
+
   export type GroupMessageCreateWithoutSenderInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8331,6 +8431,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedCreateWithoutSenderInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     groupId: string
     createdAt?: Date | string
@@ -8464,6 +8565,7 @@ export namespace Prisma {
     OR?: GroupMessageScalarWhereInput[]
     NOT?: GroupMessageScalarWhereInput | GroupMessageScalarWhereInput[]
     id?: StringFilter<"GroupMessage"> | string
+    type?: EnumMessageTypeFilter<"GroupMessage"> | $Enums.MessageType
     content?: StringFilter<"GroupMessage"> | string
     groupId?: StringFilter<"GroupMessage"> | string
     senderId?: StringFilter<"GroupMessage"> | string
@@ -8569,6 +8671,7 @@ export namespace Prisma {
 
   export type GroupMessageCreateWithoutGroupInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8577,6 +8680,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedCreateWithoutGroupInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     senderId: string
     createdAt?: Date | string
@@ -8989,6 +9093,7 @@ export namespace Prisma {
 
   export type GroupMessageCreateManySenderInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     groupId: string
     createdAt?: Date | string
@@ -9015,6 +9120,7 @@ export namespace Prisma {
 
   export type GroupMessageUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9023,6 +9129,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9031,6 +9138,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateManyWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     groupId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9136,6 +9244,7 @@ export namespace Prisma {
 
   export type GroupMessageCreateManyGroupInput = {
     id?: string
+    type: $Enums.MessageType
     content: string
     senderId: string
     createdAt?: Date | string
@@ -9144,6 +9253,7 @@ export namespace Prisma {
 
   export type GroupMessageUpdateWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9152,6 +9262,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9160,6 +9271,7 @@ export namespace Prisma {
 
   export type GroupMessageUncheckedUpdateManyWithoutGroupInput = {
     id?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -134,6 +134,7 @@ exports.Prisma.GroupScalarFieldEnum = {
 
 exports.Prisma.GroupMessageScalarFieldEnum = {
   id: 'id',
+  type: 'type',
   content: 'content',
   groupId: 'groupId',
   senderId: 'senderId',
@@ -166,7 +167,11 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
+exports.MessageType = exports.$Enums.MessageType = {
+  IMAGE: 'IMAGE',
+  TEXT: 'TEXT',
+  PDF: 'PDF'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',

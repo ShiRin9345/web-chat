@@ -36,15 +36,22 @@ model Group {
   @@index(name)
 }
 
+enum MessageType {
+  IMAGE
+  TEXT
+  PDF
+}
+
 model GroupMessage {
-  id        String   @id @default(uuid())
+  id        String      @id @default(uuid())
+  type      MessageType
   content   String
-  Group     Group    @relation(fields: [groupId], references: [id])
+  Group     Group       @relation(fields: [groupId], references: [id])
   groupId   String
-  sender    User     @relation(fields: [senderId], references: [userId])
+  sender    User        @relation(fields: [senderId], references: [userId])
   senderId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@index(groupId)
   @@index(senderId)
