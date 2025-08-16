@@ -29,8 +29,8 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
       name: '',
     },
     validators: {
-      onBlur: groupSchema,
       onSubmit: groupSchema,
+      onChange: groupSchema,
     },
     onSubmit: async ({ value }) => {
       await axios.post<Group>('/api/group', {
@@ -71,7 +71,6 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
                 <Input
                   placeholder="New group name..."
                   name="name"
-                  onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
                 {!field.state.meta.isValid && (

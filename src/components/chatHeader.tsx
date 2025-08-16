@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Separator } from '@/components/ui/separator.tsx'
 import { House } from 'lucide-react'
+import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
 
 const ChatHeader = () => {

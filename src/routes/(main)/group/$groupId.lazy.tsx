@@ -1,8 +1,9 @@
-import React, { forwardRef, useEffect, useRef } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { createLazyFileRoute, useParams } from '@tanstack/react-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { useUser } from '@clerk/clerk-react'
 import type { GroupMessage } from 'generated/index.d.ts'
 import type { MessageType } from 'type'
 import type { UserResource } from '@clerk/types'
@@ -10,7 +11,6 @@ import useChatSocket from '@/hooks/useChatSocket.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
-import { useUser } from '@clerk/clerk-react'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
@@ -27,12 +27,12 @@ export default function Home() {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
   const { user } = useUser()
 
-  useChatSocket(`${groupId}_add_messages`, [`${groupId}_messages`])
+  useChatSocket(`${groupId}_add_messages`, ['messages', groupId])
 
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
     useInfiniteQuery({
-      queryKey: [`${groupId}_messages`],
+      queryKey: ['messages', groupId],
       queryFn: async ({ pageParam }) => {
         const response = await axios.get<GroupMessageAndCursor>(
           '/api/groupMessages',
@@ -149,38 +149,36 @@ interface MessageItemProps {
   index: number
 }
 
-const MessageItem: React.FC<MessageItemProps> = forwardRef((props, ref) => {
-  return (
-    <div
-      data-index={props.index}
-      className="w-full mt-2  flex p-2 rounded-sm items-start space-x-2"
-      ref={ref}
-    >
-      <div className="flex items-start  ">
-        <img
-          src={props.user.imageUrl}
-          alt="Avatar"
-          className="rounded-full h-12"
-        />
+const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
+  ({ content, type, user, index }, ref) => {
+    return (
+      <div
+        data-index={index}
+        className="w-full mt-2  flex p-2 rounded-sm items-start space-x-2"
+        ref={ref}
+      >
+        <div className="flex items-start  ">
+          <img src={user.imageUrl} alt="Avatar" className="rounded-full h-12" />
+        </div>
+        <div className="flex w-full space-y-2 flex-col">
+          <span className="font-semibold">{user.fullName}</span>
+          {type === 'TEXT' && (
+            <p className="text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2  ">
+              {content}
+            </p>
+          )}
+          {type === 'IMAGE' && (
+            <ImageZoom zoomMargin={100}>
+              <img
+                src={content}
+                alt="image message"
+                className="max-h-[25rem] w-auto object-contain object-left max-w-1/2 rounded-md self-start"
+                loading="lazy"
+              />
+            </ImageZoom>
+          )}
+        </div>
       </div>
-      <div className="flex w-full space-y-2 flex-col">
-        <span className="font-semibold">{props.user.fullName}</span>
-        {props.type === 'TEXT' && (
-          <p className="text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2  ">
-            {props.content}
-          </p>
-        )}
-        {props.type === 'IMAGE' && (
-          <ImageZoom zoomMargin={100}>
-            <img
-              src={props.content}
-              alt="image message"
-              className="max-h-[25rem] w-auto object-contain object-left max-w-1/2 rounded-md self-start"
-              loading="lazy"
-            />
-          </ImageZoom>
-        )}
-      </div>
-    </div>
-  )
-})
+    )
+  },
+)

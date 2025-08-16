@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
+import { Plus } from 'lucide-react'
 import type { Group } from 'generated/index'
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
@@ -19,7 +20,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip.tsx'
-import { Plus } from 'lucide-react'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,

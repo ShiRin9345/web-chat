@@ -10,7 +10,7 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
     if (!socket) {
       return
     }
-    const addCallback = async (message: GroupMessage | PrivateMessage) => {
+    const addCallback = (message: GroupMessage | PrivateMessage) => {
       queryClient.setQueryData(queryKey, (oldData: any) => {
         if (!oldData || !oldData.pages || oldData.pages.length === 0) {
           return {
@@ -33,7 +33,6 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
         }
       })
     }
-    console.log('addKey: ', addKey)
     socket.on(addKey, addCallback)
     return () => {
       socket.off(addKey, addCallback)

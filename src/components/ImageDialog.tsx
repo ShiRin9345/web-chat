@@ -1,6 +1,7 @@
 import { Image } from 'lucide-react'
 import { useState } from 'react'
 import axios from 'axios'
+import { useParams } from '@tanstack/react-router'
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/shadcn-io/dropzone'
-import { useParams } from '@tanstack/react-router'
 import { MessageType } from '@/components/chatInput.tsx'
 
 type OssInfo = {
@@ -39,7 +39,7 @@ const ImageDialog = () => {
     formdata.append('signature', ossInfo.Signature)
     formdata.append('success_action_status', '200')
     formdata.append('file', file)
-    const res = await axios.post(ossInfo.host, formdata)
+    await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
     await axios.post('/api/groupMessages', {
       groupId,
