@@ -14,7 +14,7 @@ export default function AppClerkProvider({
     <ClerkProvider
       publishableKey={PUBLISHABLE_KEY}
       afterSignOutUrl="/signIn"
-      signInFallbackRedirectUrl="/"
+      signInFallbackRedirectUrl="/initial"
       signInUrl="/signIn"
     >
       {children}

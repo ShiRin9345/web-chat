@@ -1,19 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form.tsx'
+import type { Group } from 'generated/index'
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog.tsx'
+import { Label } from '@/components/ui/label.tsx'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,
@@ -25,38 +25,78 @@ const groupSchema = z.object({
 
 function RouteComponent() {
   const form = useForm({
-    resolver: zodResolver(groupSchema),
     defaultValues: {
       name: '',
     },
+    validators: {
+      onBlur: groupSchema,
+      onSubmit: groupSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await axios.post<Group>('/api/group', {
+        name: value.name,
+      })
+    },
   })
-  const onSubmit = async (values: z.infer<typeof groupSchema>) => {
-    const { name } = values
-    await axios.post('/api/group', {
-      name,
-    })
-  }
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          render={({ field }) => (
-            <>
-              <FormItem>
-                <FormLabel>name:</FormLabel>
-                <FormControl>
-                  <Input placeholder="New name..." {...field} />
-                </FormControl>
-                <FormDescription>This is your new group name</FormDescription>
-                <FormMessage />
-              </FormItem>
-            </>
-          )}
-          name="name"
-          control={form.control}
-        />
-        <Button type="submit">Create</Button>
-      </form>
-    </Form>
+    <div className="h-dvh w-full flex items-center justify-center">
+      <Dialog>
+        <DialogTrigger>open</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Group name</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              await form.handleSubmit()
+              form.reset()
+            }}
+            className="space-y-6"
+          >
+            <form.Field
+              name="name"
+              children={(field) => (
+                <>
+                  <div>
+                    <Label
+                      htmlFor="name"
+                      className="mb-2"
+                      onClick={() => console.log(field.state.meta.errors)}
+                    >
+                      name:
+                    </Label>
+                    <Input
+                      placeholder="New group name..."
+                      name="name"
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                    {!field.state.meta.isValid && (
+                      <em role="alert" className="text-red-400">
+                        {field.state.meta.errors
+                          .map((error) => error?.message)
+                          .join(' ')}
+                      </em>
+                    )}
+                  </div>
+                </>
+              )}
+            />
+            <DialogFooter>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit]}
+                children={([canSubmit]) => (
+                  <Button type="submit" disabled={!canSubmit} variant="send">
+                    Submit
+                  </Button>
+                )}
+              />
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }

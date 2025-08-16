@@ -11,7 +11,7 @@ function RouteComponent() {
       <SignIn
         path="/signIn"
         signUpUrl="/signUp"
-        fallbackRedirectUrl="/"
+        fallbackRedirectUrl="/initial"
         appearance={{
           elements: {
             footerAction__signUp: { display: 'inline-block' },

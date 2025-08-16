@@ -14,6 +14,7 @@ import { Route as mainRouteRouteImport } from './routes/(main)/route'
 import { Route as mainIndexRouteImport } from './routes/(main)/index'
 import { Route as authSignUpIndexRouteImport } from './routes/(auth)/signUp/index'
 import { Route as authSignInIndexRouteImport } from './routes/(auth)/signIn/index'
+import { Route as authInitialIndexRouteImport } from './routes/(auth)/initial/index'
 import { Route as mainGroupGroupIdRouteImport } from './routes/(main)/group/$groupId'
 
 const TestRoute = TestRouteImport.update({
@@ -40,6 +41,11 @@ const authSignInIndexRoute = authSignInIndexRouteImport.update({
   path: '/signIn/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const authInitialIndexRoute = authInitialIndexRouteImport.update({
+  id: '/(auth)/initial/',
+  path: '/initial/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport
   .update({
     id: '/group/$groupId',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
   '/test': typeof TestRoute
   '/group/$groupId': typeof mainGroupGroupIdRoute
+  '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
 }
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/test': typeof TestRoute
   '/': typeof mainIndexRoute
   '/group/$groupId': typeof mainGroupGroupIdRoute
+  '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
 }
@@ -70,20 +78,28 @@ export interface FileRoutesById {
   '/test': typeof TestRoute
   '/(main)/': typeof mainIndexRoute
   '/(main)/group/$groupId': typeof mainGroupGroupIdRoute
+  '/(auth)/initial/': typeof authInitialIndexRoute
   '/(auth)/signIn/': typeof authSignInIndexRoute
   '/(auth)/signUp/': typeof authSignUpIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test' | '/group/$groupId' | '/signIn' | '/signUp'
+  fullPaths:
+    | '/'
+    | '/test'
+    | '/group/$groupId'
+    | '/initial'
+    | '/signIn'
+    | '/signUp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/test' | '/' | '/group/$groupId' | '/signIn' | '/signUp'
+  to: '/test' | '/' | '/group/$groupId' | '/initial' | '/signIn' | '/signUp'
   id:
     | '__root__'
     | '/(main)'
     | '/test'
     | '/(main)/'
     | '/(main)/group/$groupId'
+    | '/(auth)/initial/'
     | '/(auth)/signIn/'
     | '/(auth)/signUp/'
   fileRoutesById: FileRoutesById
@@ -91,6 +107,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   mainRouteRoute: typeof mainRouteRouteWithChildren
   TestRoute: typeof TestRoute
+  authInitialIndexRoute: typeof authInitialIndexRoute
   authSignInIndexRoute: typeof authSignInIndexRoute
   authSignUpIndexRoute: typeof authSignUpIndexRoute
 }
@@ -132,6 +149,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(auth)/initial/': {
+      id: '/(auth)/initial/'
+      path: '/initial'
+      fullPath: '/initial'
+      preLoaderRoute: typeof authInitialIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(main)/group/$groupId': {
       id: '/(main)/group/$groupId'
       path: '/group/$groupId'
@@ -159,6 +183,7 @@ const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   mainRouteRoute: mainRouteRouteWithChildren,
   TestRoute: TestRoute,
+  authInitialIndexRoute: authInitialIndexRoute,
   authSignInIndexRoute: authSignInIndexRoute,
   authSignUpIndexRoute: authSignUpIndexRoute,
 }
