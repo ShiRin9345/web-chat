@@ -2,10 +2,11 @@ import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
 import { useUser } from '@clerk/clerk-react'
-import { CirclePlus, Image } from 'lucide-react'
+import { CirclePlus } from 'lucide-react'
 import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
+import ImageDialog from '@/components/ImageDialog.tsx'
 
 const ChatInput = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
@@ -70,7 +71,7 @@ const ChatInput = () => {
                   field.handleChange(`${field.state.value} ${emoji} `)
                 }
               />
-              <Image className="chatInput_icon" />
+              <ImageDialog />
               <CirclePlus className="chatInput_icon" />
             </div>
           </div>
