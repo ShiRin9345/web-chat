@@ -1,6 +1,5 @@
 import express from 'express'
 import { clerkClient, getAuth, requireAuth } from '@clerk/express'
-import { MessageType } from '../generated/index.js'
 import db from './db.ts'
 import { getIo, groupUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
@@ -53,7 +52,7 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
 })
 
 router.post('/groupMessages', requireAuth(), async (req, res) => {
-  const { content, groupId } = req.body
+  const { content, groupId, type } = req.body
   const { userId } = getAuth(req)
   try {
     const message = await db.groupMessage.create({
@@ -61,7 +60,7 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
         content,
         groupId,
         senderId: userId as string,
-        type: MessageType.TEXT,
+        type,
       },
     })
     const io = getIo()

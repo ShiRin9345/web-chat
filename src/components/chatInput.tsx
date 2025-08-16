@@ -1,16 +1,20 @@
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
-import { useUser } from '@clerk/clerk-react'
 import { CirclePlus } from 'lucide-react'
 import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import ImageDialog from '@/components/ImageDialog.tsx'
 
+export const MessageType = {
+  IMAGE: 'IMAGE',
+  TEXT: 'TEXT',
+  PDF: 'PDF',
+}
+
 const ChatInput = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
-  const { user } = useUser()
   const form = useForm({
     onSubmit: async ({ value }) => {
       try {
@@ -18,7 +22,7 @@ const ChatInput = () => {
         await axios.post('/api/groupMessages', {
           content,
           groupId,
-          userId: user?.id,
+          type: MessageType.TEXT,
         })
       } catch (e) {
         throw new Error('Error creating chat')

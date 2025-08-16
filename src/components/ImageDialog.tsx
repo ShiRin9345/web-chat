@@ -1,5 +1,6 @@
 import { Image } from 'lucide-react'
 import { useState } from 'react'
+import axios from 'axios'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +12,8 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/shadcn-io/dropzone'
-import axios from 'axios'
+import { useParams } from '@tanstack/react-router'
+import { MessageType } from '@/components/chatInput.tsx'
 
 type OssInfo = {
   OSSAccessKeyId: string
@@ -21,7 +23,9 @@ type OssInfo = {
 }
 
 const ImageDialog = () => {
+  const { groupId } = useParams({ from: '/(main)/group/$groupId' })
   const [files, setFiles] = useState<Array<File> | undefined>()
+  const [open, setOpen] = useState<boolean>(false)
   const handleDrop = async (uploadFiles: Array<File>) => {
     setFiles(uploadFiles)
     const file = uploadFiles[0]
@@ -37,12 +41,23 @@ const ImageDialog = () => {
     formdata.append('file', file)
     const res = await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
-    if (res.status === 200) {
-      alert(`upload to ${targetUrl}`)
-    }
+    await axios.post('/api/groupMessages', {
+      groupId,
+      content: targetUrl,
+      type: MessageType.IMAGE,
+    })
+    setFiles(undefined)
   }
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen: boolean) => {
+        if (!newOpen) {
+          setFiles(undefined)
+        }
+        setOpen(newOpen)
+      }}
+    >
       <DialogTrigger>
         <Image className="chatInput_icon" />
       </DialogTrigger>
