@@ -98,7 +98,7 @@ router.get('/groupCount', requireAuth(), async (req, res) => {
 router.post('/group', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
   const { name } = req.body
-  await db.group.create({
+  const group = await db.group.create({
     data: {
       name,
       members: {
@@ -108,6 +108,8 @@ router.post('/group', requireAuth(), async (req, res) => {
       },
     },
   })
+  groupUsers.set(group.id, 1)
+  res.json(group)
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {
@@ -128,7 +130,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     })
     const clientUser = await clerkClient.users.getUser(userId as string)
     const userName = clientUser.fullName
-    await db.group.create({
+    const group = await db.group.create({
       data: {
         name: userName as string,
         members: {
@@ -138,6 +140,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
         },
       },
     })
+    groupUsers.set(group.id, 1)
     return res.json(user)
   } catch (e) {
     console.log(e)
