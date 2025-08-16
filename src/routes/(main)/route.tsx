@@ -24,7 +24,7 @@ export const Route = createFileRoute('/(main)')({
     },
   }),
   loader: async ({ context }) => {
-    await context.queryClient.prefetchQuery(context.sidebarListQueryOptions)
+    await context.queryClient.ensureQueryData(context.sidebarListQueryOptions)
   },
 })
 

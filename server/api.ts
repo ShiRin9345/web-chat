@@ -95,6 +95,21 @@ router.get('/groupCount', requireAuth(), async (req, res) => {
   res.send(groupUsers.get(req.query.groupId as string))
 })
 
+router.post('/group', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { name } = req.body
+  await db.group.create({
+    data: {
+      name,
+      members: {
+        connect: {
+          userId: userId as string,
+        },
+      },
+    },
+  })
+})
+
 router.post('/initialUser', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
   try {
@@ -118,7 +133,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
         name: userName as string,
         members: {
           connect: {
-            id: user.id,
+            userId: userId as string,
           },
         },
       },

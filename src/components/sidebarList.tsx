@@ -73,16 +73,18 @@ function useCountSocket(groupId: string) {
   const socket = useChatSocket('', [])
   const [count, setCount] = useState<number>(0)
   useEffect(() => {
-    socket.on(`${groupId}_count`, (newcount: number) => {
-      setCount(newcount)
-    })
-    axios
-      .get('/api/groupCount', {
+    const callback = (newCount: number) => setCount(newCount)
+    socket.on(`${groupId}_count`, callback)
+    const getGroupCount = async () => {
+      const response = await axios.get<number>('/api/groupCount', {
         params: {
           groupId,
         },
       })
-      .then((response) => setCount(response.data))
+      setCount(response.data)
+    }
+    getGroupCount()
+    return () => socket.off(`${groupId}_count`, callback)
   }, [])
   return count
 }
