@@ -14,6 +14,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog.tsx'
 import { Label } from '@/components/ui/label.tsx'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip.tsx'
+import { Plus } from 'lucide-react'
 
 export const Route = createFileRoute('/test')({
   component: RouteComponent,
@@ -41,7 +47,20 @@ function RouteComponent() {
   return (
     <div className="h-dvh w-full flex items-center justify-center">
       <Dialog>
-        <DialogTrigger>open</DialogTrigger>
+        <DialogTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="group cursor-pointer">
+                <div className="bg-zinc-100 hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-200 hover:rounded-2xl justify-center ">
+                  <Plus className="text-emerald-400" />
+                </div>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" align="center">
+              <p>create new group</p>
+            </TooltipContent>
+          </Tooltip>
+        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Group name</DialogTitle>

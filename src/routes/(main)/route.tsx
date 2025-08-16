@@ -12,19 +12,18 @@ import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 import PendingPage from '@/components/pendingPage.tsx'
 
+export const sidebarListQueryOptions = {
+  queryKey: ['groups'],
+  queryFn: async () => {
+    const response = await axios.get<Array<Group>>('/api/groups')
+    return response.data
+  },
+}
+
 export const Route = createFileRoute('/(main)')({
   component: RouteComponent,
-  beforeLoad: () => ({
-    sidebarListQueryOptions: {
-      queryKey: ['groups'],
-      queryFn: async () => {
-        const response = await axios.get<Array<Group>>('/api/groups')
-        return response.data
-      },
-    },
-  }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(context.sidebarListQueryOptions)
+    await context.queryClient.ensureQueryData(sidebarListQueryOptions)
   },
 })
 

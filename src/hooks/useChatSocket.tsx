@@ -33,11 +33,12 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
         }
       })
     }
+    console.log('addKey: ', addKey)
     socket.on(addKey, addCallback)
     return () => {
       socket.off(addKey, addCallback)
     }
-  }, [socket])
+  }, [socket, addKey, queryKey])
 
   return socket
 }

@@ -1,4 +1,4 @@
-import { Link, useRouteContext } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -10,11 +10,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
-import useChatSocket from '@/hooks/useChatSocket.tsx'
+import { sidebarListQueryOptions } from '@/routes/(main)/route.tsx'
+import { useSocket } from '@/providers/socketProvider.tsx'
 
 const SidebarList = () => {
-  const context = useRouteContext({ from: '/(main)' })
-  const { data: groups } = useQuery(context.sidebarListQueryOptions)
+  const { data: groups } = useQuery(sidebarListQueryOptions)
   return (
     <>
       <Accordion type="single" collapsible>
@@ -70,7 +70,7 @@ function LabelGroup({ group }: { group: Group }) {
 }
 
 function useCountSocket(groupId: string) {
-  const socket = useChatSocket('', [])
+  const { socket } = useSocket()
   const [count, setCount] = useState<number>(0)
   useEffect(() => {
     const callback = (newCount: number) => setCount(newCount)
