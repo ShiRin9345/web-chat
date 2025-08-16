@@ -12,6 +12,7 @@ import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
+import { Loader } from 'lucide-react'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -118,7 +119,9 @@ export default function Home() {
                 >
                   {isLoaderRow ? (
                     hasNextPage ? (
-                      'Loading more...'
+                      <div className="w-full  flex items-center justify-center">
+                        <Loader className="animate-spin" />
+                      </div>
                     ) : (
                       'Nothing more to load...'
                     )
