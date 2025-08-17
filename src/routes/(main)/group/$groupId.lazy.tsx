@@ -1,18 +1,17 @@
-import { forwardRef, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { createLazyFileRoute, useParams } from '@tanstack/react-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useUser } from '@clerk/clerk-react'
+import { Loader } from 'lucide-react'
 import type { GroupMessage } from 'generated/index.d.ts'
-import type { MessageType } from 'type'
 import type { UserResource } from '@clerk/types'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
-import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
-import { Loader } from 'lucide-react'
+import { MessageItem } from '@/components/messageItem.tsx'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -144,44 +143,3 @@ export default function Home() {
     </div>
   )
 }
-
-interface MessageItemProps {
-  content: string
-  type: MessageType
-  user: UserResource
-  index: number
-}
-
-const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
-  ({ content, type, user, index }, ref) => {
-    return (
-      <div
-        data-index={index}
-        className="w-full mt-2  flex p-2 rounded-sm items-start space-x-2"
-        ref={ref}
-      >
-        <div className="flex items-start  ">
-          <img src={user.imageUrl} alt="Avatar" className="rounded-full h-12" />
-        </div>
-        <div className="flex w-full space-y-2 flex-col">
-          <span className="font-semibold">{user.fullName}</span>
-          {type === 'TEXT' && (
-            <p className="text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2  ">
-              {content}
-            </p>
-          )}
-          {type === 'IMAGE' && (
-            <ImageZoom zoomMargin={100}>
-              <img
-                src={content}
-                alt="image message"
-                className="max-h-[25rem] w-auto object-contain object-left max-w-1/2 rounded-md self-start"
-                loading="lazy"
-              />
-            </ImageZoom>
-          )}
-        </div>
-      </div>
-    )
-  },
-)
