@@ -33,7 +33,7 @@ function ToolTipIcon() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-200 hover:rounded-2xl justify-center ">
+          <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
             <Plus className="text-emerald-400" />
           </div>
         </TooltipTrigger>

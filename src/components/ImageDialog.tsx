@@ -62,7 +62,7 @@ const ImageDialog = () => {
         <Image className="chatInput_icon" />
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Upload image</DialogHeader>
+        <DialogHeader>Send image</DialogHeader>
         <Dropzone onDrop={handleDrop} src={files}>
           <DropzoneEmptyState />
           <DropzoneContent />

@@ -1,9 +1,15 @@
 import express from 'express'
 import { clerkClient, getAuth, requireAuth } from '@clerk/express'
+import { convertToModelMessages, streamText, type UIMessage } from 'ai'
+import { deepseek } from '@ai-sdk/deepseek'
+import dotenv from 'dotenv'
 import db from './db.ts'
 import { getIo, groupUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
 import type { GroupMessage } from 'generated/index'
+import { loadApiKey } from '@ai-sdk/provider-utils'
+
+dotenv.config()
 
 const router = express.Router()
 
@@ -161,4 +167,13 @@ router.get('/oss-signature', requireAuth(), async (_req, res) => {
   res.json({ ...signature, host })
 })
 
+router.post('/chat', (req, res) => {
+  const { messages }: { messages: Array<UIMessage> } = req.body
+  const result = streamText({
+    model: deepseek('deepseek-chat'),
+    system: 'You are a expert assistant',
+    messages: convertToModelMessages(messages),
+  })
+  result.pipeUIMessageStreamToResponse(res)
+})
 export default router

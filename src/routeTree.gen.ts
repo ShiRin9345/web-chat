@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Test1RouteImport } from './routes/test1'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as mainRouteRouteImport } from './routes/(main)/route'
 import { Route as mainIndexRouteImport } from './routes/(main)/index'
@@ -17,6 +18,11 @@ import { Route as authSignInIndexRouteImport } from './routes/(auth)/signIn/inde
 import { Route as authInitialIndexRouteImport } from './routes/(auth)/initial/index'
 import { Route as mainGroupGroupIdRouteImport } from './routes/(main)/group/$groupId'
 
+const Test1Route = Test1RouteImport.update({
+  id: '/test1',
+  path: '/test1',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TestRoute = TestRouteImport.update({
   id: '/test',
   path: '/test',
@@ -59,6 +65,7 @@ const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
   '/test': typeof TestRoute
+  '/test1': typeof Test1Route
   '/group/$groupId': typeof mainGroupGroupIdRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/test': typeof TestRoute
+  '/test1': typeof Test1Route
   '/': typeof mainIndexRoute
   '/group/$groupId': typeof mainGroupGroupIdRoute
   '/initial': typeof authInitialIndexRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(main)': typeof mainRouteRouteWithChildren
   '/test': typeof TestRoute
+  '/test1': typeof Test1Route
   '/(main)/': typeof mainIndexRoute
   '/(main)/group/$groupId': typeof mainGroupGroupIdRoute
   '/(auth)/initial/': typeof authInitialIndexRoute
@@ -87,16 +96,25 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/test'
+    | '/test1'
     | '/group/$groupId'
     | '/initial'
     | '/signIn'
     | '/signUp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/test' | '/' | '/group/$groupId' | '/initial' | '/signIn' | '/signUp'
+  to:
+    | '/test'
+    | '/test1'
+    | '/'
+    | '/group/$groupId'
+    | '/initial'
+    | '/signIn'
+    | '/signUp'
   id:
     | '__root__'
     | '/(main)'
     | '/test'
+    | '/test1'
     | '/(main)/'
     | '/(main)/group/$groupId'
     | '/(auth)/initial/'
@@ -107,6 +125,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   mainRouteRoute: typeof mainRouteRouteWithChildren
   TestRoute: typeof TestRoute
+  Test1Route: typeof Test1Route
   authInitialIndexRoute: typeof authInitialIndexRoute
   authSignInIndexRoute: typeof authSignInIndexRoute
   authSignUpIndexRoute: typeof authSignUpIndexRoute
@@ -114,6 +133,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test1': {
+      id: '/test1'
+      path: '/test1'
+      fullPath: '/test1'
+      preLoaderRoute: typeof Test1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/test': {
       id: '/test'
       path: '/test'
@@ -183,6 +209,7 @@ const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   mainRouteRoute: mainRouteRouteWithChildren,
   TestRoute: TestRoute,
+  Test1Route: Test1Route,
   authInitialIndexRoute: authInitialIndexRoute,
   authSignInIndexRoute: authSignInIndexRoute,
   authSignUpIndexRoute: authSignUpIndexRoute,
