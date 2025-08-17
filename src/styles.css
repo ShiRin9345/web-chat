@@ -145,11 +145,30 @@ code {
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+  .image-anchor {
+    anchor-name: --image
+  }
+  .pdf-anchor {
+    anchor-name: --pdf
+  }
 }
 @layer components {
   .chatInput_icon {
     @apply cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500
   }
+  .image_download_link {
+    position: absolute;
+    position-anchor: --image;
+    bottom: anchor(bottom);
+    right: calc(anchor(right) - 3rem);
+  }
+  .pdf_download_link {
+    position: absolute;
+    position-anchor: --pdf;
+    bottom: anchor(bottom);
+    right: calc(anchor(right) - 3rem);
+  }
+
 }
 
 .cl-internal-1dauvpw {

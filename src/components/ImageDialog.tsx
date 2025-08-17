@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/shadcn-io/dropzone'
 import { MessageType } from '@/components/chatInput.tsx'
 
-type OssInfo = {
+export type OssInfo = {
   OSSAccessKeyId: string
   Signature: string
   policy: string
@@ -41,10 +41,11 @@ const ImageDialog = () => {
     formdata.append('file', file)
     await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
+    const extension = file.name.split('.').pop()
     await axios.post('/api/groupMessages', {
       groupId,
       content: targetUrl,
-      type: MessageType.IMAGE,
+      type: extension === 'pdf' ? MessageType.PDF : MessageType.IMAGE,
     })
     setFiles(undefined)
   }

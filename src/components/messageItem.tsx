@@ -1,7 +1,10 @@
 import { forwardRef } from 'react'
+import { ArrowDownToLine } from 'lucide-react'
 import type { MessageType } from '../../type'
 import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
+import { Document, Page } from 'react-pdf'
+import PendingPage from '@/components/pendingPage.tsx'
 
 interface MessageItemProps {
   content: string
@@ -33,10 +36,35 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
               <img
                 src={content}
                 alt="image message"
-                className="max-h-[25rem] w-auto object-contain object-left max-w-1/2 rounded-md self-start"
+                className="max-h-[25rem] image-anchor w-auto object-contain object-left max-w-1/2 rounded-md self-start"
                 loading="lazy"
               />
+              <a
+                className="image_download_link rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white "
+                href={content}
+                download
+              >
+                <ArrowDownToLine className="cursor-pointer! size-5" />
+              </a>
             </ImageZoom>
+          )}
+          {type === 'PDF' && (
+            <div className="w-min pdf-anchor">
+              <Document
+                file={content}
+                loading={<PendingPage />}
+                className="pointer-events-none"
+              >
+                <Page loading={<PendingPage />} pageNumber={1} height={300} />
+              </Document>
+              <a
+                className="pdf_download_link rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white "
+                href={content}
+                download
+              >
+                <ArrowDownToLine className="cursor-pointer! size-5" />
+              </a>
+            </div>
           )}
         </div>
       </div>

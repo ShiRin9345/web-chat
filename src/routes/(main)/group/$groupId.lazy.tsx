@@ -4,16 +4,17 @@ import { createLazyFileRoute, useParams } from '@tanstack/react-router'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useUser } from '@clerk/clerk-react'
-import { Loader } from 'lucide-react'
+import { ImagePlus, Loader } from 'lucide-react'
 import type { GroupMessage } from 'generated/index.d.ts'
 import type { UserResource } from '@clerk/types'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
-import ChatInput from '@/components/chatInput.tsx'
+import ChatInput, { MessageType } from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils.ts'
+import type { OssInfo } from '@/components/ImageDialog.tsx'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -84,10 +85,32 @@ export default function Home() {
     messages.length,
     fetchNextPage,
   ])
+  const onDrop = async (uploadFiles: Array<File>) => {
+    const file = uploadFiles[0]
+    const response = await axios.get<OssInfo>('/api/oss-signature')
+    const ossInfo = response.data
+    const formdata = new FormData()
+
+    formdata.append('key', file.name)
+    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+    formdata.append('policy', ossInfo.policy)
+    formdata.append('signature', ossInfo.Signature)
+    formdata.append('success_action_status', '200')
+    formdata.append('file', file)
+    await axios.post(ossInfo.host, formdata)
+    const targetUrl = ossInfo.host + '/' + file.name
+    await axios.post('/api/groupMessages', {
+      groupId,
+      content: targetUrl,
+      type: MessageType.IMAGE,
+    })
+  }
   const { getRootProps, isDragActive } = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.png', '.gif'],
     },
+    onDrop,
+    noDragEventsBubbling: true,
   })
 
   return (
@@ -100,7 +123,10 @@ export default function Home() {
           !isDragActive && 'invisible opacity-0',
         )}
       >
-        <span>Dragging</span>
+        <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[35rem] h-[13rem] bg-white flex flex-col items-center justify-center rounded-lg gap-2 py-4">
+          <ImagePlus />
+          <p className="font-semibold">Drag and drop your file here.</p>
+        </div>
       </div>
 
       <div
@@ -145,7 +171,7 @@ export default function Home() {
                     <MessageItem
                       index={virtualRow.index}
                       ref={rowVirtualizer.measureElement}
-                      content={message.content}
+                      content={message?.content}
                       type={message.type}
                       user={user as UserResource}
                     />
