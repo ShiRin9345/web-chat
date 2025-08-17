@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useDropzone } from 'react-dropzone'
+import { cn } from '@/lib/utils.ts'
 
 export const Route = createFileRoute('/test2')({
   component: RouteComponent,
@@ -19,11 +20,16 @@ function RouteComponent() {
     onDrop,
   })
   return (
-    <div
-      {...getRootProps()}
-      className="h-dvh w-full flex items-center justify-center"
-    >
-      {isDragActive && <span>Dragging</span>}
+    <div {...getRootProps()} className="h-dvh relative w-full ">
+      <div
+        {...getRootProps()}
+        className={cn(
+          'absolute z-50 transition-all duration-500 inset-0 bg-blue-500',
+          !isDragActive && 'invisible opacity-0',
+        )}
+      >
+        <span>Dragging</span>
+      </div>
     </div>
   )
 }

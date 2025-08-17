@@ -12,6 +12,8 @@ import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
+import { useDropzone } from 'react-dropzone'
+import { cn } from '@/lib/utils.ts'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -82,10 +84,25 @@ export default function Home() {
     messages.length,
     fetchNextPage,
   ])
+  const { getRootProps, isDragActive } = useDropzone({
+    accept: {
+      'image/*': ['.jpeg', '.png', '.gif'],
+    },
+  })
 
   return (
-    <div className="flex relative flex-col h-screen">
+    <div {...getRootProps()} className="flex relative flex-col h-screen">
       <ChatHeader />
+      <div
+        {...getRootProps()}
+        className={cn(
+          'absolute inset-0 transition-all z-50 duration-500 bg-transparent backdrop-blur-lg',
+          !isDragActive && 'invisible opacity-0',
+        )}
+      >
+        <span>Dragging</span>
+      </div>
+
       <div
         ref={parentRef}
         className="p-2 flex-1 h-full overflow-auto bg-zinc-100 scrollbar-none relative "
