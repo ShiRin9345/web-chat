@@ -24,27 +24,6 @@ export function initIo(server: HttpServer) {
       }
       await changeGroupOnlineCount(socket, 1)
     })
-    socket.on('join_group', (groupId) => {
-      socket.join(groupId)
-      socket.broadcast
-        .to(groupId)
-        .emit('user_connected', socket.handshake.auth.userId)
-    })
-    socket.on('leave_group', (groupId) => {
-      socket.leave(groupId)
-    })
-    socket.on('join_video_room', (roomId, id) => {
-      socket.join(roomId)
-      socket.broadcast.to(roomId).emit('user_connected', id)
-      console.log('join', id)
-    })
-    socket.on('leave_video_room', (roomId, id) => {
-      if (id) {
-        socket.broadcast.to(roomId).emit('user_disconnected', id)
-        console.log('leave', roomId, id)
-        socket.leave(roomId)
-      }
-    })
     socket.on('disconnect', async () => {
       const newRefCount = changeUserReference(socket, -1)
       if (newRefCount >= 1) {
@@ -52,6 +31,13 @@ export function initIo(server: HttpServer) {
       }
       onlineUsers.delete(socket.handshake.auth.userId)
       await changeGroupOnlineCount(socket, -1)
+    })
+    socket.on('join_video_room', (groupId: string, id: string) => {
+      socket.join(groupId)
+      socket.broadcast.to(groupId).emit('user_connected', id)
+    })
+    socket.on('leave_video_room', (groupId: string) => {
+      socket.leave(groupId)
     })
     console.log(`socket ${socket.id} connected`)
   })
