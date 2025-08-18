@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Test1RouteImport } from './routes/test1'
 import { Route as TestRouteImport } from './routes/test'
@@ -16,7 +18,11 @@ import { Route as mainIndexRouteImport } from './routes/(main)/index'
 import { Route as authSignUpIndexRouteImport } from './routes/(auth)/signUp/index'
 import { Route as authSignInIndexRouteImport } from './routes/(auth)/signIn/index'
 import { Route as authInitialIndexRouteImport } from './routes/(auth)/initial/index'
-import { Route as mainGroupGroupIdRouteImport } from './routes/(main)/group/$groupId'
+import { Route as mainGroupVideoGroupIdRouteImport } from './routes/(main)/group/video/$groupId'
+
+const mainGroupGroupIdLazyRouteImport = createFileRoute(
+  '/(main)/group/$groupId',
+)()
 
 const Test1Route = Test1RouteImport.update({
   id: '/test1',
@@ -52,7 +58,7 @@ const authInitialIndexRoute = authInitialIndexRouteImport.update({
   path: '/initial/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport
+const mainGroupGroupIdLazyRoute = mainGroupGroupIdLazyRouteImport
   .update({
     id: '/group/$groupId',
     path: '/group/$groupId',
@@ -61,24 +67,31 @@ const mainGroupGroupIdRoute = mainGroupGroupIdRouteImport
   .lazy(() =>
     import('./routes/(main)/group/$groupId.lazy').then((d) => d.Route),
   )
+const mainGroupVideoGroupIdRoute = mainGroupVideoGroupIdRouteImport.update({
+  id: '/group/video/$groupId',
+  path: '/group/video/$groupId',
+  getParentRoute: () => mainRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
-  '/group/$groupId': typeof mainGroupGroupIdRoute
+  '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
+  '/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRoutesByTo {
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
   '/': typeof mainIndexRoute
-  '/group/$groupId': typeof mainGroupGroupIdRoute
+  '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
+  '/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -86,10 +99,11 @@ export interface FileRoutesById {
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
   '/(main)/': typeof mainIndexRoute
-  '/(main)/group/$groupId': typeof mainGroupGroupIdRoute
+  '/(main)/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/(auth)/initial/': typeof authInitialIndexRoute
   '/(auth)/signIn/': typeof authSignInIndexRoute
   '/(auth)/signUp/': typeof authSignUpIndexRoute
+  '/(main)/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +115,7 @@ export interface FileRouteTypes {
     | '/initial'
     | '/signIn'
     | '/signUp'
+    | '/group/video/$groupId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/test'
@@ -110,6 +125,7 @@ export interface FileRouteTypes {
     | '/initial'
     | '/signIn'
     | '/signUp'
+    | '/group/video/$groupId'
   id:
     | '__root__'
     | '/(main)'
@@ -120,6 +136,7 @@ export interface FileRouteTypes {
     | '/(auth)/initial/'
     | '/(auth)/signIn/'
     | '/(auth)/signUp/'
+    | '/(main)/group/video/$groupId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -186,7 +203,14 @@ declare module '@tanstack/react-router' {
       id: '/(main)/group/$groupId'
       path: '/group/$groupId'
       fullPath: '/group/$groupId'
-      preLoaderRoute: typeof mainGroupGroupIdRouteImport
+      preLoaderRoute: typeof mainGroupGroupIdLazyRouteImport
+      parentRoute: typeof mainRouteRoute
+    }
+    '/(main)/group/video/$groupId': {
+      id: '/(main)/group/video/$groupId'
+      path: '/group/video/$groupId'
+      fullPath: '/group/video/$groupId'
+      preLoaderRoute: typeof mainGroupVideoGroupIdRouteImport
       parentRoute: typeof mainRouteRoute
     }
   }
@@ -194,12 +218,14 @@ declare module '@tanstack/react-router' {
 
 interface mainRouteRouteChildren {
   mainIndexRoute: typeof mainIndexRoute
-  mainGroupGroupIdRoute: typeof mainGroupGroupIdRoute
+  mainGroupGroupIdLazyRoute: typeof mainGroupGroupIdLazyRoute
+  mainGroupVideoGroupIdRoute: typeof mainGroupVideoGroupIdRoute
 }
 
 const mainRouteRouteChildren: mainRouteRouteChildren = {
   mainIndexRoute: mainIndexRoute,
-  mainGroupGroupIdRoute: mainGroupGroupIdRoute,
+  mainGroupGroupIdLazyRoute: mainGroupGroupIdLazyRoute,
+  mainGroupVideoGroupIdRoute: mainGroupVideoGroupIdRoute,
 }
 
 const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(
