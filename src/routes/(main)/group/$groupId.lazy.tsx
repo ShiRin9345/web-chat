@@ -5,16 +5,16 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useUser } from '@clerk/clerk-react'
 import { ImagePlus, Loader } from 'lucide-react'
+import { useDropzone } from 'react-dropzone'
 import type { GroupMessage } from 'generated/index.d.ts'
 import type { UserResource } from '@clerk/types'
+import type { OssInfo } from '@/components/ImageDialog.tsx'
 import useChatSocket from '@/hooks/useChatSocket.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput, { MessageType } from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
-import { useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils.ts'
-import type { OssInfo } from '@/components/ImageDialog.tsx'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -30,7 +30,7 @@ export default function Home() {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
   const { user } = useUser()
 
-  useChatSocket(`${groupId}_add_messages`, ['messages', groupId])
+  useChatSocket(groupId, ['messages', groupId])
 
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =

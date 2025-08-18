@@ -3,7 +3,10 @@ import { useQueryClient } from '@tanstack/react-query'
 import type { GroupMessage, PrivateMessage } from 'generated/index.d.ts'
 import { useSocket } from '@/providers/socketProvider.tsx'
 
-export default function useChatSocket(addKey: string, queryKey: Array<string>) {
+export default function useChatSocket(
+  groupId: string,
+  queryKey: Array<string>,
+) {
   const { socket } = useSocket()
   const queryClient = useQueryClient()
   useEffect(() => {
@@ -33,11 +36,13 @@ export default function useChatSocket(addKey: string, queryKey: Array<string>) {
         }
       })
     }
-    socket.on(addKey, addCallback)
+    socket.on('new_message', addCallback)
+    socket.emit('join_group', groupId)
     return () => {
-      socket.off(addKey, addCallback)
+      socket.off('new_message', addCallback)
+      socket.emit('leave_group', groupId)
     }
-  }, [socket, addKey, queryKey])
+  }, [socket, groupId, queryKey])
 
   return socket
 }

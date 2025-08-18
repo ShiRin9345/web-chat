@@ -24,6 +24,12 @@ export function initIo(server: HttpServer) {
       }
       await changeGroupOnlineCount(socket, 1)
     })
+    socket.on('join_group', (groupId) => {
+      socket.join(groupId)
+    })
+    socket.on('leave_group', (groupId) => {
+      socket.leave(groupId)
+    })
     socket.on('disconnect', async () => {
       const newRefCount = changeUserReference(socket, -1)
       if (newRefCount >= 1) {

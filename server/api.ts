@@ -1,13 +1,13 @@
 import express from 'express'
 import { clerkClient, getAuth, requireAuth } from '@clerk/express'
-import { convertToModelMessages, streamText, type UIMessage } from 'ai'
+import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
 import db from './db.ts'
 import { getIo, groupUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
+import type { UIMessage } from 'ai'
 import type { GroupMessage } from 'generated/index'
-import { loadApiKey } from '@ai-sdk/provider-utils'
 
 dotenv.config()
 
@@ -71,7 +71,7 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
     })
     const io = getIo()
 
-    io.emit(`${groupId}_add_messages`, message)
+    io.to(groupId).emit(`new_message`, message)
 
     res.json(message)
   } catch (e) {
