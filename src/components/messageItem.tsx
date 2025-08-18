@@ -1,9 +1,9 @@
 import { forwardRef } from 'react'
 import { ArrowDownToLine } from 'lucide-react'
+import { Document, Page } from 'react-pdf'
 import type { MessageType } from '../../type'
 import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
-import { Document, Page } from 'react-pdf'
 import PendingPage from '@/components/pendingPage.tsx'
 
 interface MessageItemProps {
@@ -49,7 +49,7 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
             </ImageZoom>
           )}
           {type === 'PDF' && (
-            <div className="w-min pdf-anchor">
+            <div className="w-min pdf-anchor rounded-md overflow-hidden">
               <Document
                 file={content}
                 loading={<PendingPage />}
