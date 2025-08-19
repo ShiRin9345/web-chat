@@ -47,15 +47,13 @@ const rootElement = document.getElementById('app')
 if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
-    <StrictMode>
-      <AppClerkProvider>
-        <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-          <SocketProvider>
-            <RouterProvider router={router} />
-          </SocketProvider>
-        </TanStackQueryProvider.Provider>
-      </AppClerkProvider>
-    </StrictMode>,
+    <AppClerkProvider>
+      <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+        <SocketProvider>
+          <RouterProvider router={router} />
+        </SocketProvider>
+      </TanStackQueryProvider.Provider>
+    </AppClerkProvider>,
   )
 }
 
