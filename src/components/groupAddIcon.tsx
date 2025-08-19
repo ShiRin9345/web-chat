@@ -34,7 +34,7 @@ function ToolTipIcon() {
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
-            <Plus className="text-emerald-400" />
+            <Plus className="text-emerald-500" />
           </div>
         </TooltipTrigger>
         <TooltipContent side="right" align="center">

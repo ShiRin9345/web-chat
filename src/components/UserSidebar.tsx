@@ -1,3 +1,4 @@
+import { Plus, UserRoundPlus } from 'lucide-react'
 import { AppSidebar, SidebarContent } from '@/components/ui/sidebar.tsx'
 import GroupAddIcon from '@/components/groupAddIcon.tsx'
 
@@ -5,8 +6,11 @@ const UserSidebar = () => {
   return (
     <AppSidebar>
       <SidebarContent>
-        <div className="w-full h-dvh flex flex-col items-center py-2">
+        <div className="w-full h-dvh flex flex-col items-center gap-6 py-2">
           <GroupAddIcon />
+          <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
+            <UserRoundPlus className="text-emerald-500" />
+          </div>
         </div>
       </SidebarContent>
     </AppSidebar>

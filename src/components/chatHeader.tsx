@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { House, Video } from 'lucide-react'
+import { House, Phone, Video } from 'lucide-react'
 import axios from 'axios'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
@@ -29,7 +29,7 @@ const ChatHeader = () => {
   }, [socket])
   return (
     <>
-      <div className="h-12 w-full p-2 ">
+      <div className="h-12 w-full p-2 relative">
         <Button variant="ghost" size="icon">
           <Link to="/">
             <House />
@@ -38,9 +38,16 @@ const ChatHeader = () => {
         <Button variant="ghost" size="icon">
           <Link to="/group/video/$groupId" params={{ groupId }}>
             <Video />
-            {videoCount}
           </Link>
         </Button>
+        {videoCount > 0 && (
+          <p className="absolute bg-emerald-500/80 p-2 right-5  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">
+            <Phone />
+            <span className="text-secondary">
+              {videoCount} people is calling{' '}
+            </span>
+          </p>
+        )}
       </div>
       <Separator />
     </>
