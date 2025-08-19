@@ -4,9 +4,10 @@ import express from 'express'
 import dotenv from 'dotenv'
 import { clerkMiddleware } from '@clerk/express'
 import { instrument } from '@socket.io/admin-ui'
+import { ExpressPeerServer } from 'peer'
 import router from './api.ts'
 import { getIo, groupVideoUsers, initIo } from './io.ts'
-import { ExpressPeerServer } from 'peer'
+import type { AddressInfo } from 'node:net'
 
 dotenv.config()
 
@@ -16,23 +17,36 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', router)
 const server = createServer(app)
-const peerServer = ExpressPeerServer(server, {
+initIo(server)
+const peerApp = express()
+const peerServer = peerApp.listen(5174)
+
+const peer = ExpressPeerServer(peerServer, {
   path: '/',
 })
-peerServer.on('connection', (client) => {
+
+peer.on('connection', (client) => {
   console.log('Peer connected: ', client.getId())
   const groupId = client.getId().split('_')[1]
   console.log(`Group ID: ${groupId}`)
-  groupVideoUsers.set()
+  const roomId = `video_${groupId}`
+  groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) + 1)
+  const io = getIo()
+  io.to(groupId).emit('user_join_video', groupVideoUsers.get(roomId))
 })
-peerServer.on('disconnect', (client) => {
+peer.on('disconnect', (client) => {
   console.log('Peer disconnected: ', client.getId())
+  const groupId = client.getId().split('_')[1]
+  const roomId = `video_${groupId}`
+  const io = getIo()
+  groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) - 1)
+  io.to(groupId).emit('user_leave_video', groupVideoUsers.get(roomId))
 })
-app.use('/peerjs', peerServer)
-initIo(server)
+peerApp.use('/peerjs', peer)
 
 server.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${server.address().port}`)
+  const address = server.address() as AddressInfo
+  console.log(`Listening on port ${address.port}`)
 })
 
 instrument(getIo(), {

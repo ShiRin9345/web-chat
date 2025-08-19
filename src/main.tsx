@@ -1,8 +1,8 @@
-import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 import * as Sentry from '@sentry/react'
+import { pdfjs } from 'react-pdf'
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 
 import { routeTree } from './routeTree.gen'
@@ -12,7 +12,7 @@ import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { SocketProvider } from '@/providers/socketProvider.tsx'
 import AppClerkProvider from '@/integrations/clerk/provider.tsx'
-import { pdfjs } from 'react-pdf'
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 Sentry.init({

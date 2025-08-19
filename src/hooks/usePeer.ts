@@ -1,14 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Peer from 'peerjs'
+import { v4 as uuidv4 } from 'uuid'
 import type { MediaConnection } from 'peerjs'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import useMediaStream from '@/hooks/useMediaStream.ts'
-import { v4 as uuidv4 } from 'uuid'
 
 const usePeer = (groupId: string) => {
   const { socket } = useSocket()
   const { stream: myStream } = useMediaStream()
-  const [memberCount, setMemberCount] = useState<number>(1)
   const videoContainerRef = useRef<HTMLDivElement>(null)
   const myVideoRef = useRef<HTMLVideoElement>(null)
   const peerRef = useRef<Peer | null>(null)
@@ -23,7 +22,7 @@ const usePeer = (groupId: string) => {
     remoteVideoRef.current[call.peer] = video
   }
   useEffect(() => {
-    if (!myVideoRef.current) return
+    if (!myVideoRef.current || !myStream) return
     myVideoRef.current.srcObject = myStream
   }, [myStream])
   useEffect(() => {
@@ -33,14 +32,12 @@ const usePeer = (groupId: string) => {
       call?.on('stream', (userStream) => {
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
-          setMemberCount((prev) => prev + 1)
         }
       })
       call?.on('close', () => {
         if (call.peer in remoteVideoRef.current) {
           remoteVideoRef.current[call.peer]?.remove()
           delete remoteVideoRef.current[call.peer]
-          setMemberCount((prev) => prev - 1)
         }
       })
       call?.peerConnection.addEventListener('connectionstatechange', () => {
@@ -53,7 +50,6 @@ const usePeer = (groupId: string) => {
           if (call.peer in remoteVideoRef.current) {
             remoteVideoRef.current[call.peer]?.remove()
             delete remoteVideoRef.current[call.peer]
-            setMemberCount((prev) => prev - 1)
           }
         }
       })
@@ -64,7 +60,7 @@ const usePeer = (groupId: string) => {
     const clientId = `${uuidv4()}_${groupId}`
     peerRef.current = new Peer(clientId, {
       host: 'localhost',
-      port: 5173,
+      port: 5174,
       path: '/peerjs',
       config: {
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
@@ -75,14 +71,12 @@ const usePeer = (groupId: string) => {
       call.on('stream', (userStream) => {
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
-          setMemberCount((prev) => prev + 1)
         }
       })
       call.on('close', () => {
         if (call.peer in remoteVideoRef.current) {
           remoteVideoRef.current[call.peer]?.remove()
           delete remoteVideoRef.current[call.peer]
-          setMemberCount((prev) => prev - 1)
         }
       })
     })
@@ -102,7 +96,6 @@ const usePeer = (groupId: string) => {
   return {
     myVideoRef,
     videoContainerRef,
-    memberCount,
   }
 }
 export default usePeer
