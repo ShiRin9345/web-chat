@@ -22,12 +22,13 @@ const usePeer = (groupId: string) => {
     remoteVideoRef.current[call.peer] = video
   }
   useEffect(() => {
+    if (!myVideoRef.current) return
     myVideoRef.current.srcObject = myStream
   }, [myStream])
   useEffect(() => {
-    if (!socket) return
+    if (!socket || !myStream) return
     socket.on('user_connected', (id: string) => {
-      const call = peerRef.current?.call(id, myStream as MediaStream)
+      const call = peerRef.current?.call(id, myStream)
       call?.on('stream', (userStream) => {
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
@@ -58,10 +59,10 @@ const usePeer = (groupId: string) => {
     })
   }, [socket, myStream])
   useEffect(() => {
-    if (!socket) return
+    if (!socket || !myStream) return
     peerRef.current = new Peer()
     peerRef.current.on('call', (call) => {
-      call.answer(myStream as MediaStream)
+      call.answer(myStream)
       call.on('stream', (userStream) => {
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
@@ -78,10 +79,13 @@ const usePeer = (groupId: string) => {
     })
     peerRef.current.on('open', (id) => {
       socket.emit('join_video_room', groupId, id)
+      console.log('open')
     })
     return () => {
+      console.log(myStream)
       peerRef.current?.destroy()
       socket.emit('leave_video_room', groupId)
+      console.log('leave')
     }
   }, [socket, myStream])
   return {
