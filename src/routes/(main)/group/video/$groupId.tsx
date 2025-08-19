@@ -1,9 +1,4 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useEffect, useRef } from 'react'
-import Peer from 'peerjs'
-import type { MediaConnection } from 'peerjs'
-import useMediaStream from '@/hooks/useMediaStream.tsx'
-import { useSocket } from '@/providers/socketProvider.tsx'
 import usePeer from '@/hooks/userPeer.ts'
 
 export const Route = createFileRoute('/(main)/group/video/$groupId')({

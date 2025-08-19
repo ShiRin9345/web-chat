@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import Peer from 'peerjs'
 import type { MediaConnection } from 'peerjs'
 import { useSocket } from '@/providers/socketProvider.tsx'
-import useMediaStream from '@/hooks/useMediaStream.tsx'
+import useMediaStream from '@/hooks/useMediaStream.ts'
 
 const usePeer = (groupId: string) => {
   const { socket } = useSocket()
@@ -19,9 +19,8 @@ const usePeer = (groupId: string) => {
     video.playsInline = true
     video.width = 200
     video.height = 200
-    videoContainerRef.current.append(video)
+    videoContainerRef.current?.append(video)
     remoteVideoRef.current[call.peer] = video
-    console.log('add video')
   }
   useEffect(() => {
     myVideoRef.current.srcObject = myStream
@@ -29,20 +28,14 @@ const usePeer = (groupId: string) => {
   useEffect(() => {
     if (!socket) return
     socket.on('user_connected', (id: string) => {
-      console.log('user connected', id)
-      console.log('ready to call the stream is ', myStream)
       const call = peerRef.current?.call(id, myStream as MediaStream)
-      console.log(call)
       call?.on('stream', (userStream) => {
-        console.log('user stream setup')
-
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
         }
       })
       call?.on('close', () => {
         remoteVideoRef.current[call.peer]?.remove()
-        console.log('close')
       })
       call?.peerConnection.addEventListener('connectionstatechange', () => {
         const state = call.peerConnection.connectionState
@@ -62,7 +55,6 @@ const usePeer = (groupId: string) => {
     peerRef.current = new Peer()
     peerRef.current.on('call', (call) => {
       call.answer(myStream as MediaStream)
-      console.log('receive a call , now mystream is ', myStream)
       call.on('stream', (userStream) => {
         if (!(call.peer in remoteVideoRef.current)) {
           addVideo(call, userStream)
@@ -70,13 +62,10 @@ const usePeer = (groupId: string) => {
       })
       call.on('close', () => {
         remoteVideoRef.current[call.peer]?.remove()
-        console.log('close')
       })
     })
     peerRef.current.on('open', (id) => {
-      console.log('open', id)
       socket.emit('join_video_room', groupId, id)
-      console.log(id)
     })
     return () => {
       peerRef.current?.destroy()
