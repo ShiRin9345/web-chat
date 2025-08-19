@@ -1,5 +1,7 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
 import axios from 'axios'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import type { Group } from '../../../generated/index.d.ts'
 import UserSidebar from '@/components/UserSidebar.tsx'
 import {
@@ -32,7 +34,27 @@ function RouteComponent() {
   if (!isLoaded || !isSignedIn) {
     return <PendingPage />
   }
-
+  const location = useLocation()
+  useGSAP(() => {
+    gsap.fromTo(
+      '#gsapContainer',
+      {
+        opacity: 0,
+      },
+      {
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.inOut',
+      },
+    )
+    return () => {
+      gsap.to('#gsapContainer', {
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.inOut',
+      })
+    }
+  }, [location])
   return (
     <>
       <UserSidebarProvider>
@@ -44,7 +66,9 @@ function RouteComponent() {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={80}>
-              <Outlet />
+              <div id="gsapContainer">
+                <Outlet />
+              </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </main>

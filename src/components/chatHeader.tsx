@@ -1,10 +1,11 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { House, Phone, Video } from 'lucide-react'
 import axios from 'axios'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useSocket } from '@/providers/socketProvider.tsx'
+import gsap from 'gsap'
 
 const ChatHeader = () => {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
@@ -54,3 +55,31 @@ const ChatHeader = () => {
   )
 }
 export default ChatHeader
+
+const animatedLink = ({
+  groupId,
+  children,
+  url,
+}: {
+  groupId: string | undefined
+  children: ReactNode
+  url: string
+}) => {
+  const navigate = useNavigate()
+  const onClick = () => {
+    setTimeout(() => {
+      navigate({
+        to: url,
+        params: {
+          groupId,
+        },
+      })
+      gsap.to('#gsapContainer', {
+        opacity: 0,
+        duration: 1,
+        ease: 'power2.inOut',
+      })
+    }, 1000)
+  }
+  return <div onClick={onClick}>{children}</div>
+}
