@@ -3,6 +3,7 @@ import Peer from 'peerjs'
 import type { MediaConnection } from 'peerjs'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import useMediaStream from '@/hooks/useMediaStream.ts'
+import { v4 as uuidv4 } from 'uuid'
 
 const usePeer = (groupId: string) => {
   const { socket } = useSocket()
@@ -60,7 +61,15 @@ const usePeer = (groupId: string) => {
   }, [socket, myStream])
   useEffect(() => {
     if (!socket || !myStream) return
-    peerRef.current = new Peer()
+    const clientId = `${uuidv4()}_${groupId}`
+    peerRef.current = new Peer(clientId, {
+      host: 'localhost',
+      port: 5173,
+      path: '/peerjs',
+      config: {
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      },
+    })
     peerRef.current.on('call', (call) => {
       call.answer(myStream)
       call.on('stream', (userStream) => {
