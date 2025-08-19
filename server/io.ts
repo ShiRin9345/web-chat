@@ -7,6 +7,7 @@ let io: Server
 // one user can open many tabs in a single window, so one userId can be used by many socket
 export const onlineUsers = new Map<string, number>()
 export const groupUsers = new Map<string, number>()
+export const groupVideoUsers = new Map<string, number>()
 
 export function initIo(server: HttpServer) {
   io = new Server(server, {
@@ -35,10 +36,19 @@ export function initIo(server: HttpServer) {
     socket.on('join_video_room', (groupId: string, id: string) => {
       const roomId = `video_${groupId}`
       socket.join(roomId)
+      groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) + 1)
       socket.broadcast.to(roomId).emit('user_connected', id)
+      socket.broadcast
+        .to(groupId)
+        .emit('user_join_video', groupVideoUsers.get(roomId))
     })
     socket.on('leave_video_room', (groupId: string) => {
       const roomId = `video_${groupId}`
+      groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) - 1)
+      socket.broadcast
+        .to(groupId)
+        .emit('user_leave_video', groupVideoUsers.get(roomId))
+
       socket.leave(roomId)
     })
     socket.on('join_group', (groupId: string) => {

@@ -4,7 +4,7 @@ import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
 import db from './db.ts'
-import { getIo, groupUsers } from './io.ts'
+import { getIo, groupUsers, groupVideoUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
 import type { UIMessage } from 'ai'
 import type { GroupMessage } from 'generated/index'
@@ -117,6 +117,12 @@ router.post('/group', requireAuth(), async (req, res) => {
   })
   groupUsers.set(group.id, 1)
   res.json(group)
+})
+
+router.get('/videoCount', requireAuth(), (req, res) => {
+  const { groupId } = req.query
+  const roomId = `video_${groupId}`
+  res.send(groupVideoUsers.get(roomId) || 0)
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {
