@@ -33,11 +33,13 @@ export function initIo(server: HttpServer) {
       await changeGroupOnlineCount(socket, -1)
     })
     socket.on('join_video_room', (groupId: string, id: string) => {
-      socket.join(groupId)
-      socket.broadcast.to(groupId).emit('user_connected', id)
+      const roomId = `video_${groupId}`
+      socket.join(roomId)
+      socket.broadcast.to(roomId).emit('user_connected', id)
     })
     socket.on('leave_video_room', (groupId: string) => {
-      socket.leave(groupId)
+      const roomId = `video_${groupId}`
+      socket.leave(roomId)
     })
     socket.on('join_group', (groupId: string) => {
       socket.join(groupId)
