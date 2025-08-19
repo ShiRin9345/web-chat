@@ -7,16 +7,17 @@ export const Route = createFileRoute('/(main)/group/video/$groupId')({
 
 function RouteComponent() {
   const { groupId } = useParams({ from: '/(main)/group/video/$groupId' })
-  const { videoContainerRef, myVideoRef } = usePeer(groupId)
+  const { videoContainerRef, myVideoRef, memberCount } = usePeer(groupId)
+  console.log(memberCount)
   return (
     <div
-      className="w-full h-dvh flex flex-wrap items-center justify-center"
+      className="w-full h-dvh grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] auto-rows-fr"
       ref={videoContainerRef}
     >
       <video
         playsInline
         autoPlay
-        className="w-[300px] aspect-video object-cover "
+        className="w-full h-full aspect-video object-cover "
         ref={myVideoRef}
       />
     </div>

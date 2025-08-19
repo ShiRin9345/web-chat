@@ -39,6 +39,12 @@ export function initIo(server: HttpServer) {
     socket.on('leave_video_room', (groupId: string) => {
       socket.leave(groupId)
     })
+    socket.on('join_group', (groupId: string) => {
+      socket.join(groupId)
+    })
+    socket.on('leave_group', (groupId: string) => {
+      socket.leave(groupId)
+    })
     console.log(`socket ${socket.id} connected`)
   })
 }
