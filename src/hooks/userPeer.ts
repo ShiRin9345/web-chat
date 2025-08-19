@@ -17,8 +17,7 @@ const usePeer = (groupId: string) => {
     video.srcObject = stream
     video.autoplay = true
     video.playsInline = true
-    video.width = 200
-    video.height = 200
+    video.className = 'aspect-video w-[300px] object-cover'
     videoContainerRef.current?.append(video)
     remoteVideoRef.current[call.peer] = video
   }

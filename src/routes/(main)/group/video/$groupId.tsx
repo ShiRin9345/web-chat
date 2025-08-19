@@ -9,11 +9,14 @@ function RouteComponent() {
   const { groupId } = useParams({ from: '/(main)/group/video/$groupId' })
   const { videoContainerRef, myVideoRef } = usePeer(groupId)
   return (
-    <div className="w-full h-dvh flex gap-2 flex-wrap" ref={videoContainerRef}>
+    <div
+      className="w-full h-dvh flex flex-wrap items-center justify-center"
+      ref={videoContainerRef}
+    >
       <video
         playsInline
         autoPlay
-        className="w-[200px] h-[200px]"
+        className="w-[300px] aspect-video object-cover "
         ref={myVideoRef}
       />
     </div>
