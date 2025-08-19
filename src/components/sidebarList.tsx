@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -12,17 +11,18 @@ import {
 import { Separator } from '@/components/ui/separator.tsx'
 import { sidebarListQueryOptions } from '@/routes/(main)/route.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
+import AnimatedLink from '@/components/animatedLink.tsx'
 
 const SidebarList = () => {
   const { data: groups } = useQuery(sidebarListQueryOptions)
   return (
     <>
       <Accordion type="single" collapsible>
-        <Link to="/">
+        <AnimatedLink url="/">
           <button className="w-full cursor-pointer text-lg text-md  text-left rounded-sm font-semibold transition duration-200 px-2 hover:bg-zinc-100 h-10">
             Home
           </button>
-        </Link>
+        </AnimatedLink>
         <AccordionItem value="groups">
           <AccordionTrigger className="!no-underline cursor-pointer ">
             <span className="pl-2"> Groups</span>
@@ -56,16 +56,11 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
 function LabelGroup({ group }: { group: Group }) {
   const count = useCountSocket(group.id)
   return (
-    <Link
-      to="/group/$groupId"
-      params={{
-        groupId: group.id,
-      }}
-    >
+    <AnimatedLink url="/group/$groupId" groupId={group.id}>
       <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
         {group.name} {count}
       </button>
-    </Link>
+    </AnimatedLink>
   )
 }
 

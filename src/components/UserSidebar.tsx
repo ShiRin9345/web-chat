@@ -1,4 +1,4 @@
-import { Plus, UserRoundPlus } from 'lucide-react'
+import { UserRoundPlus } from 'lucide-react'
 import { AppSidebar, SidebarContent } from '@/components/ui/sidebar.tsx'
 import GroupAddIcon from '@/components/groupAddIcon.tsx'
 

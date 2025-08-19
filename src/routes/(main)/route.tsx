@@ -13,6 +13,7 @@ import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 import PendingPage from '@/components/pendingPage.tsx'
+import { useRef } from 'react'
 
 export const sidebarListQueryOptions = {
   queryKey: ['groups'],
@@ -31,11 +32,10 @@ export const Route = createFileRoute('/(main)')({
 
 function RouteComponent() {
   const { isSignedIn, isLoaded } = useCheckAuth()
-  if (!isLoaded || !isSignedIn) {
-    return <PendingPage />
-  }
   const location = useLocation()
+  const gsapContainerRef = useRef<HTMLDivElement>(null)
   useGSAP(() => {
+    if (!gsapContainerRef.current) return
     gsap.fromTo(
       '#gsapContainer',
       {
@@ -43,18 +43,15 @@ function RouteComponent() {
       },
       {
         opacity: 1,
-        duration: 1,
+        duration: 0.125,
         ease: 'power2.inOut',
       },
     )
-    return () => {
-      gsap.to('#gsapContainer', {
-        opacity: 0,
-        duration: 1,
-        ease: 'power2.inOut',
-      })
-    }
-  }, [location])
+  }, [location, gsapContainerRef.current])
+
+  if (!isLoaded || !isSignedIn) {
+    return <PendingPage />
+  }
   return (
     <>
       <UserSidebarProvider>
@@ -66,7 +63,7 @@ function RouteComponent() {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={80}>
-              <div id="gsapContainer">
+              <div id="gsapContainer" ref={gsapContainerRef}>
                 <Outlet />
               </div>
             </ResizablePanel>

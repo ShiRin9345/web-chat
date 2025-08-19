@@ -4,7 +4,6 @@ import {
   StatusIndicator,
   StatusLabel,
 } from '@/components/ui/shadcn-io/status'
-import { cn } from '@/lib/utils.ts'
 
 const Indicator = () => {
   const { isConnected } = useSocket()
