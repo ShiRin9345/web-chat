@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Group = $Result.DefaultSelection<Prisma.$GroupPayload>
 /**
+ * Model NewFriendRequest
+ * 
+ */
+export type NewFriendRequest = $Result.DefaultSelection<Prisma.$NewFriendRequestPayload>
+/**
  * Model GroupMessage
  * 
  */
@@ -201,6 +206,16 @@ export class PrismaClient<
     * ```
     */
   get group(): Prisma.GroupDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.newFriendRequest`: Exposes CRUD operations for the **NewFriendRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NewFriendRequests
+    * const newFriendRequests = await prisma.newFriendRequest.findMany()
+    * ```
+    */
+  get newFriendRequest(): Prisma.NewFriendRequestDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.groupMessage`: Exposes CRUD operations for the **GroupMessage** model.
@@ -673,6 +688,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Group: 'Group',
+    NewFriendRequest: 'NewFriendRequest',
     GroupMessage: 'GroupMessage',
     PrivateMessage: 'PrivateMessage',
     Conversation: 'Conversation'
@@ -694,7 +710,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "group" | "groupMessage" | "privateMessage" | "conversation"
+      modelProps: "user" | "group" | "newFriendRequest" | "groupMessage" | "privateMessage" | "conversation"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -843,6 +859,80 @@ export namespace Prisma {
           count: {
             args: Prisma.GroupCountArgs<ExtArgs>
             result: $Utils.Optional<GroupCountAggregateOutputType> | number
+          }
+        }
+      }
+      NewFriendRequest: {
+        payload: Prisma.$NewFriendRequestPayload<ExtArgs>
+        fields: Prisma.NewFriendRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NewFriendRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NewFriendRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.NewFriendRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NewFriendRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          findMany: {
+            args: Prisma.NewFriendRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>[]
+          }
+          create: {
+            args: Prisma.NewFriendRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          createMany: {
+            args: Prisma.NewFriendRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NewFriendRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.NewFriendRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          update: {
+            args: Prisma.NewFriendRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.NewFriendRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NewFriendRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NewFriendRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.NewFriendRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewFriendRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.NewFriendRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNewFriendRequest>
+          }
+          groupBy: {
+            args: Prisma.NewFriendRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NewFriendRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NewFriendRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<NewFriendRequestCountAggregateOutputType> | number
           }
         }
       }
@@ -1162,6 +1252,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     group?: GroupOmit
+    newFriendRequest?: NewFriendRequestOmit
     groupMessage?: GroupMessageOmit
     privateMessage?: PrivateMessageOmit
     conversation?: ConversationOmit
@@ -1269,6 +1360,8 @@ export namespace Prisma {
     sentPrivateMessage: number
     receivedPrivateMessage: number
     conversations: number
+    NewFriendSendRequest: number
+    NewFriendReceiveRequest: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1277,6 +1370,8 @@ export namespace Prisma {
     sentPrivateMessage?: boolean | UserCountOutputTypeCountSentPrivateMessageArgs
     receivedPrivateMessage?: boolean | UserCountOutputTypeCountReceivedPrivateMessageArgs
     conversations?: boolean | UserCountOutputTypeCountConversationsArgs
+    NewFriendSendRequest?: boolean | UserCountOutputTypeCountNewFriendSendRequestArgs
+    NewFriendReceiveRequest?: boolean | UserCountOutputTypeCountNewFriendReceiveRequestArgs
   }
 
   // Custom InputTypes
@@ -1323,6 +1418,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ConversationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNewFriendSendRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NewFriendRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNewFriendReceiveRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NewFriendRequestWhereInput
   }
 
 
@@ -1571,6 +1680,8 @@ export namespace Prisma {
     sentPrivateMessage?: boolean | User$sentPrivateMessageArgs<ExtArgs>
     receivedPrivateMessage?: boolean | User$receivedPrivateMessageArgs<ExtArgs>
     conversations?: boolean | User$conversationsArgs<ExtArgs>
+    NewFriendSendRequest?: boolean | User$NewFriendSendRequestArgs<ExtArgs>
+    NewFriendReceiveRequest?: boolean | User$NewFriendReceiveRequestArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1602,6 +1713,8 @@ export namespace Prisma {
     sentPrivateMessage?: boolean | User$sentPrivateMessageArgs<ExtArgs>
     receivedPrivateMessage?: boolean | User$receivedPrivateMessageArgs<ExtArgs>
     conversations?: boolean | User$conversationsArgs<ExtArgs>
+    NewFriendSendRequest?: boolean | User$NewFriendSendRequestArgs<ExtArgs>
+    NewFriendReceiveRequest?: boolean | User$NewFriendReceiveRequestArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1615,6 +1728,8 @@ export namespace Prisma {
       sentPrivateMessage: Prisma.$PrivateMessagePayload<ExtArgs>[]
       receivedPrivateMessage: Prisma.$PrivateMessagePayload<ExtArgs>[]
       conversations: Prisma.$ConversationPayload<ExtArgs>[]
+      NewFriendSendRequest: Prisma.$NewFriendRequestPayload<ExtArgs>[]
+      NewFriendReceiveRequest: Prisma.$NewFriendRequestPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2020,6 +2135,8 @@ export namespace Prisma {
     sentPrivateMessage<T extends User$sentPrivateMessageArgs<ExtArgs> = {}>(args?: Subset<T, User$sentPrivateMessageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PrivateMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receivedPrivateMessage<T extends User$receivedPrivateMessageArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedPrivateMessageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PrivateMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     conversations<T extends User$conversationsArgs<ExtArgs> = {}>(args?: Subset<T, User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    NewFriendSendRequest<T extends User$NewFriendSendRequestArgs<ExtArgs> = {}>(args?: Subset<T, User$NewFriendSendRequestArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    NewFriendReceiveRequest<T extends User$NewFriendReceiveRequestArgs<ExtArgs> = {}>(args?: Subset<T, User$NewFriendReceiveRequestArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2558,6 +2675,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ConversationScalarFieldEnum | ConversationScalarFieldEnum[]
+  }
+
+  /**
+   * User.NewFriendSendRequest
+   */
+  export type User$NewFriendSendRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    where?: NewFriendRequestWhereInput
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    cursor?: NewFriendRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.NewFriendReceiveRequest
+   */
+  export type User$NewFriendReceiveRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    where?: NewFriendRequestWhereInput
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    cursor?: NewFriendRequestWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
   }
 
   /**
@@ -3661,6 +3826,1072 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: GroupInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model NewFriendRequest
+   */
+
+  export type AggregateNewFriendRequest = {
+    _count: NewFriendRequestCountAggregateOutputType | null
+    _min: NewFriendRequestMinAggregateOutputType | null
+    _max: NewFriendRequestMaxAggregateOutputType | null
+  }
+
+  export type NewFriendRequestMinAggregateOutputType = {
+    id: string | null
+    fromUserId: string | null
+    toUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NewFriendRequestMaxAggregateOutputType = {
+    id: string | null
+    fromUserId: string | null
+    toUserId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NewFriendRequestCountAggregateOutputType = {
+    id: number
+    fromUserId: number
+    toUserId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type NewFriendRequestMinAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    toUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NewFriendRequestMaxAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    toUserId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NewFriendRequestCountAggregateInputType = {
+    id?: true
+    fromUserId?: true
+    toUserId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type NewFriendRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NewFriendRequest to aggregate.
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewFriendRequests to fetch.
+     */
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NewFriendRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewFriendRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewFriendRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NewFriendRequests
+    **/
+    _count?: true | NewFriendRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NewFriendRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NewFriendRequestMaxAggregateInputType
+  }
+
+  export type GetNewFriendRequestAggregateType<T extends NewFriendRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateNewFriendRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNewFriendRequest[P]>
+      : GetScalarType<T[P], AggregateNewFriendRequest[P]>
+  }
+
+
+
+
+  export type NewFriendRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NewFriendRequestWhereInput
+    orderBy?: NewFriendRequestOrderByWithAggregationInput | NewFriendRequestOrderByWithAggregationInput[]
+    by: NewFriendRequestScalarFieldEnum[] | NewFriendRequestScalarFieldEnum
+    having?: NewFriendRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NewFriendRequestCountAggregateInputType | true
+    _min?: NewFriendRequestMinAggregateInputType
+    _max?: NewFriendRequestMaxAggregateInputType
+  }
+
+  export type NewFriendRequestGroupByOutputType = {
+    id: string
+    fromUserId: string
+    toUserId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: NewFriendRequestCountAggregateOutputType | null
+    _min: NewFriendRequestMinAggregateOutputType | null
+    _max: NewFriendRequestMaxAggregateOutputType | null
+  }
+
+  type GetNewFriendRequestGroupByPayload<T extends NewFriendRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NewFriendRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NewFriendRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NewFriendRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], NewFriendRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NewFriendRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["newFriendRequest"]>
+
+  export type NewFriendRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["newFriendRequest"]>
+
+  export type NewFriendRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["newFriendRequest"]>
+
+  export type NewFriendRequestSelectScalar = {
+    id?: boolean
+    fromUserId?: boolean
+    toUserId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type NewFriendRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fromUserId" | "toUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["newFriendRequest"]>
+  export type NewFriendRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NewFriendRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type NewFriendRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    from?: boolean | UserDefaultArgs<ExtArgs>
+    to?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $NewFriendRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NewFriendRequest"
+    objects: {
+      from: Prisma.$UserPayload<ExtArgs>
+      to: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      fromUserId: string
+      toUserId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["newFriendRequest"]>
+    composites: {}
+  }
+
+  type NewFriendRequestGetPayload<S extends boolean | null | undefined | NewFriendRequestDefaultArgs> = $Result.GetResult<Prisma.$NewFriendRequestPayload, S>
+
+  type NewFriendRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NewFriendRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NewFriendRequestCountAggregateInputType | true
+    }
+
+  export interface NewFriendRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NewFriendRequest'], meta: { name: 'NewFriendRequest' } }
+    /**
+     * Find zero or one NewFriendRequest that matches the filter.
+     * @param {NewFriendRequestFindUniqueArgs} args - Arguments to find a NewFriendRequest
+     * @example
+     * // Get one NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NewFriendRequestFindUniqueArgs>(args: SelectSubset<T, NewFriendRequestFindUniqueArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NewFriendRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NewFriendRequestFindUniqueOrThrowArgs} args - Arguments to find a NewFriendRequest
+     * @example
+     * // Get one NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NewFriendRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, NewFriendRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NewFriendRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestFindFirstArgs} args - Arguments to find a NewFriendRequest
+     * @example
+     * // Get one NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NewFriendRequestFindFirstArgs>(args?: SelectSubset<T, NewFriendRequestFindFirstArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NewFriendRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestFindFirstOrThrowArgs} args - Arguments to find a NewFriendRequest
+     * @example
+     * // Get one NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NewFriendRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, NewFriendRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NewFriendRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NewFriendRequests
+     * const newFriendRequests = await prisma.newFriendRequest.findMany()
+     * 
+     * // Get first 10 NewFriendRequests
+     * const newFriendRequests = await prisma.newFriendRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const newFriendRequestWithIdOnly = await prisma.newFriendRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NewFriendRequestFindManyArgs>(args?: SelectSubset<T, NewFriendRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NewFriendRequest.
+     * @param {NewFriendRequestCreateArgs} args - Arguments to create a NewFriendRequest.
+     * @example
+     * // Create one NewFriendRequest
+     * const NewFriendRequest = await prisma.newFriendRequest.create({
+     *   data: {
+     *     // ... data to create a NewFriendRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends NewFriendRequestCreateArgs>(args: SelectSubset<T, NewFriendRequestCreateArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NewFriendRequests.
+     * @param {NewFriendRequestCreateManyArgs} args - Arguments to create many NewFriendRequests.
+     * @example
+     * // Create many NewFriendRequests
+     * const newFriendRequest = await prisma.newFriendRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NewFriendRequestCreateManyArgs>(args?: SelectSubset<T, NewFriendRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NewFriendRequests and returns the data saved in the database.
+     * @param {NewFriendRequestCreateManyAndReturnArgs} args - Arguments to create many NewFriendRequests.
+     * @example
+     * // Create many NewFriendRequests
+     * const newFriendRequest = await prisma.newFriendRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NewFriendRequests and only return the `id`
+     * const newFriendRequestWithIdOnly = await prisma.newFriendRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NewFriendRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, NewFriendRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NewFriendRequest.
+     * @param {NewFriendRequestDeleteArgs} args - Arguments to delete one NewFriendRequest.
+     * @example
+     * // Delete one NewFriendRequest
+     * const NewFriendRequest = await prisma.newFriendRequest.delete({
+     *   where: {
+     *     // ... filter to delete one NewFriendRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NewFriendRequestDeleteArgs>(args: SelectSubset<T, NewFriendRequestDeleteArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NewFriendRequest.
+     * @param {NewFriendRequestUpdateArgs} args - Arguments to update one NewFriendRequest.
+     * @example
+     * // Update one NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NewFriendRequestUpdateArgs>(args: SelectSubset<T, NewFriendRequestUpdateArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NewFriendRequests.
+     * @param {NewFriendRequestDeleteManyArgs} args - Arguments to filter NewFriendRequests to delete.
+     * @example
+     * // Delete a few NewFriendRequests
+     * const { count } = await prisma.newFriendRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NewFriendRequestDeleteManyArgs>(args?: SelectSubset<T, NewFriendRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NewFriendRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NewFriendRequests
+     * const newFriendRequest = await prisma.newFriendRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NewFriendRequestUpdateManyArgs>(args: SelectSubset<T, NewFriendRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NewFriendRequests and returns the data updated in the database.
+     * @param {NewFriendRequestUpdateManyAndReturnArgs} args - Arguments to update many NewFriendRequests.
+     * @example
+     * // Update many NewFriendRequests
+     * const newFriendRequest = await prisma.newFriendRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NewFriendRequests and only return the `id`
+     * const newFriendRequestWithIdOnly = await prisma.newFriendRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NewFriendRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, NewFriendRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NewFriendRequest.
+     * @param {NewFriendRequestUpsertArgs} args - Arguments to update or create a NewFriendRequest.
+     * @example
+     * // Update or create a NewFriendRequest
+     * const newFriendRequest = await prisma.newFriendRequest.upsert({
+     *   create: {
+     *     // ... data to create a NewFriendRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NewFriendRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NewFriendRequestUpsertArgs>(args: SelectSubset<T, NewFriendRequestUpsertArgs<ExtArgs>>): Prisma__NewFriendRequestClient<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NewFriendRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestCountArgs} args - Arguments to filter NewFriendRequests to count.
+     * @example
+     * // Count the number of NewFriendRequests
+     * const count = await prisma.newFriendRequest.count({
+     *   where: {
+     *     // ... the filter for the NewFriendRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends NewFriendRequestCountArgs>(
+      args?: Subset<T, NewFriendRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NewFriendRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NewFriendRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NewFriendRequestAggregateArgs>(args: Subset<T, NewFriendRequestAggregateArgs>): Prisma.PrismaPromise<GetNewFriendRequestAggregateType<T>>
+
+    /**
+     * Group by NewFriendRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewFriendRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NewFriendRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NewFriendRequestGroupByArgs['orderBy'] }
+        : { orderBy?: NewFriendRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NewFriendRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNewFriendRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NewFriendRequest model
+   */
+  readonly fields: NewFriendRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NewFriendRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NewFriendRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    from<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    to<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NewFriendRequest model
+   */
+  interface NewFriendRequestFieldRefs {
+    readonly id: FieldRef<"NewFriendRequest", 'String'>
+    readonly fromUserId: FieldRef<"NewFriendRequest", 'String'>
+    readonly toUserId: FieldRef<"NewFriendRequest", 'String'>
+    readonly createdAt: FieldRef<"NewFriendRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"NewFriendRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NewFriendRequest findUnique
+   */
+  export type NewFriendRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which NewFriendRequest to fetch.
+     */
+    where: NewFriendRequestWhereUniqueInput
+  }
+
+  /**
+   * NewFriendRequest findUniqueOrThrow
+   */
+  export type NewFriendRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which NewFriendRequest to fetch.
+     */
+    where: NewFriendRequestWhereUniqueInput
+  }
+
+  /**
+   * NewFriendRequest findFirst
+   */
+  export type NewFriendRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which NewFriendRequest to fetch.
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewFriendRequests to fetch.
+     */
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NewFriendRequests.
+     */
+    cursor?: NewFriendRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewFriendRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewFriendRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NewFriendRequests.
+     */
+    distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
+  }
+
+  /**
+   * NewFriendRequest findFirstOrThrow
+   */
+  export type NewFriendRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which NewFriendRequest to fetch.
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewFriendRequests to fetch.
+     */
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NewFriendRequests.
+     */
+    cursor?: NewFriendRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewFriendRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewFriendRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NewFriendRequests.
+     */
+    distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
+  }
+
+  /**
+   * NewFriendRequest findMany
+   */
+  export type NewFriendRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter, which NewFriendRequests to fetch.
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewFriendRequests to fetch.
+     */
+    orderBy?: NewFriendRequestOrderByWithRelationInput | NewFriendRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NewFriendRequests.
+     */
+    cursor?: NewFriendRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewFriendRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewFriendRequests.
+     */
+    skip?: number
+    distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
+  }
+
+  /**
+   * NewFriendRequest create
+   */
+  export type NewFriendRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to create a NewFriendRequest.
+     */
+    data: XOR<NewFriendRequestCreateInput, NewFriendRequestUncheckedCreateInput>
+  }
+
+  /**
+   * NewFriendRequest createMany
+   */
+  export type NewFriendRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NewFriendRequests.
+     */
+    data: NewFriendRequestCreateManyInput | NewFriendRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NewFriendRequest createManyAndReturn
+   */
+  export type NewFriendRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many NewFriendRequests.
+     */
+    data: NewFriendRequestCreateManyInput | NewFriendRequestCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NewFriendRequest update
+   */
+  export type NewFriendRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * The data needed to update a NewFriendRequest.
+     */
+    data: XOR<NewFriendRequestUpdateInput, NewFriendRequestUncheckedUpdateInput>
+    /**
+     * Choose, which NewFriendRequest to update.
+     */
+    where: NewFriendRequestWhereUniqueInput
+  }
+
+  /**
+   * NewFriendRequest updateMany
+   */
+  export type NewFriendRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NewFriendRequests.
+     */
+    data: XOR<NewFriendRequestUpdateManyMutationInput, NewFriendRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which NewFriendRequests to update
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * Limit how many NewFriendRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NewFriendRequest updateManyAndReturn
+   */
+  export type NewFriendRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update NewFriendRequests.
+     */
+    data: XOR<NewFriendRequestUpdateManyMutationInput, NewFriendRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which NewFriendRequests to update
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * Limit how many NewFriendRequests to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NewFriendRequest upsert
+   */
+  export type NewFriendRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * The filter to search for the NewFriendRequest to update in case it exists.
+     */
+    where: NewFriendRequestWhereUniqueInput
+    /**
+     * In case the NewFriendRequest found by the `where` argument doesn't exist, create a new NewFriendRequest with this data.
+     */
+    create: XOR<NewFriendRequestCreateInput, NewFriendRequestUncheckedCreateInput>
+    /**
+     * In case the NewFriendRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NewFriendRequestUpdateInput, NewFriendRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * NewFriendRequest delete
+   */
+  export type NewFriendRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
+    /**
+     * Filter which NewFriendRequest to delete.
+     */
+    where: NewFriendRequestWhereUniqueInput
+  }
+
+  /**
+   * NewFriendRequest deleteMany
+   */
+  export type NewFriendRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NewFriendRequests to delete
+     */
+    where?: NewFriendRequestWhereInput
+    /**
+     * Limit how many NewFriendRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NewFriendRequest without action
+   */
+  export type NewFriendRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewFriendRequest
+     */
+    select?: NewFriendRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewFriendRequest
+     */
+    omit?: NewFriendRequestOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewFriendRequestInclude<ExtArgs> | null
   }
 
 
@@ -6962,6 +8193,17 @@ export namespace Prisma {
   export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
 
 
+  export const NewFriendRequestScalarFieldEnum: {
+    id: 'id',
+    fromUserId: 'fromUserId',
+    toUserId: 'toUserId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type NewFriendRequestScalarFieldEnum = (typeof NewFriendRequestScalarFieldEnum)[keyof typeof NewFriendRequestScalarFieldEnum]
+
+
   export const GroupMessageScalarFieldEnum: {
     id: 'id',
     type: 'type',
@@ -7090,6 +8332,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageListRelationFilter
     receivedPrivateMessage?: PrivateMessageListRelationFilter
     conversations?: ConversationListRelationFilter
+    NewFriendSendRequest?: NewFriendRequestListRelationFilter
+    NewFriendReceiveRequest?: NewFriendRequestListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7102,6 +8346,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageOrderByRelationAggregateInput
     receivedPrivateMessage?: PrivateMessageOrderByRelationAggregateInput
     conversations?: ConversationOrderByRelationAggregateInput
+    NewFriendSendRequest?: NewFriendRequestOrderByRelationAggregateInput
+    NewFriendReceiveRequest?: NewFriendRequestOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7117,6 +8363,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageListRelationFilter
     receivedPrivateMessage?: PrivateMessageListRelationFilter
     conversations?: ConversationListRelationFilter
+    NewFriendSendRequest?: NewFriendRequestListRelationFilter
+    NewFriendReceiveRequest?: NewFriendRequestListRelationFilter
   }, "id" | "userId">
 
   export type UserOrderByWithAggregationInput = {
@@ -7190,6 +8438,64 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Group"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
+  }
+
+  export type NewFriendRequestWhereInput = {
+    AND?: NewFriendRequestWhereInput | NewFriendRequestWhereInput[]
+    OR?: NewFriendRequestWhereInput[]
+    NOT?: NewFriendRequestWhereInput | NewFriendRequestWhereInput[]
+    id?: StringFilter<"NewFriendRequest"> | string
+    fromUserId?: StringFilter<"NewFriendRequest"> | string
+    toUserId?: StringFilter<"NewFriendRequest"> | string
+    createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    from?: XOR<UserScalarRelationFilter, UserWhereInput>
+    to?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type NewFriendRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    from?: UserOrderByWithRelationInput
+    to?: UserOrderByWithRelationInput
+  }
+
+  export type NewFriendRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NewFriendRequestWhereInput | NewFriendRequestWhereInput[]
+    OR?: NewFriendRequestWhereInput[]
+    NOT?: NewFriendRequestWhereInput | NewFriendRequestWhereInput[]
+    fromUserId?: StringFilter<"NewFriendRequest"> | string
+    toUserId?: StringFilter<"NewFriendRequest"> | string
+    createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    from?: XOR<UserScalarRelationFilter, UserWhereInput>
+    to?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type NewFriendRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: NewFriendRequestCountOrderByAggregateInput
+    _max?: NewFriendRequestMaxOrderByAggregateInput
+    _min?: NewFriendRequestMinOrderByAggregateInput
+  }
+
+  export type NewFriendRequestScalarWhereWithAggregatesInput = {
+    AND?: NewFriendRequestScalarWhereWithAggregatesInput | NewFriendRequestScalarWhereWithAggregatesInput[]
+    OR?: NewFriendRequestScalarWhereWithAggregatesInput[]
+    NOT?: NewFriendRequestScalarWhereWithAggregatesInput | NewFriendRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NewFriendRequest"> | string
+    fromUserId?: StringWithAggregatesFilter<"NewFriendRequest"> | string
+    toUserId?: StringWithAggregatesFilter<"NewFriendRequest"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"NewFriendRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"NewFriendRequest"> | Date | string
   }
 
   export type GroupMessageWhereInput = {
@@ -7389,6 +8695,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7401,6 +8709,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserUpdateInput = {
@@ -7413,6 +8723,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7425,6 +8737,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7501,6 +8815,60 @@ export namespace Prisma {
   export type GroupUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestCreateInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    from: UserCreateNestedOneWithoutNewFriendSendRequestInput
+    to: UserCreateNestedOneWithoutNewFriendReceiveRequestInput
+  }
+
+  export type NewFriendRequestUncheckedCreateInput = {
+    id?: string
+    fromUserId: string
+    toUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    from?: UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput
+    to?: UserUpdateOneRequiredWithoutNewFriendReceiveRequestNestedInput
+  }
+
+  export type NewFriendRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestCreateManyInput = {
+    id?: string
+    fromUserId: string
+    toUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7729,6 +9097,12 @@ export namespace Prisma {
     none?: ConversationWhereInput
   }
 
+  export type NewFriendRequestListRelationFilter = {
+    every?: NewFriendRequestWhereInput
+    some?: NewFriendRequestWhereInput
+    none?: NewFriendRequestWhereInput
+  }
+
   export type GroupMessageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -7742,6 +9116,10 @@ export namespace Prisma {
   }
 
   export type ConversationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type NewFriendRequestOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7840,6 +9218,35 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type NewFriendRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NewFriendRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NewFriendRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    fromUserId?: SortOrder
+    toUserId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type EnumMessageTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
     in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
@@ -7850,11 +9257,6 @@ export namespace Prisma {
   export type GroupScalarRelationFilter = {
     is?: GroupWhereInput
     isNot?: GroupWhereInput
-  }
-
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
   }
 
   export type GroupMessageCountOrderByAggregateInput = {
@@ -7983,6 +9385,20 @@ export namespace Prisma {
     connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
   }
 
+  export type NewFriendRequestCreateNestedManyWithoutFromInput = {
+    create?: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput> | NewFriendRequestCreateWithoutFromInput[] | NewFriendRequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutFromInput | NewFriendRequestCreateOrConnectWithoutFromInput[]
+    createMany?: NewFriendRequestCreateManyFromInputEnvelope
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+  }
+
+  export type NewFriendRequestCreateNestedManyWithoutToInput = {
+    create?: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput> | NewFriendRequestCreateWithoutToInput[] | NewFriendRequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutToInput | NewFriendRequestCreateOrConnectWithoutToInput[]
+    createMany?: NewFriendRequestCreateManyToInputEnvelope
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+  }
+
   export type GroupMessageUncheckedCreateNestedManyWithoutSenderInput = {
     create?: XOR<GroupMessageCreateWithoutSenderInput, GroupMessageUncheckedCreateWithoutSenderInput> | GroupMessageCreateWithoutSenderInput[] | GroupMessageUncheckedCreateWithoutSenderInput[]
     connectOrCreate?: GroupMessageCreateOrConnectWithoutSenderInput | GroupMessageCreateOrConnectWithoutSenderInput[]
@@ -8014,6 +9430,20 @@ export namespace Prisma {
     create?: XOR<ConversationCreateWithoutMemebersInput, ConversationUncheckedCreateWithoutMemebersInput> | ConversationCreateWithoutMemebersInput[] | ConversationUncheckedCreateWithoutMemebersInput[]
     connectOrCreate?: ConversationCreateOrConnectWithoutMemebersInput | ConversationCreateOrConnectWithoutMemebersInput[]
     connect?: ConversationWhereUniqueInput | ConversationWhereUniqueInput[]
+  }
+
+  export type NewFriendRequestUncheckedCreateNestedManyWithoutFromInput = {
+    create?: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput> | NewFriendRequestCreateWithoutFromInput[] | NewFriendRequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutFromInput | NewFriendRequestCreateOrConnectWithoutFromInput[]
+    createMany?: NewFriendRequestCreateManyFromInputEnvelope
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+  }
+
+  export type NewFriendRequestUncheckedCreateNestedManyWithoutToInput = {
+    create?: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput> | NewFriendRequestCreateWithoutToInput[] | NewFriendRequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutToInput | NewFriendRequestCreateOrConnectWithoutToInput[]
+    createMany?: NewFriendRequestCreateManyToInputEnvelope
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -8088,6 +9518,34 @@ export namespace Prisma {
     deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
   }
 
+  export type NewFriendRequestUpdateManyWithoutFromNestedInput = {
+    create?: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput> | NewFriendRequestCreateWithoutFromInput[] | NewFriendRequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutFromInput | NewFriendRequestCreateOrConnectWithoutFromInput[]
+    upsert?: NewFriendRequestUpsertWithWhereUniqueWithoutFromInput | NewFriendRequestUpsertWithWhereUniqueWithoutFromInput[]
+    createMany?: NewFriendRequestCreateManyFromInputEnvelope
+    set?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    disconnect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    delete?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    update?: NewFriendRequestUpdateWithWhereUniqueWithoutFromInput | NewFriendRequestUpdateWithWhereUniqueWithoutFromInput[]
+    updateMany?: NewFriendRequestUpdateManyWithWhereWithoutFromInput | NewFriendRequestUpdateManyWithWhereWithoutFromInput[]
+    deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+  }
+
+  export type NewFriendRequestUpdateManyWithoutToNestedInput = {
+    create?: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput> | NewFriendRequestCreateWithoutToInput[] | NewFriendRequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutToInput | NewFriendRequestCreateOrConnectWithoutToInput[]
+    upsert?: NewFriendRequestUpsertWithWhereUniqueWithoutToInput | NewFriendRequestUpsertWithWhereUniqueWithoutToInput[]
+    createMany?: NewFriendRequestCreateManyToInputEnvelope
+    set?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    disconnect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    delete?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    update?: NewFriendRequestUpdateWithWhereUniqueWithoutToInput | NewFriendRequestUpdateWithWhereUniqueWithoutToInput[]
+    updateMany?: NewFriendRequestUpdateManyWithWhereWithoutToInput | NewFriendRequestUpdateManyWithWhereWithoutToInput[]
+    deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+  }
+
   export type GroupMessageUncheckedUpdateManyWithoutSenderNestedInput = {
     create?: XOR<GroupMessageCreateWithoutSenderInput, GroupMessageUncheckedCreateWithoutSenderInput> | GroupMessageCreateWithoutSenderInput[] | GroupMessageUncheckedCreateWithoutSenderInput[]
     connectOrCreate?: GroupMessageCreateOrConnectWithoutSenderInput | GroupMessageCreateOrConnectWithoutSenderInput[]
@@ -8154,6 +9612,34 @@ export namespace Prisma {
     update?: ConversationUpdateWithWhereUniqueWithoutMemebersInput | ConversationUpdateWithWhereUniqueWithoutMemebersInput[]
     updateMany?: ConversationUpdateManyWithWhereWithoutMemebersInput | ConversationUpdateManyWithWhereWithoutMemebersInput[]
     deleteMany?: ConversationScalarWhereInput | ConversationScalarWhereInput[]
+  }
+
+  export type NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput = {
+    create?: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput> | NewFriendRequestCreateWithoutFromInput[] | NewFriendRequestUncheckedCreateWithoutFromInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutFromInput | NewFriendRequestCreateOrConnectWithoutFromInput[]
+    upsert?: NewFriendRequestUpsertWithWhereUniqueWithoutFromInput | NewFriendRequestUpsertWithWhereUniqueWithoutFromInput[]
+    createMany?: NewFriendRequestCreateManyFromInputEnvelope
+    set?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    disconnect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    delete?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    update?: NewFriendRequestUpdateWithWhereUniqueWithoutFromInput | NewFriendRequestUpdateWithWhereUniqueWithoutFromInput[]
+    updateMany?: NewFriendRequestUpdateManyWithWhereWithoutFromInput | NewFriendRequestUpdateManyWithWhereWithoutFromInput[]
+    deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+  }
+
+  export type NewFriendRequestUncheckedUpdateManyWithoutToNestedInput = {
+    create?: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput> | NewFriendRequestCreateWithoutToInput[] | NewFriendRequestUncheckedCreateWithoutToInput[]
+    connectOrCreate?: NewFriendRequestCreateOrConnectWithoutToInput | NewFriendRequestCreateOrConnectWithoutToInput[]
+    upsert?: NewFriendRequestUpsertWithWhereUniqueWithoutToInput | NewFriendRequestUpsertWithWhereUniqueWithoutToInput[]
+    createMany?: NewFriendRequestCreateManyToInputEnvelope
+    set?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    disconnect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    delete?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+    update?: NewFriendRequestUpdateWithWhereUniqueWithoutToInput | NewFriendRequestUpdateWithWhereUniqueWithoutToInput[]
+    updateMany?: NewFriendRequestUpdateManyWithWhereWithoutToInput | NewFriendRequestUpdateManyWithWhereWithoutToInput[]
+    deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
   }
 
   export type GroupMessageCreateNestedManyWithoutGroupInput = {
@@ -8238,6 +9724,34 @@ export namespace Prisma {
     update?: UserUpdateWithWhereUniqueWithoutGroupsInput | UserUpdateWithWhereUniqueWithoutGroupsInput[]
     updateMany?: UserUpdateManyWithWhereWithoutGroupsInput | UserUpdateManyWithWhereWithoutGroupsInput[]
     deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutNewFriendSendRequestInput = {
+    create?: XOR<UserCreateWithoutNewFriendSendRequestInput, UserUncheckedCreateWithoutNewFriendSendRequestInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNewFriendSendRequestInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutNewFriendReceiveRequestInput = {
+    create?: XOR<UserCreateWithoutNewFriendReceiveRequestInput, UserUncheckedCreateWithoutNewFriendReceiveRequestInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNewFriendReceiveRequestInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput = {
+    create?: XOR<UserCreateWithoutNewFriendSendRequestInput, UserUncheckedCreateWithoutNewFriendSendRequestInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNewFriendSendRequestInput
+    upsert?: UserUpsertWithoutNewFriendSendRequestInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNewFriendSendRequestInput, UserUpdateWithoutNewFriendSendRequestInput>, UserUncheckedUpdateWithoutNewFriendSendRequestInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutNewFriendReceiveRequestNestedInput = {
+    create?: XOR<UserCreateWithoutNewFriendReceiveRequestInput, UserUncheckedCreateWithoutNewFriendReceiveRequestInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNewFriendReceiveRequestInput
+    upsert?: UserUpsertWithoutNewFriendReceiveRequestInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNewFriendReceiveRequestInput, UserUpdateWithoutNewFriendReceiveRequestInput>, UserUncheckedUpdateWithoutNewFriendReceiveRequestInput>
   }
 
   export type GroupCreateNestedOneWithoutGroupMessagesInput = {
@@ -8602,6 +10116,54 @@ export namespace Prisma {
     create: XOR<ConversationCreateWithoutMemebersInput, ConversationUncheckedCreateWithoutMemebersInput>
   }
 
+  export type NewFriendRequestCreateWithoutFromInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    to: UserCreateNestedOneWithoutNewFriendReceiveRequestInput
+  }
+
+  export type NewFriendRequestUncheckedCreateWithoutFromInput = {
+    id?: string
+    toUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestCreateOrConnectWithoutFromInput = {
+    where: NewFriendRequestWhereUniqueInput
+    create: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput>
+  }
+
+  export type NewFriendRequestCreateManyFromInputEnvelope = {
+    data: NewFriendRequestCreateManyFromInput | NewFriendRequestCreateManyFromInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type NewFriendRequestCreateWithoutToInput = {
+    id?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    from: UserCreateNestedOneWithoutNewFriendSendRequestInput
+  }
+
+  export type NewFriendRequestUncheckedCreateWithoutToInput = {
+    id?: string
+    fromUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestCreateOrConnectWithoutToInput = {
+    where: NewFriendRequestWhereUniqueInput
+    create: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput>
+  }
+
+  export type NewFriendRequestCreateManyToInputEnvelope = {
+    data: NewFriendRequestCreateManyToInput | NewFriendRequestCreateManyToInput[]
+    skipDuplicates?: boolean
+  }
+
   export type GroupMessageUpsertWithWhereUniqueWithoutSenderInput = {
     where: GroupMessageWhereUniqueInput
     update: XOR<GroupMessageUpdateWithoutSenderInput, GroupMessageUncheckedUpdateWithoutSenderInput>
@@ -8727,6 +10289,49 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
   }
 
+  export type NewFriendRequestUpsertWithWhereUniqueWithoutFromInput = {
+    where: NewFriendRequestWhereUniqueInput
+    update: XOR<NewFriendRequestUpdateWithoutFromInput, NewFriendRequestUncheckedUpdateWithoutFromInput>
+    create: XOR<NewFriendRequestCreateWithoutFromInput, NewFriendRequestUncheckedCreateWithoutFromInput>
+  }
+
+  export type NewFriendRequestUpdateWithWhereUniqueWithoutFromInput = {
+    where: NewFriendRequestWhereUniqueInput
+    data: XOR<NewFriendRequestUpdateWithoutFromInput, NewFriendRequestUncheckedUpdateWithoutFromInput>
+  }
+
+  export type NewFriendRequestUpdateManyWithWhereWithoutFromInput = {
+    where: NewFriendRequestScalarWhereInput
+    data: XOR<NewFriendRequestUpdateManyMutationInput, NewFriendRequestUncheckedUpdateManyWithoutFromInput>
+  }
+
+  export type NewFriendRequestScalarWhereInput = {
+    AND?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+    OR?: NewFriendRequestScalarWhereInput[]
+    NOT?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+    id?: StringFilter<"NewFriendRequest"> | string
+    fromUserId?: StringFilter<"NewFriendRequest"> | string
+    toUserId?: StringFilter<"NewFriendRequest"> | string
+    createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+  }
+
+  export type NewFriendRequestUpsertWithWhereUniqueWithoutToInput = {
+    where: NewFriendRequestWhereUniqueInput
+    update: XOR<NewFriendRequestUpdateWithoutToInput, NewFriendRequestUncheckedUpdateWithoutToInput>
+    create: XOR<NewFriendRequestCreateWithoutToInput, NewFriendRequestUncheckedCreateWithoutToInput>
+  }
+
+  export type NewFriendRequestUpdateWithWhereUniqueWithoutToInput = {
+    where: NewFriendRequestWhereUniqueInput
+    data: XOR<NewFriendRequestUpdateWithoutToInput, NewFriendRequestUncheckedUpdateWithoutToInput>
+  }
+
+  export type NewFriendRequestUpdateManyWithWhereWithoutToInput = {
+    where: NewFriendRequestScalarWhereInput
+    data: XOR<NewFriendRequestUpdateManyMutationInput, NewFriendRequestUncheckedUpdateManyWithoutToInput>
+  }
+
   export type GroupMessageCreateWithoutGroupInput = {
     id?: string
     type: $Enums.MessageType
@@ -8764,6 +10369,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutGroupsInput = {
@@ -8775,6 +10382,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutGroupsInput = {
@@ -8824,6 +10433,142 @@ export namespace Prisma {
     imageUrl?: StringFilter<"User"> | string
   }
 
+  export type UserCreateWithoutNewFriendSendRequestInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
+    groups?: GroupCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+  }
+
+  export type UserUncheckedCreateWithoutNewFriendSendRequestInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
+    groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+  }
+
+  export type UserCreateOrConnectWithoutNewFriendSendRequestInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNewFriendSendRequestInput, UserUncheckedCreateWithoutNewFriendSendRequestInput>
+  }
+
+  export type UserCreateWithoutNewFriendReceiveRequestInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
+    groups?: GroupCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+  }
+
+  export type UserUncheckedCreateWithoutNewFriendReceiveRequestInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
+    groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+  }
+
+  export type UserCreateOrConnectWithoutNewFriendReceiveRequestInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNewFriendReceiveRequestInput, UserUncheckedCreateWithoutNewFriendReceiveRequestInput>
+  }
+
+  export type UserUpsertWithoutNewFriendSendRequestInput = {
+    update: XOR<UserUpdateWithoutNewFriendSendRequestInput, UserUncheckedUpdateWithoutNewFriendSendRequestInput>
+    create: XOR<UserCreateWithoutNewFriendSendRequestInput, UserUncheckedCreateWithoutNewFriendSendRequestInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNewFriendSendRequestInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNewFriendSendRequestInput, UserUncheckedUpdateWithoutNewFriendSendRequestInput>
+  }
+
+  export type UserUpdateWithoutNewFriendSendRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
+    groups?: GroupUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNewFriendSendRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
+    groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+  }
+
+  export type UserUpsertWithoutNewFriendReceiveRequestInput = {
+    update: XOR<UserUpdateWithoutNewFriendReceiveRequestInput, UserUncheckedUpdateWithoutNewFriendReceiveRequestInput>
+    create: XOR<UserCreateWithoutNewFriendReceiveRequestInput, UserUncheckedCreateWithoutNewFriendReceiveRequestInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNewFriendReceiveRequestInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNewFriendReceiveRequestInput, UserUncheckedUpdateWithoutNewFriendReceiveRequestInput>
+  }
+
+  export type UserUpdateWithoutNewFriendReceiveRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
+    groups?: GroupUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNewFriendReceiveRequestInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
+    groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+  }
+
   export type GroupCreateWithoutGroupMessagesInput = {
     id?: string
     name: string
@@ -8854,6 +10599,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutGroupMessageInput = {
@@ -8865,6 +10612,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutGroupMessageInput = {
@@ -8919,6 +10668,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMessageInput = {
@@ -8930,6 +10681,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserCreateWithoutSentPrivateMessageInput = {
@@ -8941,6 +10694,8 @@ export namespace Prisma {
     groups?: GroupCreateNestedManyWithoutMembersInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutSentPrivateMessageInput = {
@@ -8952,6 +10707,8 @@ export namespace Prisma {
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutSentPrivateMessageInput = {
@@ -8968,6 +10725,8 @@ export namespace Prisma {
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutReceivedPrivateMessageInput = {
@@ -8979,6 +10738,8 @@ export namespace Prisma {
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutReceivedPrivateMessageInput = {
@@ -9025,6 +10786,8 @@ export namespace Prisma {
     groups?: GroupUpdateManyWithoutMembersNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentPrivateMessageInput = {
@@ -9036,6 +10799,8 @@ export namespace Prisma {
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserUpsertWithoutReceivedPrivateMessageInput = {
@@ -9058,6 +10823,8 @@ export namespace Prisma {
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedPrivateMessageInput = {
@@ -9069,6 +10836,8 @@ export namespace Prisma {
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type ConversationUpsertWithoutMessagesInput = {
@@ -9133,6 +10902,8 @@ export namespace Prisma {
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
   }
 
   export type UserUncheckedCreateWithoutConversationsInput = {
@@ -9144,6 +10915,8 @@ export namespace Prisma {
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
   }
 
   export type UserCreateOrConnectWithoutConversationsInput = {
@@ -9206,6 +10979,20 @@ export namespace Prisma {
     content: string
     senderId: string
     conversationId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestCreateManyFromInput = {
+    id?: string
+    toUserId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewFriendRequestCreateManyToInput = {
+    id?: string
+    fromUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9334,6 +11121,48 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type NewFriendRequestUpdateWithoutFromInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    to?: UserUpdateOneRequiredWithoutNewFriendReceiveRequestNestedInput
+  }
+
+  export type NewFriendRequestUncheckedUpdateWithoutFromInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestUncheckedUpdateManyWithoutFromInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    toUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestUpdateWithoutToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    from?: UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput
+  }
+
+  export type NewFriendRequestUncheckedUpdateWithoutToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewFriendRequestUncheckedUpdateManyWithoutToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromUserId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type GroupMessageCreateManyGroupInput = {
     id?: string
     type: $Enums.MessageType
@@ -9379,6 +11208,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -9390,6 +11221,8 @@ export namespace Prisma {
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutGroupsInput = {
@@ -9444,6 +11277,8 @@ export namespace Prisma {
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -9455,6 +11290,8 @@ export namespace Prisma {
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutConversationsInput = {

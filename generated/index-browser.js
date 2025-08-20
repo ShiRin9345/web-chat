@@ -134,6 +134,14 @@ exports.Prisma.GroupScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.NewFriendRequestScalarFieldEnum = {
+  id: 'id',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.GroupMessageScalarFieldEnum = {
   id: 'id',
   type: 'type',
@@ -178,6 +186,7 @@ exports.MessageType = exports.$Enums.MessageType = {
 exports.Prisma.ModelName = {
   User: 'User',
   Group: 'Group',
+  NewFriendRequest: 'NewFriendRequest',
   GroupMessage: 'GroupMessage',
   PrivateMessage: 'PrivateMessage',
   Conversation: 'Conversation'

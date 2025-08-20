@@ -16,15 +16,17 @@ datasource db {
 }
 
 model User {
-  id                     String           @id @default(uuid())
-  userId                 String           @unique
-  groupMessage           GroupMessage[]
-  fullName               String
-  imageUrl               String
-  groups                 Group[]
-  sentPrivateMessage     PrivateMessage[] @relation("sender")
-  receivedPrivateMessage PrivateMessage[] @relation("receiver")
-  conversations          Conversation[]
+  id                      String             @id @default(uuid())
+  userId                  String             @unique
+  groupMessage            GroupMessage[]
+  fullName                String
+  imageUrl                String
+  groups                  Group[]
+  sentPrivateMessage      PrivateMessage[]   @relation("sender")
+  receivedPrivateMessage  PrivateMessage[]   @relation("receiver")
+  conversations           Conversation[]
+  NewFriendSendRequest    NewFriendRequest[] @relation("requestSendUser")
+  NewFriendReceiveRequest NewFriendRequest[] @relation("requestReceiveUser")
 }
 
 model Group {
@@ -42,6 +44,16 @@ enum MessageType {
   IMAGE
   TEXT
   PDF
+}
+
+model NewFriendRequest {
+  id         String   @id @default(uuid())
+  fromUserId String
+  from       User     @relation("requestSendUser", fields: [fromUserId], references: [userId])
+  toUserId   String
+  to         User     @relation("requestReceiveUser", fields: [toUserId], references: [userId])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model GroupMessage {

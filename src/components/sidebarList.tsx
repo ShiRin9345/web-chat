@@ -17,10 +17,10 @@ import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import { useColumnStore } from '@/store/userColumnStore.ts'
 import { Input } from '@/components/ui/input.tsx'
+import { Button } from '@/components/ui/button.tsx'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
-  console.log(type)
   return (
     <>
       {type === 'GROUPS' && <GroupSideBarList />}
@@ -128,60 +128,63 @@ function AddUserSidebarList() {
       }
     },
   })
-  useEffect(() => {
-    console.log(form.state.isSubmitting)
-  }, [form.state.isSubmitting])
   return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setIsLoading(true)
-        await form.handleSubmit()
-        setIsLoading(false)
-      }}
-    >
-      <form.Field
-        name="name"
-        children={(field) => (
-          <Input
-            onChange={(e) => field.handleChange(e.target.value)}
-            placeholder="Type user's name"
-            name="name"
-          />
-        )}
-      />
-      {isLoading ? (
-        <Loader className="animate-spin" />
-      ) : (
-        <div>
-          {users.length === 0 ? (
-            <span>null</span>
-          ) : (
-            users.map((user) => (
-              <div className="w-full h-20" key={user.id}>
-                <img
-                  src={user.imageUrl}
-                  className="size-12 rounded-full aspect-square object-cover"
-                  alt="avatar"
-                />
-                <div className="flex gap-2">
-                  <span>{user.fullName}</span>
-                  <button
-                    onClick={async () => {
-                      await axios.post('/newFriendRequest', {
-                        to: user.userId,
-                      })
-                    }}
-                  >
-                    add
-                  </button>
-                </div>
-              </div>
-            ))
+    <>
+      <AnimatedLink url="/friendRequest">
+        <Button>See request</Button>
+      </AnimatedLink>
+
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          setIsLoading(true)
+          await form.handleSubmit()
+          setIsLoading(false)
+        }}
+      >
+        <form.Field
+          name="name"
+          children={(field) => (
+            <Input
+              onChange={(e) => field.handleChange(e.target.value)}
+              placeholder="Type user's name"
+              name="name"
+            />
           )}
-        </div>
-      )}
-    </form>
+        />
+        {form.state.isSubmitting ? (
+          <Loader className="animate-spin" />
+        ) : (
+          <div>
+            {users.length === 0 ? (
+              <span>null</span>
+            ) : (
+              users.map((user) => (
+                <div className="w-full h-20" key={user.id}>
+                  <img
+                    src={user.imageUrl}
+                    className="size-12 rounded-full aspect-square object-cover"
+                    alt="avatar"
+                  />
+                  <div className="flex gap-2">
+                    <span>{user.fullName}</span>
+                    <button
+                      onClick={async () => {
+                        await axios.post('/api/friendRequest', {
+                          toUserId: user.userId,
+                        })
+                      }}
+                    >
+                      add
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </form>
+    </>
   )
 }
