@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
@@ -93,25 +93,39 @@ const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
   )
 }
 
-const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
-  const { socket } = useSocket()
-  const [online, setOnline] = useState<boolean>(false)
-  useEffect(() => {
-    if (!socket) return
-    axios
-      .get<boolean>('/api/isOnline', {
+const friendOnlineStatusQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ['friendOnlineStatus', userId],
+    queryFn: async () => {
+      const response = await axios.get<boolean>('/api/isOnline', {
         params: {
-          userId: friend.userId,
+          userId: userId,
         },
       })
-      .then((response) => {
-        setOnline(response.data)
-      })
+      return response.data
+    },
+    initialData: false,
+  })
+
+const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
+  const { socket } = useSocket()
+  const queryClient = useQueryClient()
+  const { data: online } = useQuery(
+    friendOnlineStatusQueryOptions(friend.userId),
+  )
+  useEffect(() => {
+    if (!socket) return
     const handleOnline = () => {
-      setOnline(true)
+      queryClient.setQueryData(
+        ['friendOnlineStatus', friend.userId],
+        () => true,
+      )
     }
     const handleOffline = () => {
-      setOnline(false)
+      queryClient.setQueryData(
+        ['friendOnlineStatus', friend.userId],
+        () => false,
+      )
     }
     socket.on(`${friend.userId}_online`, handleOnline)
     socket.on(`${friend.userId}_offline`, handleOffline)
@@ -247,7 +261,9 @@ function AddUserSidebarList() {
           )}
         />
         {form.state.isSubmitting ? (
-          <Loader className="animate-spin" />
+          <div className="mt-2 flex items-center justify-center">
+            <Loader className="animate-spin" />
+          </div>
         ) : (
           <div className="mt-2">
             {users.length === 0 ? (
