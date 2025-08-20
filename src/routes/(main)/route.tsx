@@ -2,6 +2,7 @@ import { Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
 import axios from 'axios'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { useRef } from 'react'
 import type { Group } from '../../../generated/index.d.ts'
 import UserSidebar from '@/components/UserSidebar.tsx'
 import {
@@ -13,7 +14,6 @@ import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 import PendingPage from '@/components/pendingPage.tsx'
-import { useRef } from 'react'
 
 export const sidebarListQueryOptions = {
   queryKey: ['groups'],

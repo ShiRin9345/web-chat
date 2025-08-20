@@ -12,8 +12,23 @@ import { Separator } from '@/components/ui/separator.tsx'
 import { sidebarListQueryOptions } from '@/routes/(main)/route.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
+import { useColumnStore } from '@/store/userColumnStore.ts'
+import { useForm } from '@tanstack/react-form'
+import { z } from 'zod'
 
 const SidebarList = () => {
+  const { type } = useColumnStore()
+  console.log(type)
+  return (
+    <>
+      {type === 'GROUPS' && <GroupSideBarList />}
+      {type === 'ADD_USER' && <div>add_user</div>}
+    </>
+  )
+}
+export default SidebarList
+
+const GroupSideBarList = () => {
   const { data: groups } = useQuery(sidebarListQueryOptions)
   return (
     <>
@@ -35,7 +50,6 @@ const SidebarList = () => {
     </>
   )
 }
-export default SidebarList
 
 const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
   groups,
@@ -82,4 +96,32 @@ function useCountSocket(groupId: string) {
     return () => socket.off(`${groupId}_count`, callback)
   }, [])
   return count
+}
+
+const addUserFormSchema = z.object({
+  name: z.string(),
+})
+
+function addUserSidebarList() {
+  const form = useForm({
+    defaultValues: {
+      name: '',
+    },
+    validators: {
+      onSubmit: addUserFormSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const { name } = value
+    },
+  })
+  return (
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        await form.handleSubmit()
+        form.reset()
+      }}
+    ></form>
+  )
 }

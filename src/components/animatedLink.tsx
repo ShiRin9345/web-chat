@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
 import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
 import gsap from 'gsap'
+import type { ReactNode } from 'react'
 
 const AnimatedLink = ({
   groupId,

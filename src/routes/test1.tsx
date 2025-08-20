@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Document, Page, pdfjs } from 'react-pdf'
+import { Document, Page } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
 import { useRef, useState } from 'react'
