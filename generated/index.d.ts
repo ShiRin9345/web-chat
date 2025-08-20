@@ -1423,16 +1423,22 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: string | null
     userId: string | null
+    fullName: string | null
+    imageUrl: string | null
   }
 
   export type UserMaxAggregateOutputType = {
     id: string | null
     userId: string | null
+    fullName: string | null
+    imageUrl: string | null
   }
 
   export type UserCountAggregateOutputType = {
     id: number
     userId: number
+    fullName: number
+    imageUrl: number
     _all: number
   }
 
@@ -1440,16 +1446,22 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     userId?: true
+    fullName?: true
+    imageUrl?: true
   }
 
   export type UserMaxAggregateInputType = {
     id?: true
     userId?: true
+    fullName?: true
+    imageUrl?: true
   }
 
   export type UserCountAggregateInputType = {
     id?: true
     userId?: true
+    fullName?: true
+    imageUrl?: true
     _all?: true
   }
 
@@ -1528,6 +1540,8 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     userId: string
+    fullName: string
+    imageUrl: string
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1550,6 +1564,8 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    fullName?: boolean
+    imageUrl?: boolean
     groupMessage?: boolean | User$groupMessageArgs<ExtArgs>
     groups?: boolean | User$groupsArgs<ExtArgs>
     sentPrivateMessage?: boolean | User$sentPrivateMessageArgs<ExtArgs>
@@ -1561,19 +1577,25 @@ export namespace Prisma {
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    fullName?: boolean
+    imageUrl?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    fullName?: boolean
+    imageUrl?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
     id?: boolean
     userId?: boolean
+    fullName?: boolean
+    imageUrl?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "fullName" | "imageUrl", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     groupMessage?: boolean | User$groupMessageArgs<ExtArgs>
     groups?: boolean | User$groupsArgs<ExtArgs>
@@ -1597,6 +1619,8 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
+      fullName: string
+      imageUrl: string
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2027,6 +2051,8 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly userId: FieldRef<"User", 'String'>
+    readonly fullName: FieldRef<"User", 'String'>
+    readonly imageUrl: FieldRef<"User", 'String'>
   }
     
 
@@ -6918,7 +6944,9 @@ export namespace Prisma {
 
   export const UserScalarFieldEnum: {
     id: 'id',
-    userId: 'userId'
+    userId: 'userId',
+    fullName: 'fullName',
+    imageUrl: 'imageUrl'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -7055,6 +7083,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
     userId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    imageUrl?: StringFilter<"User"> | string
     groupMessage?: GroupMessageListRelationFilter
     groups?: GroupListRelationFilter
     sentPrivateMessage?: PrivateMessageListRelationFilter
@@ -7065,6 +7095,8 @@ export namespace Prisma {
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    fullName?: SortOrder
+    imageUrl?: SortOrder
     groupMessage?: GroupMessageOrderByRelationAggregateInput
     groups?: GroupOrderByRelationAggregateInput
     sentPrivateMessage?: PrivateMessageOrderByRelationAggregateInput
@@ -7078,6 +7110,8 @@ export namespace Prisma {
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    fullName?: StringFilter<"User"> | string
+    imageUrl?: StringFilter<"User"> | string
     groupMessage?: GroupMessageListRelationFilter
     groups?: GroupListRelationFilter
     sentPrivateMessage?: PrivateMessageListRelationFilter
@@ -7088,6 +7122,8 @@ export namespace Prisma {
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    fullName?: SortOrder
+    imageUrl?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -7099,6 +7135,8 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
     userId?: StringWithAggregatesFilter<"User"> | string
+    fullName?: StringWithAggregatesFilter<"User"> | string
+    imageUrl?: StringWithAggregatesFilter<"User"> | string
   }
 
   export type GroupWhereInput = {
@@ -7344,6 +7382,8 @@ export namespace Prisma {
   export type UserCreateInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
@@ -7354,6 +7394,8 @@ export namespace Prisma {
   export type UserUncheckedCreateInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
@@ -7364,6 +7406,8 @@ export namespace Prisma {
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
@@ -7374,6 +7418,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -7384,16 +7430,22 @@ export namespace Prisma {
   export type UserCreateManyInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
   }
 
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupCreateInput = {
@@ -7696,16 +7748,22 @@ export namespace Prisma {
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    fullName?: SortOrder
+    imageUrl?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    fullName?: SortOrder
+    imageUrl?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    fullName?: SortOrder
+    imageUrl?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -8700,6 +8758,8 @@ export namespace Prisma {
   export type UserCreateWithoutGroupsInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
@@ -8709,6 +8769,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutGroupsInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
@@ -8758,6 +8820,8 @@ export namespace Prisma {
     NOT?: UserScalarWhereInput | UserScalarWhereInput[]
     id?: StringFilter<"User"> | string
     userId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    imageUrl?: StringFilter<"User"> | string
   }
 
   export type GroupCreateWithoutGroupMessagesInput = {
@@ -8784,6 +8848,8 @@ export namespace Prisma {
   export type UserCreateWithoutGroupMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
@@ -8793,6 +8859,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutGroupMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
@@ -8845,6 +8913,8 @@ export namespace Prisma {
   export type UserUpdateWithoutGroupMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
@@ -8854,6 +8924,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutGroupMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
@@ -8863,6 +8935,8 @@ export namespace Prisma {
   export type UserCreateWithoutSentPrivateMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutMembersInput
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
@@ -8872,6 +8946,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutSentPrivateMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
@@ -8886,6 +8962,8 @@ export namespace Prisma {
   export type UserCreateWithoutReceivedPrivateMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
@@ -8895,6 +8973,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutReceivedPrivateMessageInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
@@ -8939,6 +9019,8 @@ export namespace Prisma {
   export type UserUpdateWithoutSentPrivateMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutMembersNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
@@ -8948,6 +9030,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutSentPrivateMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
@@ -8968,6 +9052,8 @@ export namespace Prisma {
   export type UserUpdateWithoutReceivedPrivateMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
@@ -8977,6 +9063,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutReceivedPrivateMessageInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -9039,6 +9127,8 @@ export namespace Prisma {
   export type UserCreateWithoutConversationsInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
@@ -9048,6 +9138,8 @@ export namespace Prisma {
   export type UserUncheckedCreateWithoutConversationsInput = {
     id?: string
     userId: string
+    fullName: string
+    imageUrl: string
     groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
     sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
@@ -9281,6 +9373,8 @@ export namespace Prisma {
   export type UserUpdateWithoutGroupsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
@@ -9290,6 +9384,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutGroupsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
@@ -9299,6 +9395,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyWithoutGroupsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type PrivateMessageCreateManyConversationInput = {
@@ -9340,6 +9438,8 @@ export namespace Prisma {
   export type UserUpdateWithoutConversationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
@@ -9349,6 +9449,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateWithoutConversationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
     sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
@@ -9358,6 +9460,8 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyWithoutConversationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
 

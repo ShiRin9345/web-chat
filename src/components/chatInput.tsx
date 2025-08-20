@@ -6,6 +6,7 @@ import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import ImageDialog from '@/components/ImageDialog.tsx'
+import { useEffect } from 'react'
 
 export const MessageType = {
   IMAGE: 'IMAGE',
