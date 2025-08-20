@@ -56,11 +56,24 @@ export namespace $Enums {
 
 export type MessageType = (typeof MessageType)[keyof typeof MessageType]
 
+
+export const RequestState: {
+  PENDING: 'PENDING',
+  AGREED: 'AGREED',
+  REJECTED: 'REJECTED'
+};
+
+export type RequestState = (typeof RequestState)[keyof typeof RequestState]
+
 }
 
 export type MessageType = $Enums.MessageType
 
 export const MessageType: typeof $Enums.MessageType
+
+export type RequestState = $Enums.RequestState
+
+export const RequestState: typeof $Enums.RequestState
 
 /**
  * ##  Prisma Client ʲˢ
@@ -3845,6 +3858,7 @@ export namespace Prisma {
     toUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    state: $Enums.RequestState | null
   }
 
   export type NewFriendRequestMaxAggregateOutputType = {
@@ -3853,6 +3867,7 @@ export namespace Prisma {
     toUserId: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    state: $Enums.RequestState | null
   }
 
   export type NewFriendRequestCountAggregateOutputType = {
@@ -3861,6 +3876,7 @@ export namespace Prisma {
     toUserId: number
     createdAt: number
     updatedAt: number
+    state: number
     _all: number
   }
 
@@ -3871,6 +3887,7 @@ export namespace Prisma {
     toUserId?: true
     createdAt?: true
     updatedAt?: true
+    state?: true
   }
 
   export type NewFriendRequestMaxAggregateInputType = {
@@ -3879,6 +3896,7 @@ export namespace Prisma {
     toUserId?: true
     createdAt?: true
     updatedAt?: true
+    state?: true
   }
 
   export type NewFriendRequestCountAggregateInputType = {
@@ -3887,6 +3905,7 @@ export namespace Prisma {
     toUserId?: true
     createdAt?: true
     updatedAt?: true
+    state?: true
     _all?: true
   }
 
@@ -3968,6 +3987,7 @@ export namespace Prisma {
     toUserId: string
     createdAt: Date
     updatedAt: Date
+    state: $Enums.RequestState
     _count: NewFriendRequestCountAggregateOutputType | null
     _min: NewFriendRequestMinAggregateOutputType | null
     _max: NewFriendRequestMaxAggregateOutputType | null
@@ -3993,6 +4013,7 @@ export namespace Prisma {
     toUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    state?: boolean
     from?: boolean | UserDefaultArgs<ExtArgs>
     to?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["newFriendRequest"]>
@@ -4003,6 +4024,7 @@ export namespace Prisma {
     toUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    state?: boolean
     from?: boolean | UserDefaultArgs<ExtArgs>
     to?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["newFriendRequest"]>
@@ -4013,6 +4035,7 @@ export namespace Prisma {
     toUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    state?: boolean
     from?: boolean | UserDefaultArgs<ExtArgs>
     to?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["newFriendRequest"]>
@@ -4023,9 +4046,10 @@ export namespace Prisma {
     toUserId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    state?: boolean
   }
 
-  export type NewFriendRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fromUserId" | "toUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["newFriendRequest"]>
+  export type NewFriendRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "fromUserId" | "toUserId" | "createdAt" | "updatedAt" | "state", ExtArgs["result"]["newFriendRequest"]>
   export type NewFriendRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     from?: boolean | UserDefaultArgs<ExtArgs>
     to?: boolean | UserDefaultArgs<ExtArgs>
@@ -4051,6 +4075,7 @@ export namespace Prisma {
       toUserId: string
       createdAt: Date
       updatedAt: Date
+      state: $Enums.RequestState
     }, ExtArgs["result"]["newFriendRequest"]>
     composites: {}
   }
@@ -4481,6 +4506,7 @@ export namespace Prisma {
     readonly toUserId: FieldRef<"NewFriendRequest", 'String'>
     readonly createdAt: FieldRef<"NewFriendRequest", 'DateTime'>
     readonly updatedAt: FieldRef<"NewFriendRequest", 'DateTime'>
+    readonly state: FieldRef<"NewFriendRequest", 'RequestState'>
   }
     
 
@@ -8198,7 +8224,8 @@ export namespace Prisma {
     fromUserId: 'fromUserId',
     toUserId: 'toUserId',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    state: 'state'
   };
 
   export type NewFriendRequestScalarFieldEnum = (typeof NewFriendRequestScalarFieldEnum)[keyof typeof NewFriendRequestScalarFieldEnum]
@@ -8285,6 +8312,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RequestState'
+   */
+  export type EnumRequestStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestState'>
+    
+
+
+  /**
+   * Reference to a field of type 'RequestState[]'
+   */
+  export type ListEnumRequestStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RequestState[]'>
     
 
 
@@ -8449,6 +8490,7 @@ export namespace Prisma {
     toUserId?: StringFilter<"NewFriendRequest"> | string
     createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
     updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    state?: EnumRequestStateFilter<"NewFriendRequest"> | $Enums.RequestState
     from?: XOR<UserScalarRelationFilter, UserWhereInput>
     to?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -8459,6 +8501,7 @@ export namespace Prisma {
     toUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    state?: SortOrder
     from?: UserOrderByWithRelationInput
     to?: UserOrderByWithRelationInput
   }
@@ -8472,6 +8515,7 @@ export namespace Prisma {
     toUserId?: StringFilter<"NewFriendRequest"> | string
     createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
     updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    state?: EnumRequestStateFilter<"NewFriendRequest"> | $Enums.RequestState
     from?: XOR<UserScalarRelationFilter, UserWhereInput>
     to?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -8482,6 +8526,7 @@ export namespace Prisma {
     toUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    state?: SortOrder
     _count?: NewFriendRequestCountOrderByAggregateInput
     _max?: NewFriendRequestMaxOrderByAggregateInput
     _min?: NewFriendRequestMinOrderByAggregateInput
@@ -8496,6 +8541,7 @@ export namespace Prisma {
     toUserId?: StringWithAggregatesFilter<"NewFriendRequest"> | string
     createdAt?: DateTimeWithAggregatesFilter<"NewFriendRequest"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"NewFriendRequest"> | Date | string
+    state?: EnumRequestStateWithAggregatesFilter<"NewFriendRequest"> | $Enums.RequestState
   }
 
   export type GroupMessageWhereInput = {
@@ -8823,6 +8869,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
     from: UserCreateNestedOneWithoutNewFriendSendRequestInput
     to: UserCreateNestedOneWithoutNewFriendReceiveRequestInput
   }
@@ -8833,12 +8880,14 @@ export namespace Prisma {
     toUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type NewFriendRequestUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
     from?: UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput
     to?: UserUpdateOneRequiredWithoutNewFriendReceiveRequestNestedInput
   }
@@ -8849,6 +8898,7 @@ export namespace Prisma {
     toUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type NewFriendRequestCreateManyInput = {
@@ -8857,12 +8907,14 @@ export namespace Prisma {
     toUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type NewFriendRequestUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type NewFriendRequestUncheckedUpdateManyInput = {
@@ -8871,6 +8923,7 @@ export namespace Prisma {
     toUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type GroupMessageCreateInput = {
@@ -9218,6 +9271,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumRequestStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestState | EnumRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStateFilter<$PrismaModel> | $Enums.RequestState
+  }
+
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
@@ -9229,6 +9289,7 @@ export namespace Prisma {
     toUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    state?: SortOrder
   }
 
   export type NewFriendRequestMaxOrderByAggregateInput = {
@@ -9237,6 +9298,7 @@ export namespace Prisma {
     toUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    state?: SortOrder
   }
 
   export type NewFriendRequestMinOrderByAggregateInput = {
@@ -9245,6 +9307,17 @@ export namespace Prisma {
     toUserId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    state?: SortOrder
+  }
+
+  export type EnumRequestStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestState | EnumRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStateWithAggregatesFilter<$PrismaModel> | $Enums.RequestState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStateFilter<$PrismaModel>
+    _max?: NestedEnumRequestStateFilter<$PrismaModel>
   }
 
   export type EnumMessageTypeFilter<$PrismaModel = never> = {
@@ -9738,6 +9811,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type EnumRequestStateFieldUpdateOperationsInput = {
+    set?: $Enums.RequestState
+  }
+
   export type UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput = {
     create?: XOR<UserCreateWithoutNewFriendSendRequestInput, UserUncheckedCreateWithoutNewFriendSendRequestInput>
     connectOrCreate?: UserCreateOrConnectWithoutNewFriendSendRequestInput
@@ -9975,6 +10052,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumRequestStateFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestState | EnumRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStateFilter<$PrismaModel> | $Enums.RequestState
+  }
+
+  export type NestedEnumRequestStateWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RequestState | EnumRequestStateFieldRefInput<$PrismaModel>
+    in?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RequestState[] | ListEnumRequestStateFieldRefInput<$PrismaModel>
+    not?: NestedEnumRequestStateWithAggregatesFilter<$PrismaModel> | $Enums.RequestState
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRequestStateFilter<$PrismaModel>
+    _max?: NestedEnumRequestStateFilter<$PrismaModel>
+  }
+
   export type NestedEnumMessageTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
     in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
@@ -10120,6 +10214,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
     to: UserCreateNestedOneWithoutNewFriendReceiveRequestInput
   }
 
@@ -10128,6 +10223,7 @@ export namespace Prisma {
     toUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type NewFriendRequestCreateOrConnectWithoutFromInput = {
@@ -10144,6 +10240,7 @@ export namespace Prisma {
     id?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
     from: UserCreateNestedOneWithoutNewFriendSendRequestInput
   }
 
@@ -10152,6 +10249,7 @@ export namespace Prisma {
     fromUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type NewFriendRequestCreateOrConnectWithoutToInput = {
@@ -10314,6 +10412,7 @@ export namespace Prisma {
     toUserId?: StringFilter<"NewFriendRequest"> | string
     createdAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
     updatedAt?: DateTimeFilter<"NewFriendRequest"> | Date | string
+    state?: EnumRequestStateFilter<"NewFriendRequest"> | $Enums.RequestState
   }
 
   export type NewFriendRequestUpsertWithWhereUniqueWithoutToInput = {
@@ -10988,6 +11087,7 @@ export namespace Prisma {
     toUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type NewFriendRequestCreateManyToInput = {
@@ -10995,6 +11095,7 @@ export namespace Prisma {
     fromUserId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    state: $Enums.RequestState
   }
 
   export type GroupMessageUpdateWithoutSenderInput = {
@@ -11125,6 +11226,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
     to?: UserUpdateOneRequiredWithoutNewFriendReceiveRequestNestedInput
   }
 
@@ -11133,6 +11235,7 @@ export namespace Prisma {
     toUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type NewFriendRequestUncheckedUpdateManyWithoutFromInput = {
@@ -11140,12 +11243,14 @@ export namespace Prisma {
     toUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type NewFriendRequestUpdateWithoutToInput = {
     id?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
     from?: UserUpdateOneRequiredWithoutNewFriendSendRequestNestedInput
   }
 
@@ -11154,6 +11259,7 @@ export namespace Prisma {
     fromUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type NewFriendRequestUncheckedUpdateManyWithoutToInput = {
@@ -11161,6 +11267,7 @@ export namespace Prisma {
     fromUserId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
   export type GroupMessageCreateManyGroupInput = {

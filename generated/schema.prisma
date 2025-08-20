@@ -46,14 +46,21 @@ enum MessageType {
   PDF
 }
 
+enum RequestState {
+  PENDING
+  AGREED
+  REJECTED
+}
+
 model NewFriendRequest {
-  id         String   @id @default(uuid())
+  id         String       @id @default(uuid())
   fromUserId String
-  from       User     @relation("requestSendUser", fields: [fromUserId], references: [userId])
+  from       User         @relation("requestSendUser", fields: [fromUserId], references: [userId])
   toUserId   String
-  to         User     @relation("requestReceiveUser", fields: [toUserId], references: [userId])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  to         User         @relation("requestReceiveUser", fields: [toUserId], references: [userId])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  state      RequestState
 }
 
 model GroupMessage {

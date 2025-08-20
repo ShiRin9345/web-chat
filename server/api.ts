@@ -3,11 +3,12 @@ import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
+import { RequestState } from '@prisma/client'
 import db from './db.ts'
 import { getIo, groupUsers, groupVideoUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
+import type { GroupMessage, NewFriendRequest } from '@prisma/client'
 import type { UIMessage } from 'ai'
-import type { GroupMessage } from 'generated/index'
 
 dotenv.config()
 
@@ -76,6 +77,27 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
     res.json(message)
   } catch (e) {
     console.error(e)
+  }
+})
+
+router.post('/handleRequest', requireAuth(), async (req, res) => {
+  const { request, state } = req.body as {
+    request: NewFriendRequest
+    state: string
+  }
+  try {
+    const newRequest = await db.newFriendRequest.update({
+      where: {
+        id: request.id,
+      },
+      data: {
+        state: state === 'agreed' ? RequestState.AGREED : RequestState.REJECTED,
+      },
+    })
+    return res.json(newRequest)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch messages')
   }
 })
 
@@ -211,6 +233,7 @@ router.post('/friendRequest', requireAuth(), async (req, res) => {
       data: {
         fromUserId: fromUserId as string,
         toUserId: toUserId as string,
+        state: RequestState.PENDING,
       },
     })
     res.json(request)

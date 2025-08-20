@@ -139,7 +139,8 @@ exports.Prisma.NewFriendRequestScalarFieldEnum = {
   fromUserId: 'fromUserId',
   toUserId: 'toUserId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  state: 'state'
 };
 
 exports.Prisma.GroupMessageScalarFieldEnum = {
@@ -177,6 +178,12 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+exports.RequestState = exports.$Enums.RequestState = {
+  PENDING: 'PENDING',
+  AGREED: 'AGREED',
+  REJECTED: 'REJECTED'
+};
+
 exports.MessageType = exports.$Enums.MessageType = {
   IMAGE: 'IMAGE',
   TEXT: 'TEXT',
