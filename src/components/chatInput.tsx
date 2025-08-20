@@ -91,9 +91,11 @@ const ChatInput = () => {
   const form = useForm({
     onSubmit: async ({ value }) => {
       await mutateAsync(value.content)
-      document.getElementById('bottom')?.scrollIntoView({
-        behavior: 'smooth',
-      })
+      setTimeout(() => {
+        document.getElementById('bottom')?.scrollIntoView({
+          behavior: 'smooth',
+        })
+      }, 100)
     },
     defaultValues: {
       content: '',

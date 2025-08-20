@@ -40,6 +40,16 @@ export default function useChatSocket(
           pages: newData,
         }
       })
+      const topDiv = document.getElementById('topDiv') as HTMLDivElement
+      const distanceOffBottom =
+        topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight
+      if (distanceOffBottom <= 100) {
+        setTimeout(() => {
+          document.getElementById('bottom')?.scrollIntoView({
+            behavior: 'smooth',
+          })
+        }, 100)
+      }
     }
     socket.on('new_message', addCallback)
     socket.emit('join_group', groupId)
