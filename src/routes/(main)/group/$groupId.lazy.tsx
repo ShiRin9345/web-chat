@@ -131,6 +131,7 @@ export default function Home() {
 
       <div
         ref={parentRef}
+        id="topDiv"
         className="p-2 flex-1 h-full overflow-auto bg-zinc-100 scrollbar-none relative "
       >
         <div
