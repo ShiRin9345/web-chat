@@ -19,6 +19,8 @@ model User {
   id                     String           @id @default(uuid())
   userId                 String           @unique
   groupMessage           GroupMessage[]
+  fullName               String
+  imageUrl               String
   groups                 Group[]
   sentPrivateMessage     PrivateMessage[] @relation("sender")
   receivedPrivateMessage PrivateMessage[] @relation("receiver")

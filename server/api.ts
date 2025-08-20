@@ -79,6 +79,24 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
   }
 })
 
+router.get('/users', requireAuth(), async (req, res) => {
+  const { name } = req.query
+  try {
+    const users = await db.user.findMany({
+      where: {
+        fullName: {
+          contains: name as string,
+          mode: 'insensitive',
+        },
+      },
+    })
+    res.json(users)
+  } catch (e) {
+    console.log(e)
+    res.status(500).send('Something went wrong to fetch users')
+  }
+})
+
 router.get('/groups', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
   try {
@@ -136,9 +154,12 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     if (user) {
       return res.json(user)
     }
+    const clerkUser = await clerkClient.users.getUser(userId as string)
     user = await db.user.create({
       data: {
         userId: userId as string,
+        fullName: clerkUser.fullName as string,
+        imageUrl: clerkUser.imageUrl,
       },
     })
     const clientUser = await clerkClient.users.getUser(userId as string)
@@ -171,6 +192,11 @@ router.get('/oss-signature', requireAuth(), async (_req, res) => {
   const location = (await client.getBucketLocation(config.bucket)).location
   const host = `https://${config.bucket}.${location}.aliyuncs.com`
   res.json({ ...signature, host })
+})
+
+router.post('/newFriendRequest', requireAuth(), async (req, res) => {
+  const { userId: fromUserId } = getAuth(req)
+  const { toUserId } = req.body
 })
 
 router.post('/chat', (req, res) => {
