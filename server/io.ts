@@ -24,6 +24,7 @@ export function initIo(server: HttpServer) {
         return
       }
       await changeGroupOnlineCount(socket, 1)
+      io.emit(`${socket.handshake.auth.userId}_online`)
     })
     socket.on('disconnect', async () => {
       const newRefCount = changeUserReference(socket, -1)
@@ -32,6 +33,7 @@ export function initIo(server: HttpServer) {
       }
       onlineUsers.delete(socket.handshake.auth.userId)
       await changeGroupOnlineCount(socket, -1)
+      io.emit(`${socket.handshake.auth.userId}_offline`)
     })
     socket.on('join_video_room', (groupId: string, id: string) => {
       const roomId = `video_${groupId}`

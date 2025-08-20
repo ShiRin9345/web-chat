@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
-import { ArrowRight, Loader, Plus, PlusCircle } from 'lucide-react'
+import { ArrowRight, Loader, Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import type { Group, User } from 'generated/index'
 import {
   Accordion,
@@ -17,7 +18,11 @@ import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import { useColumnStore } from '@/store/userColumnStore.ts'
 import { Input } from '@/components/ui/input.tsx'
-import { Button } from '@/components/ui/button.tsx'
+import {
+  Status,
+  StatusIndicator,
+  StatusLabel,
+} from '@/components/ui/shadcn-io/status'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
@@ -76,19 +81,57 @@ const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
   return (
     <div className="px-2">
       {friends?.map &&
-        friends.map((friend) => (
+        friends.map((friend, index) => (
           <React.Fragment key={friend.id}>
-            <div className="w-full flex items-center gap-2 p-2 hover:bg-zinc-100 transition duration-200 rounded-md cursor-pointer h-12">
-              <img
-                src={friend.imageUrl}
-                className="size-8 rounded-full aspect-square"
-                alt="avatar"
-              />
-              <span> {friend.fullName}</span>
-            </div>
-            <Separator className="my-[0.45rem]" />
+            <FriendItem friend={friend} />
+            {index < friends.length - 1 && (
+              <Separator className="my-[0.45rem]" />
+            )}
           </React.Fragment>
         ))}
+    </div>
+  )
+}
+
+const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
+  const { socket } = useSocket()
+  const [online, setOnline] = useState<boolean>(false)
+  useEffect(() => {
+    if (!socket) return
+    axios
+      .get<boolean>('/api/isOnline', {
+        params: {
+          userId: friend.userId,
+        },
+      })
+      .then((response) => {
+        setOnline(response.data)
+      })
+    const handleOnline = () => {
+      setOnline(true)
+    }
+    const handleOffline = () => {
+      setOnline(false)
+    }
+    socket.on(`${friend.userId}_online`, handleOnline)
+    socket.on(`${friend.userId}_offline`, handleOffline)
+    return () => {
+      socket.off(`${friend.userId}_online`, handleOnline)
+      socket.off(`${friend.userId}_offline`, handleOffline)
+    }
+  }, [socket])
+  return (
+    <div className="w-full flex items-center gap-2 p-2 hover:bg-zinc-100 transition duration-200 rounded-md cursor-pointer h-12">
+      <img
+        src={friend.imageUrl}
+        className="size-8 rounded-full aspect-square"
+        alt="avatar"
+      />
+      <span> {friend.fullName}</span>
+      <Status status={`${online ? 'online' : 'offline'}`}>
+        <StatusLabel />
+        <StatusIndicator />
+      </Status>
     </div>
   )
 }
@@ -152,6 +195,7 @@ const addUserFormSchema = z.object({
 
 function AddUserSidebarList() {
   const [users, setUsers] = useState<Array<User>>([])
+  const { data: friends } = useQuery(friendQueryOptions)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const form = useForm({
     defaultValues: {
@@ -222,14 +266,21 @@ function AddUserSidebarList() {
                     />
                     <span>{user.fullName}</span>
                   </div>
-                  <Plus
-                    className="size-5 cursor-pointer hover:bg-zinc-100 rounded-full transition duration-200"
-                    onClick={async () => {
-                      await axios.post('/api/friendRequest', {
-                        toUserId: user.userId,
-                      })
-                    }}
-                  />
+                  {friends?.every((friend) => friend.id !== user.id) ? (
+                    <Plus
+                      className="size-5 cursor-pointer hover:bg-zinc-100 rounded-full transition duration-200"
+                      onClick={async () => {
+                        toast('Request has been send', {
+                          duration: 2000,
+                        })
+                        await axios.post('/api/friendRequest', {
+                          toUserId: user.userId,
+                        })
+                      }}
+                    />
+                  ) : (
+                    <div>accepted</div>
+                  )}
                 </div>
               ))
             )}

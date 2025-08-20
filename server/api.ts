@@ -5,7 +5,7 @@ import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
 import { RequestState } from '@prisma/client'
 import db from './db.ts'
-import { getIo, groupUsers, groupVideoUsers } from './io.ts'
+import { getIo, groupUsers, groupVideoUsers, onlineUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
 import type { GroupMessage, NewFriendRequest } from '@prisma/client'
 import type { UIMessage } from 'ai'
@@ -249,6 +249,12 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     console.log(e)
     res.status(500).send('Something went wrong to initial user')
   }
+})
+
+router.get('/isOnline', requireAuth(), async (req, res) => {
+  const { userId } = req.query as { userId: string }
+  const isOnline = onlineUsers.has(userId)
+  res.send(isOnline)
 })
 
 router.get('/oss-signature', requireAuth(), async (_req, res) => {
