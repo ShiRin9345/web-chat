@@ -181,6 +181,7 @@ export default function Home() {
             })
           )}
         </div>
+        <div id="bottom" />
       </div>
       <ChatInput />
     </div>
