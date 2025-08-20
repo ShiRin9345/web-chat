@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useUser } from '@clerk/clerk-react'
 import type { GroupMessage, PrivateMessage } from 'generated/index.d.ts'
 import { useSocket } from '@/providers/socketProvider.tsx'
 
@@ -9,11 +10,15 @@ export default function useChatSocket(
 ) {
   const { socket } = useSocket()
   const queryClient = useQueryClient()
+  const { user } = useUser()
   useEffect(() => {
     if (!socket) {
       return
     }
     const addCallback = (message: GroupMessage | PrivateMessage) => {
+      if (message.senderId === user?.id) {
+        return
+      }
       queryClient.setQueryData(queryKey, (oldData: any) => {
         if (!oldData || !oldData.pages || oldData.pages.length === 0) {
           return {
@@ -42,7 +47,7 @@ export default function useChatSocket(
       socket.off('new_message', addCallback)
       socket.emit('leave_group', groupId)
     }
-  }, [socket, groupId, queryKey])
+  }, [socket, groupId, queryKey, user?.id])
 
   return socket
 }
