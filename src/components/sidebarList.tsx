@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
@@ -23,15 +23,24 @@ const SidebarList = () => {
   const { type } = useColumnStore()
   return (
     <>
-      {type === 'GROUPS' && <GroupSideBarList />}
+      {type === 'GROUPS' && <ContactSidebarList />}
       {type === 'ADD_USER' && <AddUserSidebarList />}
     </>
   )
 }
 export default SidebarList
 
-const GroupSideBarList = () => {
+const friendQueryOptions = queryOptions({
+  queryKey: ['frineds'],
+  queryFn: async () => {
+    const response = await axios.get<Array<User>>('/api/friends')
+    return response.data
+  },
+})
+
+const ContactSidebarList = () => {
   const { data: groups } = useQuery(sidebarListQueryOptions)
+  const { data: friends } = useQuery(friendQueryOptions)
   return (
     <>
       <Accordion type="single" collapsible>
@@ -48,8 +57,35 @@ const GroupSideBarList = () => {
             <GroupList groups={groups} />
           </AccordionContent>
         </AccordionItem>
+        <AccordionItem value="friends">
+          <AccordionTrigger className="!no-underline cursor-pointer ">
+            <span className="pl-2"> Friends</span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <FriendList friends={friends} />
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </>
+  )
+}
+
+const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
+  friends,
+}) => {
+  return (
+    <div className="px-2">
+      {friends?.map &&
+        friends.map((friend) => (
+          <React.Fragment key={friend.id}>
+            <div className="w-full p-2 h-20">
+              {friend.fullName}
+              <img src={friend.imageUrl} alt="avatar" />
+            </div>
+            <Separator className="my-[0.45rem]" />
+          </React.Fragment>
+        ))}
+    </div>
   )
 }
 

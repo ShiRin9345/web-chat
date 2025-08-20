@@ -80,6 +80,31 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
   }
 })
 
+router.get('/friends', requireAuth(), async (req, res) => {
+  try {
+    const { userId } = getAuth(req) as { userId: string }
+    const userWithFriends = await db.user.findUnique({
+      where: {
+        userId,
+      },
+      include: {
+        friends: {
+          select: {
+            id: true,
+            userId: true,
+            fullName: true,
+            imageUrl: true,
+          },
+        },
+      },
+    })
+    res.json(userWithFriends?.friends)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch friends')
+  }
+})
+
 router.post('/handleRequest', requireAuth(), async (req, res) => {
   const { request, state } = req.body as {
     request: NewFriendRequest
@@ -94,6 +119,28 @@ router.post('/handleRequest', requireAuth(), async (req, res) => {
         state: state === 'agreed' ? RequestState.AGREED : RequestState.REJECTED,
       },
     })
+    if (state === 'agreed') {
+      await db.user.update({
+        where: {
+          userId: request.fromUserId,
+        },
+        data: {
+          friends: {
+            connect: { userId: request.toUserId },
+          },
+        },
+      })
+      await db.user.update({
+        where: {
+          userId: request.toUserId,
+        },
+        data: {
+          friends: {
+            connect: { userId: request.fromUserId },
+          },
+        },
+      })
+    }
     return res.json(newRequest)
   } catch (e) {
     console.error(e)

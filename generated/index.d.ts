@@ -1375,6 +1375,8 @@ export namespace Prisma {
     conversations: number
     NewFriendSendRequest: number
     NewFriendReceiveRequest: number
+    friends: number
+    friendOf: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1385,6 +1387,8 @@ export namespace Prisma {
     conversations?: boolean | UserCountOutputTypeCountConversationsArgs
     NewFriendSendRequest?: boolean | UserCountOutputTypeCountNewFriendSendRequestArgs
     NewFriendReceiveRequest?: boolean | UserCountOutputTypeCountNewFriendReceiveRequestArgs
+    friends?: boolean | UserCountOutputTypeCountFriendsArgs
+    friendOf?: boolean | UserCountOutputTypeCountFriendOfArgs
   }
 
   // Custom InputTypes
@@ -1445,6 +1449,20 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNewFriendReceiveRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NewFriendRequestWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFriendsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFriendOfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: UserWhereInput
   }
 
 
@@ -1695,6 +1713,8 @@ export namespace Prisma {
     conversations?: boolean | User$conversationsArgs<ExtArgs>
     NewFriendSendRequest?: boolean | User$NewFriendSendRequestArgs<ExtArgs>
     NewFriendReceiveRequest?: boolean | User$NewFriendReceiveRequestArgs<ExtArgs>
+    friends?: boolean | User$friendsArgs<ExtArgs>
+    friendOf?: boolean | User$friendOfArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1728,6 +1748,8 @@ export namespace Prisma {
     conversations?: boolean | User$conversationsArgs<ExtArgs>
     NewFriendSendRequest?: boolean | User$NewFriendSendRequestArgs<ExtArgs>
     NewFriendReceiveRequest?: boolean | User$NewFriendReceiveRequestArgs<ExtArgs>
+    friends?: boolean | User$friendsArgs<ExtArgs>
+    friendOf?: boolean | User$friendOfArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1743,6 +1765,8 @@ export namespace Prisma {
       conversations: Prisma.$ConversationPayload<ExtArgs>[]
       NewFriendSendRequest: Prisma.$NewFriendRequestPayload<ExtArgs>[]
       NewFriendReceiveRequest: Prisma.$NewFriendRequestPayload<ExtArgs>[]
+      friends: Prisma.$UserPayload<ExtArgs>[]
+      friendOf: Prisma.$UserPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2150,6 +2174,8 @@ export namespace Prisma {
     conversations<T extends User$conversationsArgs<ExtArgs> = {}>(args?: Subset<T, User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     NewFriendSendRequest<T extends User$NewFriendSendRequestArgs<ExtArgs> = {}>(args?: Subset<T, User$NewFriendSendRequestArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     NewFriendReceiveRequest<T extends User$NewFriendReceiveRequestArgs<ExtArgs> = {}>(args?: Subset<T, User$NewFriendReceiveRequestArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewFriendRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    friends<T extends User$friendsArgs<ExtArgs> = {}>(args?: Subset<T, User$friendsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    friendOf<T extends User$friendOfArgs<ExtArgs> = {}>(args?: Subset<T, User$friendOfArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2736,6 +2762,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NewFriendRequestScalarFieldEnum | NewFriendRequestScalarFieldEnum[]
+  }
+
+  /**
+   * User.friends
+   */
+  export type User$friendsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
+  }
+
+  /**
+   * User.friendOf
+   */
+  export type User$friendOfArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+    orderBy?: UserOrderByWithRelationInput | UserOrderByWithRelationInput[]
+    cursor?: UserWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UserScalarFieldEnum | UserScalarFieldEnum[]
   }
 
   /**
@@ -8375,6 +8449,8 @@ export namespace Prisma {
     conversations?: ConversationListRelationFilter
     NewFriendSendRequest?: NewFriendRequestListRelationFilter
     NewFriendReceiveRequest?: NewFriendRequestListRelationFilter
+    friends?: UserListRelationFilter
+    friendOf?: UserListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8389,6 +8465,8 @@ export namespace Prisma {
     conversations?: ConversationOrderByRelationAggregateInput
     NewFriendSendRequest?: NewFriendRequestOrderByRelationAggregateInput
     NewFriendReceiveRequest?: NewFriendRequestOrderByRelationAggregateInput
+    friends?: UserOrderByRelationAggregateInput
+    friendOf?: UserOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8406,6 +8484,8 @@ export namespace Prisma {
     conversations?: ConversationListRelationFilter
     NewFriendSendRequest?: NewFriendRequestListRelationFilter
     NewFriendReceiveRequest?: NewFriendRequestListRelationFilter
+    friends?: UserListRelationFilter
+    friendOf?: UserListRelationFilter
   }, "id" | "userId">
 
   export type UserOrderByWithAggregationInput = {
@@ -8743,6 +8823,8 @@ export namespace Prisma {
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8757,6 +8839,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUpdateInput = {
@@ -8771,6 +8855,8 @@ export namespace Prisma {
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8785,6 +8871,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9156,6 +9244,12 @@ export namespace Prisma {
     none?: NewFriendRequestWhereInput
   }
 
+  export type UserListRelationFilter = {
+    every?: UserWhereInput
+    some?: UserWhereInput
+    none?: UserWhereInput
+  }
+
   export type GroupMessageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -9173,6 +9267,10 @@ export namespace Prisma {
   }
 
   export type NewFriendRequestOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type UserOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9224,16 +9322,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
-  export type UserListRelationFilter = {
-    every?: UserWhereInput
-    some?: UserWhereInput
-    none?: UserWhereInput
-  }
-
-  export type UserOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type GroupCountOrderByAggregateInput = {
@@ -9472,6 +9560,18 @@ export namespace Prisma {
     connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
   }
 
+  export type UserCreateNestedManyWithoutFriendOfInput = {
+    create?: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput> | UserCreateWithoutFriendOfInput[] | UserUncheckedCreateWithoutFriendOfInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendOfInput | UserCreateOrConnectWithoutFriendOfInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserCreateNestedManyWithoutFriendsInput = {
+    create?: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput> | UserCreateWithoutFriendsInput[] | UserUncheckedCreateWithoutFriendsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendsInput | UserCreateOrConnectWithoutFriendsInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
   export type GroupMessageUncheckedCreateNestedManyWithoutSenderInput = {
     create?: XOR<GroupMessageCreateWithoutSenderInput, GroupMessageUncheckedCreateWithoutSenderInput> | GroupMessageCreateWithoutSenderInput[] | GroupMessageUncheckedCreateWithoutSenderInput[]
     connectOrCreate?: GroupMessageCreateOrConnectWithoutSenderInput | GroupMessageCreateOrConnectWithoutSenderInput[]
@@ -9517,6 +9617,18 @@ export namespace Prisma {
     connectOrCreate?: NewFriendRequestCreateOrConnectWithoutToInput | NewFriendRequestCreateOrConnectWithoutToInput[]
     createMany?: NewFriendRequestCreateManyToInputEnvelope
     connect?: NewFriendRequestWhereUniqueInput | NewFriendRequestWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutFriendOfInput = {
+    create?: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput> | UserCreateWithoutFriendOfInput[] | UserUncheckedCreateWithoutFriendOfInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendOfInput | UserCreateOrConnectWithoutFriendOfInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+  }
+
+  export type UserUncheckedCreateNestedManyWithoutFriendsInput = {
+    create?: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput> | UserCreateWithoutFriendsInput[] | UserUncheckedCreateWithoutFriendsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendsInput | UserCreateOrConnectWithoutFriendsInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9619,6 +9731,32 @@ export namespace Prisma {
     deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
   }
 
+  export type UserUpdateManyWithoutFriendOfNestedInput = {
+    create?: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput> | UserCreateWithoutFriendOfInput[] | UserUncheckedCreateWithoutFriendOfInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendOfInput | UserCreateOrConnectWithoutFriendOfInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFriendOfInput | UserUpsertWithWhereUniqueWithoutFriendOfInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFriendOfInput | UserUpdateWithWhereUniqueWithoutFriendOfInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFriendOfInput | UserUpdateManyWithWhereWithoutFriendOfInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUpdateManyWithoutFriendsNestedInput = {
+    create?: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput> | UserCreateWithoutFriendsInput[] | UserUncheckedCreateWithoutFriendsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendsInput | UserCreateOrConnectWithoutFriendsInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFriendsInput | UserUpsertWithWhereUniqueWithoutFriendsInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFriendsInput | UserUpdateWithWhereUniqueWithoutFriendsInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFriendsInput | UserUpdateManyWithWhereWithoutFriendsInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
   export type GroupMessageUncheckedUpdateManyWithoutSenderNestedInput = {
     create?: XOR<GroupMessageCreateWithoutSenderInput, GroupMessageUncheckedCreateWithoutSenderInput> | GroupMessageCreateWithoutSenderInput[] | GroupMessageUncheckedCreateWithoutSenderInput[]
     connectOrCreate?: GroupMessageCreateOrConnectWithoutSenderInput | GroupMessageCreateOrConnectWithoutSenderInput[]
@@ -9713,6 +9851,32 @@ export namespace Prisma {
     update?: NewFriendRequestUpdateWithWhereUniqueWithoutToInput | NewFriendRequestUpdateWithWhereUniqueWithoutToInput[]
     updateMany?: NewFriendRequestUpdateManyWithWhereWithoutToInput | NewFriendRequestUpdateManyWithWhereWithoutToInput[]
     deleteMany?: NewFriendRequestScalarWhereInput | NewFriendRequestScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutFriendOfNestedInput = {
+    create?: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput> | UserCreateWithoutFriendOfInput[] | UserUncheckedCreateWithoutFriendOfInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendOfInput | UserCreateOrConnectWithoutFriendOfInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFriendOfInput | UserUpsertWithWhereUniqueWithoutFriendOfInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFriendOfInput | UserUpdateWithWhereUniqueWithoutFriendOfInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFriendOfInput | UserUpdateManyWithWhereWithoutFriendOfInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
+  }
+
+  export type UserUncheckedUpdateManyWithoutFriendsNestedInput = {
+    create?: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput> | UserCreateWithoutFriendsInput[] | UserUncheckedCreateWithoutFriendsInput[]
+    connectOrCreate?: UserCreateOrConnectWithoutFriendsInput | UserCreateOrConnectWithoutFriendsInput[]
+    upsert?: UserUpsertWithWhereUniqueWithoutFriendsInput | UserUpsertWithWhereUniqueWithoutFriendsInput[]
+    set?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    disconnect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    delete?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    connect?: UserWhereUniqueInput | UserWhereUniqueInput[]
+    update?: UserUpdateWithWhereUniqueWithoutFriendsInput | UserUpdateWithWhereUniqueWithoutFriendsInput[]
+    updateMany?: UserUpdateManyWithWhereWithoutFriendsInput | UserUpdateManyWithWhereWithoutFriendsInput[]
+    deleteMany?: UserScalarWhereInput | UserScalarWhereInput[]
   }
 
   export type GroupMessageCreateNestedManyWithoutGroupInput = {
@@ -10262,6 +10426,76 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type UserCreateWithoutFriendOfInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
+    groups?: GroupCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+  }
+
+  export type UserUncheckedCreateWithoutFriendOfInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
+    groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+  }
+
+  export type UserCreateOrConnectWithoutFriendOfInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput>
+  }
+
+  export type UserCreateWithoutFriendsInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageCreateNestedManyWithoutSenderInput
+    groups?: GroupCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
+  }
+
+  export type UserUncheckedCreateWithoutFriendsInput = {
+    id?: string
+    userId: string
+    fullName: string
+    imageUrl: string
+    groupMessage?: GroupMessageUncheckedCreateNestedManyWithoutSenderInput
+    groups?: GroupUncheckedCreateNestedManyWithoutMembersInput
+    sentPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutSenderInput
+    receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
+  }
+
+  export type UserCreateOrConnectWithoutFriendsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput>
+  }
+
   export type GroupMessageUpsertWithWhereUniqueWithoutSenderInput = {
     where: GroupMessageWhereUniqueInput
     update: XOR<GroupMessageUpdateWithoutSenderInput, GroupMessageUncheckedUpdateWithoutSenderInput>
@@ -10431,6 +10665,48 @@ export namespace Prisma {
     data: XOR<NewFriendRequestUpdateManyMutationInput, NewFriendRequestUncheckedUpdateManyWithoutToInput>
   }
 
+  export type UserUpsertWithWhereUniqueWithoutFriendOfInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutFriendOfInput, UserUncheckedUpdateWithoutFriendOfInput>
+    create: XOR<UserCreateWithoutFriendOfInput, UserUncheckedCreateWithoutFriendOfInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutFriendOfInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutFriendOfInput, UserUncheckedUpdateWithoutFriendOfInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutFriendOfInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutFriendOfInput>
+  }
+
+  export type UserScalarWhereInput = {
+    AND?: UserScalarWhereInput | UserScalarWhereInput[]
+    OR?: UserScalarWhereInput[]
+    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
+    id?: StringFilter<"User"> | string
+    userId?: StringFilter<"User"> | string
+    fullName?: StringFilter<"User"> | string
+    imageUrl?: StringFilter<"User"> | string
+  }
+
+  export type UserUpsertWithWhereUniqueWithoutFriendsInput = {
+    where: UserWhereUniqueInput
+    update: XOR<UserUpdateWithoutFriendsInput, UserUncheckedUpdateWithoutFriendsInput>
+    create: XOR<UserCreateWithoutFriendsInput, UserUncheckedCreateWithoutFriendsInput>
+  }
+
+  export type UserUpdateWithWhereUniqueWithoutFriendsInput = {
+    where: UserWhereUniqueInput
+    data: XOR<UserUpdateWithoutFriendsInput, UserUncheckedUpdateWithoutFriendsInput>
+  }
+
+  export type UserUpdateManyWithWhereWithoutFriendsInput = {
+    where: UserScalarWhereInput
+    data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutFriendsInput>
+  }
+
   export type GroupMessageCreateWithoutGroupInput = {
     id?: string
     type: $Enums.MessageType
@@ -10470,6 +10746,8 @@ export namespace Prisma {
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutGroupsInput = {
@@ -10483,6 +10761,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutGroupsInput = {
@@ -10522,16 +10802,6 @@ export namespace Prisma {
     data: XOR<UserUpdateManyMutationInput, UserUncheckedUpdateManyWithoutGroupsInput>
   }
 
-  export type UserScalarWhereInput = {
-    AND?: UserScalarWhereInput | UserScalarWhereInput[]
-    OR?: UserScalarWhereInput[]
-    NOT?: UserScalarWhereInput | UserScalarWhereInput[]
-    id?: StringFilter<"User"> | string
-    userId?: StringFilter<"User"> | string
-    fullName?: StringFilter<"User"> | string
-    imageUrl?: StringFilter<"User"> | string
-  }
-
   export type UserCreateWithoutNewFriendSendRequestInput = {
     id?: string
     userId: string
@@ -10543,6 +10813,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutNewFriendSendRequestInput = {
@@ -10556,6 +10828,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutNewFriendSendRequestInput = {
@@ -10574,6 +10848,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutNewFriendReceiveRequestInput = {
@@ -10587,6 +10863,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutNewFriendReceiveRequestInput = {
@@ -10616,6 +10894,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewFriendSendRequestInput = {
@@ -10629,6 +10909,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUpsertWithoutNewFriendReceiveRequestInput = {
@@ -10653,6 +10935,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewFriendReceiveRequestInput = {
@@ -10666,6 +10950,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type GroupCreateWithoutGroupMessagesInput = {
@@ -10700,6 +10986,8 @@ export namespace Prisma {
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutGroupMessageInput = {
@@ -10713,6 +11001,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutGroupMessageInput = {
@@ -10769,6 +11059,8 @@ export namespace Prisma {
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupMessageInput = {
@@ -10782,6 +11074,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserCreateWithoutSentPrivateMessageInput = {
@@ -10795,6 +11089,8 @@ export namespace Prisma {
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutSentPrivateMessageInput = {
@@ -10808,6 +11104,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutSentPrivateMessageInput = {
@@ -10826,6 +11124,8 @@ export namespace Prisma {
     conversations?: ConversationCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutReceivedPrivateMessageInput = {
@@ -10839,6 +11139,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedCreateNestedManyWithoutMemebersInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutReceivedPrivateMessageInput = {
@@ -10887,6 +11189,8 @@ export namespace Prisma {
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentPrivateMessageInput = {
@@ -10900,6 +11204,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUpsertWithoutReceivedPrivateMessageInput = {
@@ -10924,6 +11230,8 @@ export namespace Prisma {
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedPrivateMessageInput = {
@@ -10937,6 +11245,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type ConversationUpsertWithoutMessagesInput = {
@@ -11003,6 +11313,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageCreateNestedManyWithoutReceiverInput
     NewFriendSendRequest?: NewFriendRequestCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestCreateNestedManyWithoutToInput
+    friends?: UserCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserCreateNestedManyWithoutFriendsInput
   }
 
   export type UserUncheckedCreateWithoutConversationsInput = {
@@ -11016,6 +11328,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedCreateNestedManyWithoutReceiverInput
     NewFriendSendRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutFromInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedCreateNestedManyWithoutToInput
+    friends?: UserUncheckedCreateNestedManyWithoutFriendOfInput
+    friendOf?: UserUncheckedCreateNestedManyWithoutFriendsInput
   }
 
   export type UserCreateOrConnectWithoutConversationsInput = {
@@ -11270,6 +11584,80 @@ export namespace Prisma {
     state?: EnumRequestStateFieldUpdateOperationsInput | $Enums.RequestState
   }
 
+  export type UserUpdateWithoutFriendOfInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
+    groups?: GroupUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFriendOfInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
+    groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutFriendOfInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UserUpdateWithoutFriendsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUpdateManyWithoutSenderNestedInput
+    groups?: GroupUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFriendsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    groupMessage?: GroupMessageUncheckedUpdateManyWithoutSenderNestedInput
+    groups?: GroupUncheckedUpdateManyWithoutMembersNestedInput
+    sentPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutSenderNestedInput
+    receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
+    NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
+    NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
+  }
+
+  export type UserUncheckedUpdateManyWithoutFriendsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    imageUrl?: StringFieldUpdateOperationsInput | string
+  }
+
   export type GroupMessageCreateManyGroupInput = {
     id?: string
     type: $Enums.MessageType
@@ -11317,6 +11705,8 @@ export namespace Prisma {
     conversations?: ConversationUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGroupsInput = {
@@ -11330,6 +11720,8 @@ export namespace Prisma {
     conversations?: ConversationUncheckedUpdateManyWithoutMemebersNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutGroupsInput = {
@@ -11386,6 +11778,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUpdateManyWithoutReceiverNestedInput
     NewFriendSendRequest?: NewFriendRequestUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUpdateManyWithoutToNestedInput
+    friends?: UserUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -11399,6 +11793,8 @@ export namespace Prisma {
     receivedPrivateMessage?: PrivateMessageUncheckedUpdateManyWithoutReceiverNestedInput
     NewFriendSendRequest?: NewFriendRequestUncheckedUpdateManyWithoutFromNestedInput
     NewFriendReceiveRequest?: NewFriendRequestUncheckedUpdateManyWithoutToNestedInput
+    friends?: UserUncheckedUpdateManyWithoutFriendOfNestedInput
+    friendOf?: UserUncheckedUpdateManyWithoutFriendsNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutConversationsInput = {

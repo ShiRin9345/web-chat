@@ -27,6 +27,8 @@ model User {
   conversations           Conversation[]
   NewFriendSendRequest    NewFriendRequest[] @relation("requestSendUser")
   NewFriendReceiveRequest NewFriendRequest[] @relation("requestReceiveUser")
+  friends                 User[]             @relation("UserFriends")
+  friendOf                User[]             @relation("UserFriends")
 }
 
 model Group {
