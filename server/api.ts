@@ -295,10 +295,11 @@ router.get('/friendRequest', requireAuth(), async (req, res) => {
   try {
     const requests = await db.newFriendRequest.findMany({
       where: {
-        toUserId: userId as string,
+        OR: [{ toUserId: userId as string }, { fromUserId: userId as string }],
       },
       include: {
         from: true,
+        to: true,
       },
     })
     res.json(requests)

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
-import { Loader } from 'lucide-react'
+import { ArrowRight, Loader, Plus, PlusCircle } from 'lucide-react'
 import type { Group, User } from 'generated/index'
 import {
   Accordion,
@@ -43,7 +43,7 @@ const ContactSidebarList = () => {
   const { data: friends } = useQuery(friendQueryOptions)
   return (
     <>
-      <Accordion type="single" collapsible>
+      <Accordion type="multiple">
         <AnimatedLink url="/">
           <button className="w-full cursor-pointer text-lg text-md  text-left rounded-sm font-semibold transition duration-200 px-2 hover:bg-zinc-100 h-10">
             Home
@@ -78,9 +78,13 @@ const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
       {friends?.map &&
         friends.map((friend) => (
           <React.Fragment key={friend.id}>
-            <div className="w-full p-2 h-20">
-              {friend.fullName}
-              <img src={friend.imageUrl} alt="avatar" />
+            <div className="w-full flex items-center gap-2 p-2 hover:bg-zinc-100 transition duration-200 rounded-md cursor-pointer h-12">
+              <img
+                src={friend.imageUrl}
+                className="size-8 rounded-full aspect-square"
+                alt="avatar"
+              />
+              <span> {friend.fullName}</span>
             </div>
             <Separator className="my-[0.45rem]" />
           </React.Fragment>
@@ -94,13 +98,17 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
 }) => {
   return (
     <div className="px-2">
-      {groups?.map &&
-        groups.map((group) => (
-          <React.Fragment key={group.id}>
-            <LabelGroup group={group} />
-            <Separator className="my-[0.45rem]" />
-          </React.Fragment>
-        ))}
+      <ul>
+        {groups?.map &&
+          groups.map((group, index) => (
+            <React.Fragment key={group.id}>
+              <LabelGroup group={group} />
+              {index < groups.length - 1 && (
+                <Separator className="my-[0.45rem]" />
+              )}
+            </React.Fragment>
+          ))}
+      </ul>
     </div>
   )
 }
@@ -108,11 +116,13 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
 function LabelGroup({ group }: { group: Group }) {
   const count = useCountSocket(group.id)
   return (
-    <AnimatedLink url="/group/$groupId" groupId={group.id}>
-      <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
-        {group.name} {count}
-      </button>
-    </AnimatedLink>
+    <li>
+      <AnimatedLink url="/group/$groupId" groupId={group.id}>
+        <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
+          {group.name} {count}
+        </button>
+      </AnimatedLink>
+    </li>
   )
 }
 
@@ -165,9 +175,12 @@ function AddUserSidebarList() {
     },
   })
   return (
-    <>
+    <div className="flex flex-col gap-2">
       <AnimatedLink url="/friendRequest">
-        <Button>See request</Button>
+        <div className="flex items-center justify-evenly px-2">
+          <p className="w-full text-left">See request</p>
+          <ArrowRight />
+        </div>
       </AnimatedLink>
 
       <form
@@ -192,35 +205,37 @@ function AddUserSidebarList() {
         {form.state.isSubmitting ? (
           <Loader className="animate-spin" />
         ) : (
-          <div>
+          <div className="mt-2">
             {users.length === 0 ? (
-              <span>null</span>
+              <p className="text-center">no existing user</p>
             ) : (
               users.map((user) => (
-                <div className="w-full h-20" key={user.id}>
-                  <img
-                    src={user.imageUrl}
-                    className="size-12 rounded-full aspect-square object-cover"
-                    alt="avatar"
-                  />
-                  <div className="flex gap-2">
+                <div
+                  className="w-full h-20 flex items-center justify-between"
+                  key={user.id}
+                >
+                  <div className="flex items-center gap-2">
+                    <img
+                      src={user.imageUrl}
+                      className="size-10 rounded-full aspect-square object-cover"
+                      alt="avatar"
+                    />
                     <span>{user.fullName}</span>
-                    <button
-                      onClick={async () => {
-                        await axios.post('/api/friendRequest', {
-                          toUserId: user.userId,
-                        })
-                      }}
-                    >
-                      add
-                    </button>
                   </div>
+                  <Plus
+                    className="size-5 cursor-pointer hover:bg-zinc-100 rounded-full transition duration-200"
+                    onClick={async () => {
+                      await axios.post('/api/friendRequest', {
+                        toUserId: user.userId,
+                      })
+                    }}
+                  />
                 </div>
               ))
             )}
           </div>
         )}
       </form>
-    </>
+    </div>
   )
 }

@@ -14,6 +14,7 @@ import ChatSideBar from '@/components/chatSideBar.tsx'
 import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 import PendingPage from '@/components/pendingPage.tsx'
+import { Toaster } from '@/components/ui/sonner.tsx'
 
 export const sidebarListQueryOptions = {
   queryKey: ['groups'],
@@ -54,6 +55,7 @@ function RouteComponent() {
   }
   return (
     <>
+      <Toaster />
       <UserSidebarProvider>
         <UserSidebar />
         <main className="flex-1">
