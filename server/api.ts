@@ -194,9 +194,48 @@ router.get('/oss-signature', requireAuth(), async (_req, res) => {
   res.json({ ...signature, host })
 })
 
-router.post('/newFriendRequest', requireAuth(), async (req, res) => {
+router.post('/friendRequest', requireAuth(), async (req, res) => {
   const { userId: fromUserId } = getAuth(req)
   const { toUserId } = req.body
+  try {
+    const oldRequest = await db.newFriendRequest.findFirst({
+      where: {
+        fromUserId: fromUserId as string,
+        toUserId: toUserId as string,
+      },
+    })
+    if (oldRequest) {
+      return res.json(oldRequest)
+    }
+    const request = await db.newFriendRequest.create({
+      data: {
+        fromUserId: fromUserId as string,
+        toUserId: toUserId as string,
+      },
+    })
+    res.json(request)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to newFriendRequest')
+  }
+})
+
+router.get('/friendRequest', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  try {
+    const requests = await db.newFriendRequest.findMany({
+      where: {
+        toUserId: userId as string,
+      },
+      include: {
+        from: true,
+      },
+    })
+    res.json(requests)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to friendRequest')
+  }
 })
 
 router.post('/chat', (req, res) => {
