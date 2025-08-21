@@ -4,7 +4,6 @@ import { ImagePlus } from 'lucide-react'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { messageType } from '@/components/chatInput.tsx'
 import { cn } from '@/lib/utils.ts'
-import { useEffect } from 'react'
 
 const DropFile = () => {
   const onDrop = async (uploadFiles: Array<File>) => {
@@ -39,7 +38,7 @@ const DropFile = () => {
       {...getRootProps()}
       className={cn(
         'absolute inset-0 transition-all z-50 duration-500 bg-transparent backdrop-blur-lg',
-        !isDragActive && 'invisible opacity-0',
+        !isDragActive && 'opacity-0',
       )}
     >
       <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[35rem] h-[13rem] bg-white flex flex-col items-center justify-center rounded-lg gap-2 py-4">
