@@ -1,17 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { ImagePlus, Loader } from 'lucide-react'
+import { Loader } from 'lucide-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import axios from 'axios'
-import { useDropzone } from 'react-dropzone'
 import type { UserResource } from '@clerk/types'
-import type { OssInfo } from '@/components/ImageDialog.tsx'
 import type { PrivateMessage } from 'generated/index'
 import useChatSocket from '@/hooks/useChatSocket.ts'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
-import { messageType } from '@/components/chatInput.tsx'
-import { cn } from '@/lib/utils.ts'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
 
@@ -70,104 +65,63 @@ const VirtualChatList: React.FC<Props> = ({
     messages.length,
     fetchNextPage,
   ])
-  const onDrop = async (uploadFiles: Array<File>) => {
-    const file = uploadFiles[0]
-    const response = await axios.get<OssInfo>('/api/oss-signature')
-    const ossInfo = response.data
-    const formdata = new FormData()
-
-    formdata.append('key', file.name)
-    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
-    formdata.append('policy', ossInfo.policy)
-    formdata.append('signature', ossInfo.Signature)
-    formdata.append('success_action_status', '200')
-    formdata.append('file', file)
-    await axios.post(ossInfo.host, formdata)
-    const targetUrl = ossInfo.host + '/' + file.name
-    await axios.post('/api/groupMessages', {
-      friendUserId,
-      content: targetUrl,
-      type: messageType.IMAGE,
-    })
-  }
-  const { getRootProps, isDragActive } = useDropzone({
-    accept: {
-      'image/*': ['.jpeg', '.png', '.gif'],
-    },
-    onDrop,
-    noDragEventsBubbling: true,
-  })
 
   return (
-    <>
+    <div
+      ref={parentRef}
+      id="topDiv"
+      className="p-2 flex-1 h-full overflow-auto bg-zinc-100 scrollbar-none relative "
+    >
       <div
-        {...getRootProps()}
-        className={cn(
-          'absolute inset-0 transition-all z-50 duration-500 bg-transparent backdrop-blur-lg',
-          !isDragActive && 'invisible opacity-0',
-        )}
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+        className={`h-[${rowVirtualizer.getTotalSize()}px] w-full relative`}
       >
-        <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[35rem] h-[13rem] bg-white flex flex-col items-center justify-center rounded-lg gap-2 py-4">
-          <ImagePlus />
-          <p className="font-semibold">Drag and drop your file here.</p>
-        </div>
-      </div>
-      <div
-        ref={parentRef}
-        id="topDiv"
-        className="p-2 flex-1 h-full overflow-auto bg-zinc-100 scrollbar-none relative "
-      >
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
-          }}
-          className={`h-[${rowVirtualizer.getTotalSize()}px] w-full relative`}
-        >
-          {status === 'pending' ? (
-            <PendingPage />
-          ) : (
-            rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const message = messages[virtualRow.index]
-              const isLoaderRow = virtualRow.index > messages.length - 1
-              return (
-                <div
-                  key={virtualRow.key}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                >
-                  {isLoaderRow ? (
-                    hasNextPage ? (
-                      <div className="w-full  flex items-center justify-center">
-                        <Loader className="animate-spin" />
-                      </div>
-                    ) : (
-                      'Nothing more to load...'
-                    )
+        {status === 'pending' ? (
+          <PendingPage />
+        ) : (
+          rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const message = messages[virtualRow.index]
+            const isLoaderRow = virtualRow.index > messages.length - 1
+            return (
+              <div
+                key={virtualRow.key}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                {isLoaderRow ? (
+                  hasNextPage ? (
+                    <div className="w-full  flex items-center justify-center">
+                      <Loader className="animate-spin" />
+                    </div>
                   ) : (
-                    <MessageItem
-                      index={virtualRow.index}
-                      ref={rowVirtualizer.measureElement}
-                      content={message?.content}
-                      type={message.type}
-                      user={user as UserResource}
-                    />
-                  )}
-                </div>
-              )
-            })
-          )}
-        </div>
-        <div id="bottom" />
+                    'Nothing more to load...'
+                  )
+                ) : (
+                  <MessageItem
+                    index={virtualRow.index}
+                    ref={rowVirtualizer.measureElement}
+                    content={message?.content}
+                    type={message.type}
+                    user={user as UserResource}
+                  />
+                )}
+              </div>
+            )
+          })
+        )}
       </div>
-    </>
+      <div id="bottom" />
+    </div>
   )
 }
 export default VirtualChatList
