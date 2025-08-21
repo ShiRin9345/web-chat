@@ -54,6 +54,7 @@ function RouteComponent() {
   if (!isLoaded || !isSignedIn) {
     return <PendingPage />
   }
+
   return (
     <>
       <Toaster />
