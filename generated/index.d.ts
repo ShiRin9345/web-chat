@@ -6103,6 +6103,7 @@ export namespace Prisma {
     senderId: string | null
     receiverId: string | null
     conversationId: string | null
+    type: $Enums.MessageType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6113,6 +6114,7 @@ export namespace Prisma {
     senderId: string | null
     receiverId: string | null
     conversationId: string | null
+    type: $Enums.MessageType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6123,6 +6125,7 @@ export namespace Prisma {
     senderId: number
     receiverId: number
     conversationId: number
+    type: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6135,6 +6138,7 @@ export namespace Prisma {
     senderId?: true
     receiverId?: true
     conversationId?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6145,6 +6149,7 @@ export namespace Prisma {
     senderId?: true
     receiverId?: true
     conversationId?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6155,6 +6160,7 @@ export namespace Prisma {
     senderId?: true
     receiverId?: true
     conversationId?: true
+    type?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6238,6 +6244,7 @@ export namespace Prisma {
     senderId: string
     receiverId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt: Date
     updatedAt: Date
     _count: PrivateMessageCountAggregateOutputType | null
@@ -6265,6 +6272,7 @@ export namespace Prisma {
     senderId?: boolean
     receiverId?: boolean
     conversationId?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sender?: boolean | UserDefaultArgs<ExtArgs>
@@ -6278,6 +6286,7 @@ export namespace Prisma {
     senderId?: boolean
     receiverId?: boolean
     conversationId?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sender?: boolean | UserDefaultArgs<ExtArgs>
@@ -6291,6 +6300,7 @@ export namespace Prisma {
     senderId?: boolean
     receiverId?: boolean
     conversationId?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sender?: boolean | UserDefaultArgs<ExtArgs>
@@ -6304,11 +6314,12 @@ export namespace Prisma {
     senderId?: boolean
     receiverId?: boolean
     conversationId?: boolean
+    type?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type PrivateMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "senderId" | "receiverId" | "conversationId" | "createdAt" | "updatedAt", ExtArgs["result"]["privateMessage"]>
+  export type PrivateMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "senderId" | "receiverId" | "conversationId" | "type" | "createdAt" | "updatedAt", ExtArgs["result"]["privateMessage"]>
   export type PrivateMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
@@ -6338,6 +6349,7 @@ export namespace Prisma {
       senderId: string
       receiverId: string
       conversationId: string
+      type: $Enums.MessageType
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["privateMessage"]>
@@ -6771,6 +6783,7 @@ export namespace Prisma {
     readonly senderId: FieldRef<"PrivateMessage", 'String'>
     readonly receiverId: FieldRef<"PrivateMessage", 'String'>
     readonly conversationId: FieldRef<"PrivateMessage", 'String'>
+    readonly type: FieldRef<"PrivateMessage", 'MessageType'>
     readonly createdAt: FieldRef<"PrivateMessage", 'DateTime'>
     readonly updatedAt: FieldRef<"PrivateMessage", 'DateTime'>
   }
@@ -8324,6 +8337,7 @@ export namespace Prisma {
     senderId: 'senderId',
     receiverId: 'receiverId',
     conversationId: 'conversationId',
+    type: 'type',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -8701,6 +8715,7 @@ export namespace Prisma {
     senderId?: StringFilter<"PrivateMessage"> | string
     receiverId?: StringFilter<"PrivateMessage"> | string
     conversationId?: StringFilter<"PrivateMessage"> | string
+    type?: EnumMessageTypeFilter<"PrivateMessage"> | $Enums.MessageType
     createdAt?: DateTimeFilter<"PrivateMessage"> | Date | string
     updatedAt?: DateTimeFilter<"PrivateMessage"> | Date | string
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -8714,6 +8729,7 @@ export namespace Prisma {
     senderId?: SortOrder
     receiverId?: SortOrder
     conversationId?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sender?: UserOrderByWithRelationInput
@@ -8730,6 +8746,7 @@ export namespace Prisma {
     senderId?: StringFilter<"PrivateMessage"> | string
     receiverId?: StringFilter<"PrivateMessage"> | string
     conversationId?: StringFilter<"PrivateMessage"> | string
+    type?: EnumMessageTypeFilter<"PrivateMessage"> | $Enums.MessageType
     createdAt?: DateTimeFilter<"PrivateMessage"> | Date | string
     updatedAt?: DateTimeFilter<"PrivateMessage"> | Date | string
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -8743,6 +8760,7 @@ export namespace Prisma {
     senderId?: SortOrder
     receiverId?: SortOrder
     conversationId?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: PrivateMessageCountOrderByAggregateInput
@@ -8759,6 +8777,7 @@ export namespace Prisma {
     senderId?: StringWithAggregatesFilter<"PrivateMessage"> | string
     receiverId?: StringWithAggregatesFilter<"PrivateMessage"> | string
     conversationId?: StringWithAggregatesFilter<"PrivateMessage"> | string
+    type?: EnumMessageTypeWithAggregatesFilter<"PrivateMessage"> | $Enums.MessageType
     createdAt?: DateTimeWithAggregatesFilter<"PrivateMessage"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"PrivateMessage"> | Date | string
   }
@@ -9085,6 +9104,7 @@ export namespace Prisma {
   export type PrivateMessageCreateInput = {
     id?: string
     content: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
     sender: UserCreateNestedOneWithoutSentPrivateMessageInput
@@ -9098,6 +9118,7 @@ export namespace Prisma {
     senderId: string
     receiverId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9105,6 +9126,7 @@ export namespace Prisma {
   export type PrivateMessageUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sender?: UserUpdateOneRequiredWithoutSentPrivateMessageNestedInput
@@ -9118,6 +9140,7 @@ export namespace Prisma {
     senderId?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9128,6 +9151,7 @@ export namespace Prisma {
     senderId: string
     receiverId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9135,6 +9159,7 @@ export namespace Prisma {
   export type PrivateMessageUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9145,6 +9170,7 @@ export namespace Prisma {
     senderId?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9471,6 +9497,7 @@ export namespace Prisma {
     senderId?: SortOrder
     receiverId?: SortOrder
     conversationId?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9481,6 +9508,7 @@ export namespace Prisma {
     senderId?: SortOrder
     receiverId?: SortOrder
     conversationId?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9491,6 +9519,7 @@ export namespace Prisma {
     senderId?: SortOrder
     receiverId?: SortOrder
     conversationId?: SortOrder
+    type?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10302,6 +10331,7 @@ export namespace Prisma {
   export type PrivateMessageCreateWithoutSenderInput = {
     id?: string
     content: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
     receiver: UserCreateNestedOneWithoutReceivedPrivateMessageInput
@@ -10313,6 +10343,7 @@ export namespace Prisma {
     content: string
     receiverId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10330,6 +10361,7 @@ export namespace Prisma {
   export type PrivateMessageCreateWithoutReceiverInput = {
     id?: string
     content: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
     sender: UserCreateNestedOneWithoutSentPrivateMessageInput
@@ -10341,6 +10373,7 @@ export namespace Prisma {
     content: string
     senderId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10576,6 +10609,7 @@ export namespace Prisma {
     senderId?: StringFilter<"PrivateMessage"> | string
     receiverId?: StringFilter<"PrivateMessage"> | string
     conversationId?: StringFilter<"PrivateMessage"> | string
+    type?: EnumMessageTypeFilter<"PrivateMessage"> | $Enums.MessageType
     createdAt?: DateTimeFilter<"PrivateMessage"> | Date | string
     updatedAt?: DateTimeFilter<"PrivateMessage"> | Date | string
   }
@@ -11277,6 +11311,7 @@ export namespace Prisma {
   export type PrivateMessageCreateWithoutConversationInput = {
     id?: string
     content: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
     sender: UserCreateNestedOneWithoutSentPrivateMessageInput
@@ -11288,6 +11323,7 @@ export namespace Prisma {
     content: string
     senderId: string
     receiverId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11383,6 +11419,7 @@ export namespace Prisma {
     content: string
     receiverId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11392,6 +11429,7 @@ export namespace Prisma {
     content: string
     senderId: string
     conversationId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11465,6 +11503,7 @@ export namespace Prisma {
   export type PrivateMessageUpdateWithoutSenderInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     receiver?: UserUpdateOneRequiredWithoutReceivedPrivateMessageNestedInput
@@ -11476,6 +11515,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11485,6 +11525,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11492,6 +11533,7 @@ export namespace Prisma {
   export type PrivateMessageUpdateWithoutReceiverInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sender?: UserUpdateOneRequiredWithoutSentPrivateMessageNestedInput
@@ -11503,6 +11545,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11512,6 +11555,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     conversationId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11736,6 +11780,7 @@ export namespace Prisma {
     content: string
     senderId: string
     receiverId: string
+    type: $Enums.MessageType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11743,6 +11788,7 @@ export namespace Prisma {
   export type PrivateMessageUpdateWithoutConversationInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sender?: UserUpdateOneRequiredWithoutSentPrivateMessageNestedInput
@@ -11754,6 +11800,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11763,6 +11810,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     senderId?: StringFieldUpdateOperationsInput | string
     receiverId?: StringFieldUpdateOperationsInput | string
+    type?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

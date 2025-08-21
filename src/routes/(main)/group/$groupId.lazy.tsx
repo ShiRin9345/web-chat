@@ -112,7 +112,6 @@ export default function Home() {
     onDrop,
     noDragEventsBubbling: true,
   })
-
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
       <ChatHeader />

@@ -1,32 +1,30 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { queryOptions, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import type {
-  Conversation,
-  GroupMessage,
-  PrivateMessage,
-  User,
-} from 'generated/index'
 import { useUser } from '@clerk/clerk-react'
-import useChatSocket from '@/hooks/useChatSocket.ts'
 import { useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import type { OssInfo } from '@/components/ImageDialog.tsx'
-import ChatInput, { MessageType } from '@/components/chatInput.tsx'
 import { useDropzone } from 'react-dropzone'
+import { ImagePlus, Loader } from 'lucide-react'
+import type { Conversation, PrivateMessage, User } from 'generated/index'
+import type { UserResource } from '@clerk/types'
+import type { OssInfo } from '@/components/ImageDialog.tsx'
+import useChatSocket from '@/hooks/useChatSocket.ts'
+import ChatInput, {
+  ConversationChatInput,
+  MessageType,
+} from '@/components/chatInput.tsx'
 import ChatHeader from '@/components/chatHeader.tsx'
 import { cn } from '@/lib/utils.ts'
-import { ImagePlus, Loader } from 'lucide-react'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
-import type { UserResource } from '@clerk/types'
 
 type ConversationWithMessagesWithUsers = Conversation & {
   messages: Array<PrivateMessage>
   members: Array<User>
 }
-type GroupMessageAndCursor = {
-  messages: Array<GroupMessage>
+type PrivateMessageAndCursor = {
+  messages: Array<PrivateMessage>
   nextCursor: string
 }
 
@@ -46,39 +44,43 @@ const conversationQueryOptions = (userId: string) =>
     },
   })
 
-export const Route = createFileRoute('/(main)/conversation/$userId')({
+export const Route = createFileRoute('/(main)/conversation/$friendUserId')({
   component: RouteComponent,
   loader: ({ context, params }) => {
-    context.queryClient.ensureQueryData(conversationQueryOptions(params.userId))
+    context.queryClient.ensureQueryData(
+      conversationQueryOptions(params.friendUserId),
+    )
   },
 })
 
 function RouteComponent() {
-  const { userId } = Route.useParams()
-  const { data: conversation } = useQuery(conversationQueryOptions(userId))
+  const { friendUserId } = Route.useParams()
+  const { data: conversation } = useQuery(
+    conversationQueryOptions(friendUserId),
+  )
   const { user } = useUser()
 
-  useChatSocket(userId, ['messages', userId])
+  useChatSocket(conversation?.id, ['messages', friendUserId])
 
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
     useInfiniteQuery({
-      queryKey: ['messages', userId],
+      queryKey: ['messages', friendUserId],
       queryFn: async ({ pageParam }) => {
-        const response = await axios.get<GroupMessageAndCursor>(
-          '/api/groupMessages',
+        const response = await axios.get<PrivateMessageAndCursor>(
+          '/api/privateMessages',
           {
             params: {
               cursor: pageParam,
               limit: 10,
               userId: user?.id as string,
-              otherUserId: userId,
+              otherUserId: friendUserId,
             },
           },
         )
         return response.data
       },
-      getNextPageParam: (lastPage: GroupMessageAndCursor) => {
+      getNextPageParam: (lastPage: PrivateMessageAndCursor) => {
         return lastPage.nextCursor
       },
       initialPageParam: undefined,
@@ -129,7 +131,7 @@ function RouteComponent() {
     await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
     await axios.post('/api/groupMessages', {
-      groupId,
+      friendUserId,
       content: targetUrl,
       type: MessageType.IMAGE,
     })
@@ -144,7 +146,6 @@ function RouteComponent() {
 
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
-      <ChatHeader />
       <div
         {...getRootProps()}
         className={cn(
@@ -213,7 +214,7 @@ function RouteComponent() {
         </div>
         <div id="bottom" />
       </div>
-      <ChatInput />
+      <ConversationChatInput conversationId={conversation?.id as string} />
     </div>
   )
 }

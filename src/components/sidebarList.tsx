@@ -135,7 +135,10 @@ const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
     }
   }, [socket])
   return (
-    <AnimatedLink url="/conversation/$userId" userId={friend.userId}>
+    <AnimatedLink
+      url="/conversation/$friendUserId"
+      friendUserId={friend.userId}
+    >
       <div className="w-full flex items-center gap-2 p-2 hover:bg-zinc-100 transition duration-200 rounded-md cursor-pointer h-12">
         <img
           src={friend.imageUrl}

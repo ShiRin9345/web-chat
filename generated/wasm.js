@@ -159,6 +159,7 @@ exports.Prisma.PrivateMessageScalarFieldEnum = {
   senderId: 'senderId',
   receiverId: 'receiverId',
   conversationId: 'conversationId',
+  type: 'type',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
