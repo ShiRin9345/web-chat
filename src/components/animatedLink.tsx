@@ -38,6 +38,7 @@ const AnimatedLink = ({
         to: url,
         params: {
           groupId,
+          userId,
         },
       })
     }, 125)
