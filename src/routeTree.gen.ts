@@ -19,7 +19,7 @@ import { Route as mainFriendRequestIndexRouteImport } from './routes/(main)/frie
 import { Route as authSignUpIndexRouteImport } from './routes/(auth)/signUp/index'
 import { Route as authSignInIndexRouteImport } from './routes/(auth)/signIn/index'
 import { Route as authInitialIndexRouteImport } from './routes/(auth)/initial/index'
-import { Route as mainVideoGroupIdRouteImport } from './routes/(main)/video/$groupId'
+import { Route as mainVideoRoomIdRouteImport } from './routes/(main)/video/$roomId'
 import { Route as mainConversationFriendUserIdRouteImport } from './routes/(main)/conversation/$friendUserId'
 
 const mainGroupGroupIdLazyRouteImport = createFileRoute(
@@ -74,9 +74,9 @@ const mainGroupGroupIdLazyRoute = mainGroupGroupIdLazyRouteImport
   .lazy(() =>
     import('./routes/(main)/group/$groupId.lazy').then((d) => d.Route),
   )
-const mainVideoGroupIdRoute = mainVideoGroupIdRouteImport.update({
-  id: '/video/$groupId',
-  path: '/video/$groupId',
+const mainVideoRoomIdRoute = mainVideoRoomIdRouteImport.update({
+  id: '/video/$roomId',
+  path: '/video/$roomId',
   getParentRoute: () => mainRouteRoute,
 } as any)
 const mainConversationFriendUserIdRoute =
@@ -91,7 +91,7 @@ export interface FileRoutesByFullPath {
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
-  '/video/$groupId': typeof mainVideoGroupIdRoute
+  '/video/$roomId': typeof mainVideoRoomIdRoute
   '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
@@ -103,7 +103,7 @@ export interface FileRoutesByTo {
   '/test1': typeof Test1Route
   '/': typeof mainIndexRoute
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
-  '/video/$groupId': typeof mainVideoGroupIdRoute
+  '/video/$roomId': typeof mainVideoRoomIdRoute
   '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
@@ -117,7 +117,7 @@ export interface FileRoutesById {
   '/test1': typeof Test1Route
   '/(main)/': typeof mainIndexRoute
   '/(main)/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
-  '/(main)/video/$groupId': typeof mainVideoGroupIdRoute
+  '/(main)/video/$roomId': typeof mainVideoRoomIdRoute
   '/(main)/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/(auth)/initial/': typeof authInitialIndexRoute
   '/(auth)/signIn/': typeof authSignInIndexRoute
@@ -131,7 +131,7 @@ export interface FileRouteTypes {
     | '/test'
     | '/test1'
     | '/conversation/$friendUserId'
-    | '/video/$groupId'
+    | '/video/$roomId'
     | '/group/$groupId'
     | '/initial'
     | '/signIn'
@@ -143,7 +143,7 @@ export interface FileRouteTypes {
     | '/test1'
     | '/'
     | '/conversation/$friendUserId'
-    | '/video/$groupId'
+    | '/video/$roomId'
     | '/group/$groupId'
     | '/initial'
     | '/signIn'
@@ -156,7 +156,7 @@ export interface FileRouteTypes {
     | '/test1'
     | '/(main)/'
     | '/(main)/conversation/$friendUserId'
-    | '/(main)/video/$groupId'
+    | '/(main)/video/$roomId'
     | '/(main)/group/$groupId'
     | '/(auth)/initial/'
     | '/(auth)/signIn/'
@@ -238,11 +238,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainGroupGroupIdLazyRouteImport
       parentRoute: typeof mainRouteRoute
     }
-    '/(main)/video/$groupId': {
-      id: '/(main)/video/$groupId'
-      path: '/video/$groupId'
-      fullPath: '/video/$groupId'
-      preLoaderRoute: typeof mainVideoGroupIdRouteImport
+    '/(main)/video/$roomId': {
+      id: '/(main)/video/$roomId'
+      path: '/video/$roomId'
+      fullPath: '/video/$roomId'
+      preLoaderRoute: typeof mainVideoRoomIdRouteImport
       parentRoute: typeof mainRouteRoute
     }
     '/(main)/conversation/$friendUserId': {
@@ -258,7 +258,7 @@ declare module '@tanstack/react-router' {
 interface mainRouteRouteChildren {
   mainIndexRoute: typeof mainIndexRoute
   mainConversationFriendUserIdRoute: typeof mainConversationFriendUserIdRoute
-  mainVideoGroupIdRoute: typeof mainVideoGroupIdRoute
+  mainVideoRoomIdRoute: typeof mainVideoRoomIdRoute
   mainGroupGroupIdLazyRoute: typeof mainGroupGroupIdLazyRoute
   mainFriendRequestIndexRoute: typeof mainFriendRequestIndexRoute
 }
@@ -266,7 +266,7 @@ interface mainRouteRouteChildren {
 const mainRouteRouteChildren: mainRouteRouteChildren = {
   mainIndexRoute: mainIndexRoute,
   mainConversationFriendUserIdRoute: mainConversationFriendUserIdRoute,
-  mainVideoGroupIdRoute: mainVideoGroupIdRoute,
+  mainVideoRoomIdRoute: mainVideoRoomIdRoute,
   mainGroupGroupIdLazyRoute: mainGroupGroupIdLazyRoute,
   mainFriendRequestIndexRoute: mainFriendRequestIndexRoute,
 }

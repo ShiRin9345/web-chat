@@ -6,12 +6,13 @@ const AnimatedLink = ({
   groupId,
   children,
   friendUserId,
-  id,
+  roomId,
   url,
 }: {
   groupId?: string
   children: ReactNode
   friendUserId?: string
+  roomId?: string
   url: string
 }) => {
   const location = useLocation()
@@ -23,6 +24,7 @@ const AnimatedLink = ({
       params: {
         groupId,
         friendUserId,
+        roomId,
       },
     })
     if (location.pathname === parsedUrl.pathname) {

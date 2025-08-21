@@ -11,7 +11,7 @@ import type { UserResource } from '@clerk/types'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import useChatSocket from '@/hooks/useChatSocket.ts'
 import ChatHeader from '@/components/chatHeader.tsx'
-import ChatInput, { MessageType } from '@/components/chatInput.tsx'
+import ChatInput, { messageType } from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
 import { cn } from '@/lib/utils.ts'
@@ -102,7 +102,7 @@ export default function Home() {
     await axios.post('/api/groupMessages', {
       groupId,
       content: targetUrl,
-      type: MessageType.IMAGE,
+      type: messageType.IMAGE,
     })
   }
   const { getRootProps, isDragActive } = useDropzone({
@@ -114,7 +114,7 @@ export default function Home() {
   })
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
-      <ChatHeader groupId={groupId} />
+      <ChatHeader roomId={groupId} />
       <div
         {...getRootProps()}
         className={cn(
@@ -183,7 +183,7 @@ export default function Home() {
         </div>
         <div id="bottom" />
       </div>
-      <ChatInput />
+      <ChatInput groupId={groupId} />
     </div>
   )
 }
