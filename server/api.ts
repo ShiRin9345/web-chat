@@ -7,7 +7,11 @@ import { RequestState } from '@prisma/client'
 import db from './db.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
-import type { GroupMessage, NewFriendRequest } from '@prisma/client'
+import type {
+  GroupMessage,
+  NewFriendRequest,
+  PrivateMessage,
+} from '@prisma/client'
 import type { UIMessage } from 'ai'
 
 dotenv.config()
@@ -55,6 +59,99 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
   } catch (e) {
     console.error(e)
     res.status(500).send('Something went wrong to fetch messages')
+  }
+})
+router.post('/privateMessage', requireAuth(), async (req, res) => {
+  const { content, friendUserId, type, conversationId } = req.body
+  const { userId } = getAuth(req)
+  console.log(userId)
+  console.log(friendUserId)
+  try {
+    const privateMessage = await db.privateMessage.create({
+      data: {
+        senderId: userId as string,
+        receiverId: friendUserId as string,
+        content: content,
+        type: type,
+        conversationId: conversationId,
+      },
+    })
+    const io = getIo()
+    io.to(conversationId).emit('new_message', privateMessage)
+    res.json(privateMessage)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch messages')
+  }
+})
+router.get('/privateMessages', requireAuth(), async (req, res) => {
+  try {
+    const { cursor, limit, userId, otherUserId } = req.query
+    let messages: Array<PrivateMessage> = []
+    if (cursor) {
+      messages = await db.privateMessage.findMany({
+        where: {
+          OR: [
+            {
+              senderId: userId as string,
+              receiverId: otherUserId as string,
+            },
+            {
+              senderId: otherUserId as string,
+              receiverId: userId as string,
+            },
+          ],
+        },
+        cursor: { id: cursor },
+        skip: 1,
+        take: Number(limit),
+        orderBy: { createdAt: 'asc' },
+      })
+    } else {
+      if (limit) {
+        messages = await db.privateMessage.findMany({
+          where: {
+            OR: [
+              {
+                senderId: userId as string,
+                receiverId: otherUserId as string,
+              },
+              {
+                senderId: otherUserId as string,
+                receiverId: userId as string,
+              },
+            ],
+          },
+          take: Number(limit),
+          orderBy: { createdAt: 'asc' },
+        })
+      } else {
+        messages = await db.privateMessage.findMany({
+          where: {
+            OR: [
+              {
+                senderId: userId as string,
+                receiverId: otherUserId as string,
+              },
+              {
+                senderId: otherUserId as string,
+                receiverId: userId as string,
+              },
+            ],
+          },
+          orderBy: { createdAt: 'asc' },
+        })
+        return res.json(messages)
+      }
+    }
+    let nextCursor = null
+    if (messages.length === Number(limit)) {
+      nextCursor = messages[Number(limit) - 1].id
+    }
+    res.json({ messages, nextCursor })
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch private messages')
   }
 })
 
