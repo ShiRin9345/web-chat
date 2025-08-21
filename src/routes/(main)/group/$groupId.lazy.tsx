@@ -6,25 +6,21 @@ import axios from 'axios'
 import { useUser } from '@clerk/clerk-react'
 import { ImagePlus, Loader } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
-import type { GroupMessage } from 'generated/index.d.ts'
 import type { UserResource } from '@clerk/types'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
+import type { GroupMessage } from 'generated/index'
 import useChatSocket from '@/hooks/useChatSocket.ts'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput, { messageType } from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
 import { cn } from '@/lib/utils.ts'
+import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
   pendingComponent: PendingPage,
 })
-
-type GroupMessageAndCursor = {
-  messages: Array<GroupMessage>
-  nextCursor: string
-}
 
 export default function Home() {
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
@@ -34,28 +30,11 @@ export default function Home() {
 
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
-    useInfiniteQuery({
-      queryKey: ['messages', groupId],
-      queryFn: async ({ pageParam }) => {
-        const response = await axios.get<GroupMessageAndCursor>(
-          '/api/groupMessages',
-          {
-            params: {
-              cursor: pageParam,
-              limit: 10,
-              groupId,
-            },
-          },
-        )
-        return response.data
-      },
-      getNextPageParam: (lastPage: GroupMessageAndCursor) => {
-        return lastPage.nextCursor
-      },
-      initialPageParam: undefined,
-    })
+    useInfiniteQuery(chatMessageInfiniteQueryOptions({ groupId }))
 
-  const messages = data ? data.pages.flatMap((page) => page.messages) : []
+  const messages = data
+    ? data.pages.flatMap((page) => page.messages as Array<GroupMessage>)
+    : []
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? messages.length + 1 : messages.length,
     getScrollElement: () => parentRef.current,

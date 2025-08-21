@@ -1,42 +1,36 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import React, { useEffect, useRef } from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { useEffect, useRef } from 'react'
-import { useVirtualizer } from '@tanstack/react-virtual'
-import { useDropzone } from 'react-dropzone'
 import { ImagePlus, Loader } from 'lucide-react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import axios from 'axios'
+import { useDropzone } from 'react-dropzone'
 import type { UserResource } from '@clerk/types'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import type { PrivateMessage } from 'generated/index'
 import useChatSocket from '@/hooks/useChatSocket.ts'
-import ChatInput, { messageType } from '@/components/chatInput.tsx'
+import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
+import { messageType } from '@/components/chatInput.tsx'
 import { cn } from '@/lib/utils.ts'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
-import ChatHeader from '@/components/chatHeader.tsx'
-import {
-  chatMessageInfiniteQueryOptions,
-  conversationQueryOptions,
-} from '@/features/reactQuery/options.ts'
 
-export const Route = createFileRoute('/(main)/conversation/$friendUserId')({
-  component: RouteComponent,
-  loader: ({ context, params }) => {
-    context.queryClient.ensureQueryData(
-      conversationQueryOptions(params.friendUserId),
-    )
-  },
-})
-
-function RouteComponent() {
-  const { friendUserId } = Route.useParams()
-  const { data: conversation } = useQuery(
-    conversationQueryOptions(friendUserId),
-  )
+interface Props {
+  groupId?: string
+  friendUserId?: string
+  conversationId?: string
+}
+const VirtualChatList: React.FC<Props> = ({
+  groupId,
+  friendUserId,
+  conversationId,
+}) => {
   const { user } = useUser()
 
-  useChatSocket(conversation?.id, ['messages', friendUserId])
+  useChatSocket((conversationId || groupId) as string, [
+    'messages',
+    groupId || friendUserId,
+  ])
 
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
@@ -105,8 +99,7 @@ function RouteComponent() {
   })
 
   return (
-    <div {...getRootProps()} className="flex relative flex-col h-screen">
-      <ChatHeader roomId={conversation?.id as string} />
+    <>
       <div
         {...getRootProps()}
         className={cn(
@@ -119,7 +112,6 @@ function RouteComponent() {
           <p className="font-semibold">Drag and drop your file here.</p>
         </div>
       </div>
-
       <div
         ref={parentRef}
         id="topDiv"
@@ -175,10 +167,7 @@ function RouteComponent() {
         </div>
         <div id="bottom" />
       </div>
-      <ChatInput
-        conversationId={conversation?.id as string}
-        friendUserId={friendUserId}
-      />
-    </div>
+    </>
   )
 }
+export default VirtualChatList

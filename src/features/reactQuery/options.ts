@@ -1,9 +1,17 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query'
+import {
+  infiniteQueryOptions,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/react-query'
 import axios from 'axios'
 import type { QueryClient } from '@tanstack/react-query'
 import type { GroupMessage, PrivateMessage } from 'generated/index'
-import type { ConversationWithMessagesWithUsers, MessageType } from '@/type'
-import { messageType } from '@/components/chatInput.tsx'
+import type {
+  ConversationWithMessagesWithUsers,
+  GroupMessageAndCursor,
+  MessageType,
+  PrivateMessageAndCursor,
+} from '@/type'
 
 interface ChatInputMutateOptionsProps {
   groupId?: string
@@ -134,4 +142,39 @@ export const conversationQueryOptions = (userId: string) =>
       )
       return response.data
     },
+  })
+
+interface chatMessageInfiniteQueryProps {
+  userId?: string
+  groupId?: string
+  friendUserId?: string
+}
+export const chatMessageInfiniteQueryOptions = ({
+  userId,
+  groupId,
+  friendUserId,
+}: chatMessageInfiniteQueryProps) =>
+  infiniteQueryOptions({
+    queryKey: ['messages', groupId || friendUserId],
+    queryFn: async ({ pageParam }) => {
+      const url = groupId ? '/api/groupMessages' : '/api/privateMessages'
+      const response = await axios.get<
+        PrivateMessageAndCursor | GroupMessageAndCursor
+      >(url, {
+        params: {
+          cursor: pageParam,
+          limit: 10,
+          userId: userId,
+          otherUserId: friendUserId,
+          groupId: groupId,
+        },
+      })
+      return response.data
+    },
+    getNextPageParam: (
+      lastPage: PrivateMessageAndCursor | GroupMessageAndCursor,
+    ) => {
+      return lastPage.nextCursor
+    },
+    initialPageParam: undefined,
   })

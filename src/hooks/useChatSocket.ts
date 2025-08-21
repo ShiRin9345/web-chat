@@ -5,10 +5,7 @@ import type { GroupMessage, PrivateMessage } from 'generated/index.d.ts'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import { scrollBottom } from '@/lib/scroll.ts'
 
-export default function useChatSocket(
-  groupId: string,
-  queryKey: Array<string>,
-) {
+export default function useChatSocket(groupId: string, queryKey: Array<any>) {
   const { socket } = useSocket()
   const queryClient = useQueryClient()
   const { user } = useUser()
