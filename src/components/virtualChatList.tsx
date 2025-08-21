@@ -30,7 +30,11 @@ const VirtualChatList: React.FC<Props> = ({
   const parentRef = useRef<HTMLDivElement>(null)
   const { data, isFetchingNextPage, hasNextPage, fetchNextPage, status } =
     useInfiniteQuery(
-      chatMessageInfiniteQueryOptions({ userId: user?.id, friendUserId }),
+      chatMessageInfiniteQueryOptions({
+        userId: user?.id,
+        friendUserId,
+        groupId,
+      }),
     )
 
   const messages = data
