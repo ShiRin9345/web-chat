@@ -37,7 +37,7 @@ const DropFile = () => {
     <div
       {...getRootProps()}
       className={cn(
-        'absolute inset-0 transition-all z-50 duration-500 bg-transparent backdrop-blur-lg',
+        'absolute inset-0 transition-all pointer-events-none z-50 duration-500 bg-transparent backdrop-blur-lg',
         !isDragActive && 'opacity-0',
       )}
     >

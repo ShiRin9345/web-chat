@@ -11,8 +11,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Test1RouteImport } from './routes/test1'
-import { Route as TestRouteImport } from './routes/test'
 import { Route as mainRouteRouteImport } from './routes/(main)/route'
 import { Route as mainIndexRouteImport } from './routes/(main)/index'
 import { Route as mainFriendRequestIndexRouteImport } from './routes/(main)/friendRequest/index'
@@ -26,16 +24,6 @@ const mainGroupGroupIdLazyRouteImport = createFileRoute(
   '/(main)/group/$groupId',
 )()
 
-const Test1Route = Test1RouteImport.update({
-  id: '/test1',
-  path: '/test1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestRoute = TestRouteImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const mainRouteRoute = mainRouteRouteImport.update({
   id: '/(main)',
   getParentRoute: () => rootRouteImport,
@@ -88,8 +76,6 @@ const mainConversationFriendUserIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
-  '/test': typeof TestRoute
-  '/test1': typeof Test1Route
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
   '/video/$roomId': typeof mainVideoRoomIdRoute
   '/group/$groupId': typeof mainGroupGroupIdLazyRoute
@@ -99,8 +85,6 @@ export interface FileRoutesByFullPath {
   '/friendRequest': typeof mainFriendRequestIndexRoute
 }
 export interface FileRoutesByTo {
-  '/test': typeof TestRoute
-  '/test1': typeof Test1Route
   '/': typeof mainIndexRoute
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
   '/video/$roomId': typeof mainVideoRoomIdRoute
@@ -113,8 +97,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(main)': typeof mainRouteRouteWithChildren
-  '/test': typeof TestRoute
-  '/test1': typeof Test1Route
   '/(main)/': typeof mainIndexRoute
   '/(main)/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
   '/(main)/video/$roomId': typeof mainVideoRoomIdRoute
@@ -128,8 +110,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/test'
-    | '/test1'
     | '/conversation/$friendUserId'
     | '/video/$roomId'
     | '/group/$groupId'
@@ -139,8 +119,6 @@ export interface FileRouteTypes {
     | '/friendRequest'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/test'
-    | '/test1'
     | '/'
     | '/conversation/$friendUserId'
     | '/video/$roomId'
@@ -152,8 +130,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(main)'
-    | '/test'
-    | '/test1'
     | '/(main)/'
     | '/(main)/conversation/$friendUserId'
     | '/(main)/video/$roomId'
@@ -166,8 +142,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   mainRouteRoute: typeof mainRouteRouteWithChildren
-  TestRoute: typeof TestRoute
-  Test1Route: typeof Test1Route
   authInitialIndexRoute: typeof authInitialIndexRoute
   authSignInIndexRoute: typeof authSignInIndexRoute
   authSignUpIndexRoute: typeof authSignUpIndexRoute
@@ -175,20 +149,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test1': {
-      id: '/test1'
-      path: '/test1'
-      fullPath: '/test1'
-      preLoaderRoute: typeof Test1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(main)': {
       id: '/(main)'
       path: '/'
@@ -277,8 +237,6 @@ const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   mainRouteRoute: mainRouteRouteWithChildren,
-  TestRoute: TestRoute,
-  Test1Route: Test1Route,
   authInitialIndexRoute: authInitialIndexRoute,
   authSignInIndexRoute: authSignInIndexRoute,
   authSignUpIndexRoute: authSignUpIndexRoute,
