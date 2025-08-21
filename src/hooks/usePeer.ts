@@ -82,11 +82,9 @@ const usePeer = (groupId: string) => {
     })
     peerRef.current.on('open', (id) => {
       socket.emit('join_video_room', groupId, id)
-      console.log('join')
     })
     peerRef.current.on('disconnected', () => {
       socket.emit('leave_video_room', groupId)
-      console.log('leave')
     })
 
     return () => {

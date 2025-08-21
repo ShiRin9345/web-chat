@@ -42,6 +42,7 @@ const AnimatedLink = ({
         params: {
           groupId,
           friendUserId,
+          roomId,
         },
       })
     }, 125)
