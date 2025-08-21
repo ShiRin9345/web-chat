@@ -15,6 +15,7 @@ import UserSidebarProvider from '@/providers/userSidebarProvider.tsx'
 import { useCheckAuth } from '@/hooks/useCheckAuth.ts'
 import PendingPage from '@/components/pendingPage.tsx'
 import { Toaster } from '@/components/ui/sonner.tsx'
+import { TooltipProvider } from '@/components/ui/tooltip.tsx'
 
 export const sidebarListQueryOptions = {
   queryKey: ['groups'],
@@ -57,7 +58,9 @@ function RouteComponent() {
     <>
       <Toaster />
       <UserSidebarProvider>
-        <UserSidebar />
+        <TooltipProvider>
+          <UserSidebar />
+        </TooltipProvider>
         <main className="flex-1">
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>

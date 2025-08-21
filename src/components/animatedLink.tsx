@@ -5,10 +5,12 @@ import type { ReactNode } from 'react'
 const AnimatedLink = ({
   groupId,
   children,
+  userId,
   url,
 }: {
   groupId?: string
   children: ReactNode
+  userId?: string
   url: string
 }) => {
   const location = useLocation()
@@ -19,6 +21,7 @@ const AnimatedLink = ({
       to: url,
       params: {
         groupId,
+        userId,
       },
     })
     if (location.pathname === parsedUrl.pathname) {

@@ -18,7 +18,9 @@ const GroupAddIcon = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <ToolTipIcon />
+        <ToolTipIcon content="create new group">
+          <Plus className="text-emerald-500" />
+        </ToolTipIcon>
       </DialogTrigger>
       <DialogContent>
         <NewGroupForm setOpen={setOpen} />
@@ -28,19 +30,23 @@ const GroupAddIcon = () => {
 }
 export default GroupAddIcon
 
-function ToolTipIcon() {
+export function ToolTipIcon({
+  content,
+  children,
+}: {
+  content: string
+  children: React.ReactNode
+}) {
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
-            <Plus className="text-emerald-500" />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="right" align="center">
-          <p>create new group</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className="bg-zinc-100 cursor-pointer hover:bg-zinc-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
+          {children}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="right" align="center">
+        <p>{content}</p>
+      </TooltipContent>
+    </Tooltip>
   )
 }
