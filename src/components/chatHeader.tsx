@@ -27,8 +27,15 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
   }, [])
   useEffect(() => {
     if (!socket) return
-    socket.on('user_join_video', (count: number) => setVideoCount(count))
-    socket.on('user_leave_video', (count: number) => setVideoCount(count))
+    const handleVideoCountChange = (count: number): void => {
+      setVideoCount(count)
+    }
+    socket.on('user_join_video', handleVideoCountChange)
+    socket.on('user_leave_video', handleVideoCountChange)
+    return () => {
+      socket.off('user_join_video', handleVideoCountChange)
+      socket.off('user_leave_video', handleVideoCountChange)
+    }
   }, [socket])
   return (
     <>
@@ -39,7 +46,7 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
           </AnimatedLink>
         </Button>
         <Button variant="ghost" size="icon">
-          <AnimatedLink url="/video/$groupId" roomId={roomId}>
+          <AnimatedLink url="/video/$roomId" roomId={roomId}>
             <Video />
           </AnimatedLink>
         </Button>
@@ -47,7 +54,7 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
           <p className="absolute animate-pulse bg-emerald-500/80 p-2 right-5  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">
             <Phone />
             <span className="text-secondary">
-              {videoCount} people is calling{' '}
+              {videoCount} people is calling
             </span>
           </p>
         )}

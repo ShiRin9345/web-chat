@@ -349,9 +349,9 @@ router.get('/conversation', requireAuth(), async (req, res) => {
 })
 
 router.get('/videoCount', requireAuth(), (req, res) => {
-  const { groupId } = req.query
-  const roomId = `video_${groupId}`
-  res.send(groupVideoUsers.get(roomId) || 0)
+  const { roomId } = req.query
+  const videoRoomId = `video_${roomId}`
+  res.send(groupVideoUsers.get(videoRoomId) || 0)
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {

@@ -27,10 +27,11 @@ const peer = ExpressPeerServer(peerServer, {
 
 peer.on('connection', (client) => {
   console.log('Peer connected: ', client.getId())
-  const groupId = client.getId().split('_')[1]
-  console.log(`Group ID: ${groupId}`)
+  const tokenArr = client.getId().split('_')
+  const groupId = tokenArr[tokenArr.length - 1]
   const roomId = `video_${groupId}`
   groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) + 1)
+  console.log(Array.from(groupVideoUsers.keys()))
   const io = getIo()
   io.to(groupId).emit('user_join_video', groupVideoUsers.get(roomId))
 })
