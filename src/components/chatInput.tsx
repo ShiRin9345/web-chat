@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useParams } from '@tanstack/react-router'
 import { CirclePlus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type { GroupMessage } from '@prisma/client'
+import type { GroupMessage } from 'generated/index'
 import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
@@ -32,8 +32,8 @@ const ChatInput = () => {
         throw new Error('Error creating chat')
       }
     },
-    onMutate: async (content: string) => {
-      await queryClient.cancelQueries({ queryKey: ['messages', groupId] })
+    onMutate: (content: string) => {
+      queryClient.cancelQueries({ queryKey: ['messages', groupId] })
       queryClient.setQueryData(['messages', groupId], (oldData: any) => {
         if (!oldData || !oldData.pages || oldData.pages.length === 0) {
           return {
