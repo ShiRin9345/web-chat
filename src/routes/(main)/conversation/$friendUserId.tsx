@@ -146,6 +146,7 @@ function RouteComponent() {
 
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
+      <ChatHeader groupId={conversation?.id} />
       <div
         {...getRootProps()}
         className={cn(

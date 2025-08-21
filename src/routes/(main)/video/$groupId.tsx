@@ -1,12 +1,12 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import usePeer from '@/hooks/usePeer.ts'
 
-export const Route = createFileRoute('/(main)/group/video/$groupId')({
+export const Route = createFileRoute('/(main)/video/$groupId')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { groupId } = useParams({ from: '/(main)/group/video/$groupId' })
+  const { groupId } = useParams({ from: '/(main)/video/$groupId' })
   const { videoContainerRef, myVideoRef } = usePeer(groupId)
   return (
     <div
