@@ -140,6 +140,20 @@ router.post('/handleRequest', requireAuth(), async (req, res) => {
           },
         },
       })
+      await db.conversation.create({
+        data: {
+          members: {
+            connect: [
+              {
+                userId: request.fromUserId,
+              },
+              {
+                userId: request.toUserId,
+              },
+            ],
+          },
+        },
+      })
     }
     return res.json(newRequest)
   } catch (e) {
@@ -204,6 +218,37 @@ router.post('/group', requireAuth(), async (req, res) => {
   })
   groupUsers.set(group.id, 1)
   res.json(group)
+})
+
+router.get('/conversation', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { otherUserId } = req.query
+  try {
+    const conversations = await db.conversation.findFirst({
+      where: {
+        AND: [
+          {
+            members: {
+              some: { userId: userId as string },
+            },
+          },
+          {
+            members: {
+              some: { userId: otherUserId as string },
+            },
+          },
+        ],
+      },
+      include: {
+        members: true,
+        messages: true,
+      },
+    })
+    res.json(conversations)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch conversation')
+  }
 })
 
 router.get('/videoCount', requireAuth(), (req, res) => {

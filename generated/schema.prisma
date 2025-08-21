@@ -100,7 +100,7 @@ model PrivateMessage {
 model Conversation {
   id        String           @id @default(uuid())
   messages  PrivateMessage[]
-  memebers  User[]
+  members   User[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }
