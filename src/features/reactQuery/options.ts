@@ -1,0 +1,137 @@
+import { mutationOptions, queryOptions } from '@tanstack/react-query'
+import axios from 'axios'
+import type { QueryClient } from '@tanstack/react-query'
+import type { GroupMessage, PrivateMessage } from 'generated/index'
+import type { ConversationWithMessagesWithUsers, MessageType } from '@/type'
+import { messageType } from '@/components/chatInput.tsx'
+
+interface ChatInputMutateOptionsProps {
+  groupId?: string
+  conversationId?: string
+  friendUserId?: string
+
+  queryClient: QueryClient
+}
+
+export const chatInputMutateOptions = ({
+  groupId,
+  conversationId,
+  friendUserId,
+  queryClient,
+}: ChatInputMutateOptionsProps) =>
+  mutationOptions({
+    mutationKey: ['messages', groupId || friendUserId],
+    mutationFn: async ({
+      content,
+      type,
+    }: {
+      content: string
+      type: MessageType
+    }) => {
+      try {
+        if (groupId) {
+          const response = await axios.post<GroupMessage>(
+            '/api/groupMessages',
+            {
+              content,
+              groupId,
+              type,
+            },
+          )
+          return response.data
+        } else {
+          const response = await axios.post<PrivateMessage>(
+            '/api/privateMessage',
+            {
+              content,
+              friendUserId,
+              type,
+              conversationId,
+            },
+          )
+          return response.data
+        }
+      } catch (e) {
+        throw new Error('Error creating chat')
+      }
+    },
+    onMutate: ({ content, type }: { content: string; type: MessageType }) => {
+      queryClient.cancelQueries({
+        queryKey: ['messages', groupId || friendUserId],
+      })
+      queryClient.setQueryData(
+        ['messages', groupId || friendUserId],
+        (oldData: any) => {
+          if (!oldData || !oldData.pages || oldData.pages.length === 0) {
+            return {
+              pages: [
+                {
+                  messages: [
+                    {
+                      id: `optimistic-${Date.now()}`,
+                      content,
+                      type,
+                    },
+                  ],
+                },
+              ],
+            }
+          }
+          const newData = [...oldData.pages]
+          const lastIndex = newData.length - 1
+          newData[lastIndex] = {
+            ...newData[lastIndex],
+            messages: newData[lastIndex].messages.concat({
+              id: `optimistic-${Date.now()}`,
+              content,
+              type,
+            }),
+          }
+          return {
+            ...oldData,
+            pages: newData,
+          }
+        },
+      )
+    },
+    onSuccess: (newMessage: GroupMessage | PrivateMessage) => {
+      queryClient.setQueryData(
+        ['messages', groupId || friendUserId],
+        (oldData: any) => {
+          if (!oldData || !oldData.pages || oldData.pages.length === 0) {
+            return oldData
+          }
+          const newData = [...oldData.pages]
+          const lastIndex = newData.length - 1
+          const newMessages = newData[lastIndex].messages.map(
+            (message: GroupMessage | PrivateMessage) => {
+              if (message.id.startsWith('optimistic-')) {
+                return newMessage
+              }
+              return message
+            },
+          )
+          newData[lastIndex] = {
+            ...newData[lastIndex],
+            messages: newMessages,
+          }
+        },
+      )
+    },
+  })
+
+export const conversationQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ['conversation', userId],
+    queryFn: async () => {
+      const response = await axios.get<ConversationWithMessagesWithUsers>(
+        '/api/conversation',
+        {
+          params: {
+            otherUserId: userId,
+          },
+        },
+      )
+      return response.data
+    },
+  })

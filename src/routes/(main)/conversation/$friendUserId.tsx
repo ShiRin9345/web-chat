@@ -1,48 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { queryOptions, useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useUser } from '@clerk/clerk-react'
 import { useEffect, useRef } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useDropzone } from 'react-dropzone'
 import { ImagePlus, Loader } from 'lucide-react'
-import type { Conversation, PrivateMessage, User } from 'generated/index'
 import type { UserResource } from '@clerk/types'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
+import type { PrivateMessageAndCursor } from '@/type'
 import useChatSocket from '@/hooks/useChatSocket.ts'
-import ChatInput, {
-  ConversationChatInput,
-  MessageType,
-} from '@/components/chatInput.tsx'
-import ChatHeader from '@/components/chatHeader.tsx'
+import ChatInput, { messageType } from '@/components/chatInput.tsx'
 import { cn } from '@/lib/utils.ts'
 import PendingPage from '@/components/pendingPage.tsx'
 import { MessageItem } from '@/components/messageItem.tsx'
-
-type ConversationWithMessagesWithUsers = Conversation & {
-  messages: Array<PrivateMessage>
-  members: Array<User>
-}
-type PrivateMessageAndCursor = {
-  messages: Array<PrivateMessage>
-  nextCursor: string
-}
-
-const conversationQueryOptions = (userId: string) =>
-  queryOptions({
-    queryKey: ['conversation', userId],
-    queryFn: async () => {
-      const response = await axios.get<ConversationWithMessagesWithUsers>(
-        '/api/conversation',
-        {
-          params: {
-            otherUserId: userId,
-          },
-        },
-      )
-      return response.data
-    },
-  })
+import ChatHeader from '@/components/chatHeader.tsx'
+import { conversationQueryOptions } from '@/features/reactQuery/options.ts'
 
 export const Route = createFileRoute('/(main)/conversation/$friendUserId')({
   component: RouteComponent,
@@ -133,7 +106,7 @@ function RouteComponent() {
     await axios.post('/api/groupMessages', {
       friendUserId,
       content: targetUrl,
-      type: MessageType.IMAGE,
+      type: messageType.IMAGE,
     })
   }
   const { getRootProps, isDragActive } = useDropzone({
@@ -146,7 +119,7 @@ function RouteComponent() {
 
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
-      <ChatHeader groupId={conversation?.id} />
+      <ChatHeader roomId={conversation?.id as string} />
       <div
         {...getRootProps()}
         className={cn(
@@ -215,7 +188,10 @@ function RouteComponent() {
         </div>
         <div id="bottom" />
       </div>
-      <ConversationChatInput conversationId={conversation?.id as string} />
+      <ChatInput
+        conversationId={conversation?.id as string}
+        friendUserId={friendUserId}
+      />
     </div>
   )
 }

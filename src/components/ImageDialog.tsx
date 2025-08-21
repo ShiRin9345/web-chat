@@ -1,7 +1,8 @@
 import { Image } from 'lucide-react'
 import { useState } from 'react'
 import axios from 'axios'
-import { useParams } from '@tanstack/react-router'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import type { MessageType } from '@/type'
 import {
   Dialog,
   DialogContent,
@@ -13,8 +14,9 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/shadcn-io/dropzone'
-import { MessageType } from '@/components/chatInput.tsx'
-import type { Conversation } from 'generated/index'
+import { messageType } from '@/components/chatInput.tsx'
+import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
+import { scrollBottom } from '@/lib/scroll.ts'
 
 export type OssInfo = {
   OSSAccessKeyId: string
@@ -24,18 +26,25 @@ export type OssInfo = {
 }
 
 const ImageDialog = ({
-  type,
   conversationId,
   friendUserId,
   groupId,
 }: {
-  type: 'conversation' | 'group'
   conversationId?: string
   friendUserId?: string
   groupId?: string
 }) => {
   const [files, setFiles] = useState<Array<File> | undefined>()
   const [open, setOpen] = useState<boolean>(false)
+  const queryClient = useQueryClient()
+  const { mutateAsync } = useMutation(
+    chatInputMutateOptions({
+      queryClient,
+      conversationId,
+      friendUserId,
+      groupId,
+    }),
+  )
   const handleDrop = async (uploadFiles: Array<File>) => {
     setFiles(uploadFiles)
     const file = uploadFiles[0]
@@ -52,21 +61,10 @@ const ImageDialog = ({
     await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
     const extension = file.name.split('.').pop()
-    if (type === 'group') {
-      await axios.post('/api/groupMessages', {
-        groupId,
-        content: targetUrl,
-        type: extension === 'pdf' ? MessageType.PDF : MessageType.IMAGE,
-      })
-    }
-    if (type === 'conversation') {
-      await axios.post('/api/privateMessage', {
-        content: targetUrl,
-        conversationId: conversationId,
-        type: extension === 'pdf' ? MessageType.PDF : MessageType.IMAGE,
-        friendUserId: friendUserId,
-      })
-    }
+    const type = extension === 'pdf' ? messageType.PDF : messageType.IMAGE
+
+    mutateAsync({ content: targetUrl, type: type as MessageType })
+    scrollBottom()
     setFiles(undefined)
   }
   return (

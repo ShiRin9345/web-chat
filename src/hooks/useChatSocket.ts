@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import type { GroupMessage, PrivateMessage } from 'generated/index.d.ts'
 import { useSocket } from '@/providers/socketProvider.tsx'
+import { scrollBottom } from '@/lib/scroll.ts'
 
 export default function useChatSocket(
   groupId: string,
@@ -40,16 +41,7 @@ export default function useChatSocket(
           pages: newData,
         }
       })
-      const topDiv = document.getElementById('topDiv') as HTMLDivElement
-      const distanceOffBottom =
-        topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight
-      if (distanceOffBottom <= 100) {
-        setTimeout(() => {
-          document.getElementById('bottom')?.scrollIntoView({
-            behavior: 'smooth',
-          })
-        }, 100)
-      }
+      scrollBottom()
     }
     socket.on('new_message', addCallback)
     socket.emit('join_group', groupId)

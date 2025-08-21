@@ -1,20 +1,23 @@
-import { useParams } from '@tanstack/react-router'
 import { House, Phone, Video } from 'lucide-react'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
 
-const ChatHeader = ({ groupId }: { groupId: string }) => {
+interface Props {
+  roomId: string
+}
+
+const ChatHeader: React.FC<Props> = ({ roomId }) => {
   const { socket } = useSocket()
   const [videoCount, setVideoCount] = useState<number>(0)
   useEffect(() => {
     const getVideoCount = async () => {
       const response = await axios.get<number>('/api/videoCount', {
         params: {
-          groupId,
+          roomId,
         },
       })
       const count = response.data
@@ -36,7 +39,7 @@ const ChatHeader = ({ groupId }: { groupId: string }) => {
           </AnimatedLink>
         </Button>
         <Button variant="ghost" size="icon">
-          <AnimatedLink url="/video/$groupId" groupId={groupId}>
+          <AnimatedLink url="/video/$groupId" roomId={roomId}>
             <Video />
           </AnimatedLink>
         </Button>
