@@ -150,7 +150,7 @@ const ChatInput = () => {
                   field.handleChange(`${field.state.value} ${emoji} `)
                 }
               />
-              <ImageDialog />
+              <ImageDialog type="group" groupId={groupId} />
               <CirclePlus className="chatInput_icon" />
             </div>
           </div>
@@ -300,6 +300,11 @@ export const ConversationChatInput = ({
                 onChange={(emoji: string) =>
                   field.handleChange(`${field.state.value} ${emoji} `)
                 }
+              />
+              <ImageDialog
+                type="conversation"
+                conversationId={conversationId}
+                friendUserId={friendUserId}
               />
               <CirclePlus className="chatInput_icon" />
             </div>
