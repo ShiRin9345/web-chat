@@ -19,8 +19,8 @@ import { Route as mainFriendRequestIndexRouteImport } from './routes/(main)/frie
 import { Route as authSignUpIndexRouteImport } from './routes/(auth)/signUp/index'
 import { Route as authSignInIndexRouteImport } from './routes/(auth)/signIn/index'
 import { Route as authInitialIndexRouteImport } from './routes/(auth)/initial/index'
+import { Route as mainVideoGroupIdRouteImport } from './routes/(main)/video/$groupId'
 import { Route as mainConversationFriendUserIdRouteImport } from './routes/(main)/conversation/$friendUserId'
-import { Route as mainGroupVideoGroupIdRouteImport } from './routes/(main)/group/video/$groupId'
 
 const mainGroupGroupIdLazyRouteImport = createFileRoute(
   '/(main)/group/$groupId',
@@ -74,41 +74,41 @@ const mainGroupGroupIdLazyRoute = mainGroupGroupIdLazyRouteImport
   .lazy(() =>
     import('./routes/(main)/group/$groupId.lazy').then((d) => d.Route),
   )
+const mainVideoGroupIdRoute = mainVideoGroupIdRouteImport.update({
+  id: '/video/$groupId',
+  path: '/video/$groupId',
+  getParentRoute: () => mainRouteRoute,
+} as any)
 const mainConversationFriendUserIdRoute =
   mainConversationFriendUserIdRouteImport.update({
     id: '/conversation/$friendUserId',
     path: '/conversation/$friendUserId',
     getParentRoute: () => mainRouteRoute,
   } as any)
-const mainGroupVideoGroupIdRoute = mainGroupVideoGroupIdRouteImport.update({
-  id: '/group/video/$groupId',
-  path: '/group/video/$groupId',
-  getParentRoute: () => mainRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
+  '/video/$groupId': typeof mainVideoGroupIdRoute
   '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
   '/friendRequest': typeof mainFriendRequestIndexRoute
-  '/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRoutesByTo {
   '/test': typeof TestRoute
   '/test1': typeof Test1Route
   '/': typeof mainIndexRoute
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
+  '/video/$groupId': typeof mainVideoGroupIdRoute
   '/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/initial': typeof authInitialIndexRoute
   '/signIn': typeof authSignInIndexRoute
   '/signUp': typeof authSignUpIndexRoute
   '/friendRequest': typeof mainFriendRequestIndexRoute
-  '/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,12 +117,12 @@ export interface FileRoutesById {
   '/test1': typeof Test1Route
   '/(main)/': typeof mainIndexRoute
   '/(main)/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
+  '/(main)/video/$groupId': typeof mainVideoGroupIdRoute
   '/(main)/group/$groupId': typeof mainGroupGroupIdLazyRoute
   '/(auth)/initial/': typeof authInitialIndexRoute
   '/(auth)/signIn/': typeof authSignInIndexRoute
   '/(auth)/signUp/': typeof authSignUpIndexRoute
   '/(main)/friendRequest/': typeof mainFriendRequestIndexRoute
-  '/(main)/group/video/$groupId': typeof mainGroupVideoGroupIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -131,24 +131,24 @@ export interface FileRouteTypes {
     | '/test'
     | '/test1'
     | '/conversation/$friendUserId'
+    | '/video/$groupId'
     | '/group/$groupId'
     | '/initial'
     | '/signIn'
     | '/signUp'
     | '/friendRequest'
-    | '/group/video/$groupId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/test'
     | '/test1'
     | '/'
     | '/conversation/$friendUserId'
+    | '/video/$groupId'
     | '/group/$groupId'
     | '/initial'
     | '/signIn'
     | '/signUp'
     | '/friendRequest'
-    | '/group/video/$groupId'
   id:
     | '__root__'
     | '/(main)'
@@ -156,12 +156,12 @@ export interface FileRouteTypes {
     | '/test1'
     | '/(main)/'
     | '/(main)/conversation/$friendUserId'
+    | '/(main)/video/$groupId'
     | '/(main)/group/$groupId'
     | '/(auth)/initial/'
     | '/(auth)/signIn/'
     | '/(auth)/signUp/'
     | '/(main)/friendRequest/'
-    | '/(main)/group/video/$groupId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -238,18 +238,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainGroupGroupIdLazyRouteImport
       parentRoute: typeof mainRouteRoute
     }
+    '/(main)/video/$groupId': {
+      id: '/(main)/video/$groupId'
+      path: '/video/$groupId'
+      fullPath: '/video/$groupId'
+      preLoaderRoute: typeof mainVideoGroupIdRouteImport
+      parentRoute: typeof mainRouteRoute
+    }
     '/(main)/conversation/$friendUserId': {
       id: '/(main)/conversation/$friendUserId'
       path: '/conversation/$friendUserId'
       fullPath: '/conversation/$friendUserId'
       preLoaderRoute: typeof mainConversationFriendUserIdRouteImport
-      parentRoute: typeof mainRouteRoute
-    }
-    '/(main)/group/video/$groupId': {
-      id: '/(main)/group/video/$groupId'
-      path: '/group/video/$groupId'
-      fullPath: '/group/video/$groupId'
-      preLoaderRoute: typeof mainGroupVideoGroupIdRouteImport
       parentRoute: typeof mainRouteRoute
     }
   }
@@ -258,17 +258,17 @@ declare module '@tanstack/react-router' {
 interface mainRouteRouteChildren {
   mainIndexRoute: typeof mainIndexRoute
   mainConversationFriendUserIdRoute: typeof mainConversationFriendUserIdRoute
+  mainVideoGroupIdRoute: typeof mainVideoGroupIdRoute
   mainGroupGroupIdLazyRoute: typeof mainGroupGroupIdLazyRoute
   mainFriendRequestIndexRoute: typeof mainFriendRequestIndexRoute
-  mainGroupVideoGroupIdRoute: typeof mainGroupVideoGroupIdRoute
 }
 
 const mainRouteRouteChildren: mainRouteRouteChildren = {
   mainIndexRoute: mainIndexRoute,
   mainConversationFriendUserIdRoute: mainConversationFriendUserIdRoute,
+  mainVideoGroupIdRoute: mainVideoGroupIdRoute,
   mainGroupGroupIdLazyRoute: mainGroupGroupIdLazyRoute,
   mainFriendRequestIndexRoute: mainFriendRequestIndexRoute,
-  mainGroupVideoGroupIdRoute: mainGroupVideoGroupIdRoute,
 }
 
 const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(

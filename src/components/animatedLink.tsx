@@ -6,6 +6,7 @@ const AnimatedLink = ({
   groupId,
   children,
   friendUserId,
+  id,
   url,
 }: {
   groupId?: string

@@ -114,7 +114,7 @@ export default function Home() {
   })
   return (
     <div {...getRootProps()} className="flex relative flex-col h-screen">
-      <ChatHeader />
+      <ChatHeader groupId={groupId} />
       <div
         {...getRootProps()}
         className={cn(

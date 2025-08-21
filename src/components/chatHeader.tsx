@@ -7,8 +7,7 @@ import { Button } from '@/components/ui/button.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
 
-const ChatHeader = () => {
-  const { groupId } = useParams({ from: '/(main)/group/$groupId' })
+const ChatHeader = ({ groupId }: { groupId: string }) => {
   const { socket } = useSocket()
   const [videoCount, setVideoCount] = useState<number>(0)
   useEffect(() => {
@@ -37,7 +36,7 @@ const ChatHeader = () => {
           </AnimatedLink>
         </Button>
         <Button variant="ghost" size="icon">
-          <AnimatedLink url="/group/video/$groupId" groupId={groupId}>
+          <AnimatedLink url="/video/$groupId" groupId={groupId}>
             <Video />
           </AnimatedLink>
         </Button>
