@@ -82,9 +82,9 @@ function RouteComponent() {
       },
     })
     gsap.to('#bgImage', {
-      x: '1%',
-      y: '2%',
-      ease: 'power2.inOut',
+      x: () => 'random(10, 50)',
+      y: () => 'random(10, 50)',
+      ease: 'sine.inOut',
       yoyo: true,
       repeat: -1,
       duration: 4,
