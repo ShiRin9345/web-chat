@@ -287,7 +287,7 @@ function AddUserSidebarList() {
           children={(field) => (
             <Input
               onChange={(e) => field.handleChange(e.target.value)}
-              placeholder="Type user's name"
+              placeholder="Type user's name or code"
               name="name"
             />
           )}

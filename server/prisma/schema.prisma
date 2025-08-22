@@ -20,6 +20,7 @@ model User {
   groupMessage            GroupMessage[]
   fullName                String
   imageUrl                String
+  code                    String             @unique
   groups                  Group[]
   sentPrivateMessage      PrivateMessage[]   @relation("sender")
   receivedPrivateMessage  PrivateMessage[]   @relation("receiver")
