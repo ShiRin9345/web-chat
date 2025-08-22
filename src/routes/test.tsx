@@ -75,10 +75,10 @@ export const RegionSelector: React.FC<Props> = ({
   handelChange,
 }) => {
   const [provinceCode, setProvinceCode] = useState<string>(
-    initialRegion.split(' ')[0],
+    initialRegion?.split(' ')[0],
   )
-  const [cityCode, setCityCode] = useState<string>(initialRegion.split(' ')[1])
-  const [areaCode, setAreaCode] = useState<string>(initialRegion.split(' ')[2])
+  const [cityCode, setCityCode] = useState<string>(initialRegion?.split(' ')[1])
+  const [areaCode, setAreaCode] = useState<string>(initialRegion?.split(' ')[2])
   useEffect(() => {
     handelChange(provinceCode + ' ' + cityCode + ' ' + areaCode)
   }, [areaCode])

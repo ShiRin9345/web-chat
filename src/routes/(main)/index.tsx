@@ -61,7 +61,8 @@ function RouteComponent() {
     return null
   }
   return (
-    <div className="w-full h-dvh flex items-center flex-col justify-center">
+    <div className="w-full h-dvh flex relative items-center flex-col justify-center">
+      <input type="file" />
       <div className="flex flex-col">
         <form
           onSubmit={async (e) => {

@@ -2,12 +2,14 @@ import { useForm } from '@tanstack/react-form'
 import { CirclePlus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
+import type { User } from 'generated/index'
 import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import ImageDialog from '@/components/ImageDialog.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
+import { useUser } from '@clerk/clerk-react'
 
 export const messageType = {
   IMAGE: 'IMAGE',
@@ -27,11 +29,18 @@ const ChatInput: React.FC<Props> = ({
   conversationId,
 }) => {
   const queryClient = useQueryClient()
+  const { user } = useUser()
+  const sender = {
+    imageUrl: user?.imageUrl,
+    fullName: user?.fullName,
+    userId: user?.id,
+  }
   const { mutateAsync } = useMutation(
     chatInputMutateOptions({
       groupId,
       friendUserId,
       conversationId,
+      sender: sender as User,
       queryClient,
     }),
   )

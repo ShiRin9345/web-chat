@@ -2,7 +2,9 @@ import React, { createContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUser } from '@clerk/clerk-react'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
+import type { User } from 'generated/index'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
 
@@ -20,12 +22,20 @@ const DropProvider: React.FC<DropProviderProps> = ({
   friendUserId,
 }) => {
   const queryClient = useQueryClient()
+  const { user } = useUser()
+  const sender = {
+    imageUrl: user?.imageUrl,
+    fullName: user?.fullName,
+    userId: user?.id,
+  }
+
   const { mutateAsync } = useMutation(
     chatInputMutateOptions({
       queryClient,
       conversationId,
       friendUserId,
       groupId,
+      sender: sender as User,
     }),
   )
 
