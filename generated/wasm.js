@@ -127,7 +127,8 @@ exports.Prisma.ProfileScalarFieldEnum = {
   phone: 'phone',
   email: 'email',
   signature: 'signature',
-  userId: 'userId'
+  userId: 'userId',
+  bgImageUrl: 'bgImageUrl'
 };
 
 exports.Prisma.UserScalarFieldEnum = {

@@ -1659,6 +1659,7 @@ export namespace Prisma {
     email: string | null
     signature: string | null
     userId: string | null
+    bgImageUrl: string | null
   }
 
   export type ProfileMaxAggregateOutputType = {
@@ -1669,6 +1670,7 @@ export namespace Prisma {
     email: string | null
     signature: string | null
     userId: string | null
+    bgImageUrl: string | null
   }
 
   export type ProfileCountAggregateOutputType = {
@@ -1679,6 +1681,7 @@ export namespace Prisma {
     email: number
     signature: number
     userId: number
+    bgImageUrl: number
     _all: number
   }
 
@@ -1691,6 +1694,7 @@ export namespace Prisma {
     email?: true
     signature?: true
     userId?: true
+    bgImageUrl?: true
   }
 
   export type ProfileMaxAggregateInputType = {
@@ -1701,6 +1705,7 @@ export namespace Prisma {
     email?: true
     signature?: true
     userId?: true
+    bgImageUrl?: true
   }
 
   export type ProfileCountAggregateInputType = {
@@ -1711,6 +1716,7 @@ export namespace Prisma {
     email?: true
     signature?: true
     userId?: true
+    bgImageUrl?: true
     _all?: true
   }
 
@@ -1794,6 +1800,7 @@ export namespace Prisma {
     email: string
     signature: string
     userId: string
+    bgImageUrl: string
     _count: ProfileCountAggregateOutputType | null
     _min: ProfileMinAggregateOutputType | null
     _max: ProfileMaxAggregateOutputType | null
@@ -1821,6 +1828,7 @@ export namespace Prisma {
     email?: boolean
     signature?: boolean
     userId?: boolean
+    bgImageUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
@@ -1832,6 +1840,7 @@ export namespace Prisma {
     email?: boolean
     signature?: boolean
     userId?: boolean
+    bgImageUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
@@ -1843,6 +1852,7 @@ export namespace Prisma {
     email?: boolean
     signature?: boolean
     userId?: boolean
+    bgImageUrl?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
@@ -1854,9 +1864,10 @@ export namespace Prisma {
     email?: boolean
     signature?: boolean
     userId?: boolean
+    bgImageUrl?: boolean
   }
 
-  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "position" | "sex" | "phone" | "email" | "signature" | "userId", ExtArgs["result"]["profile"]>
+  export type ProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "position" | "sex" | "phone" | "email" | "signature" | "userId" | "bgImageUrl", ExtArgs["result"]["profile"]>
   export type ProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -1880,6 +1891,7 @@ export namespace Prisma {
       email: string
       signature: string
       userId: string
+      bgImageUrl: string
     }, ExtArgs["result"]["profile"]>
     composites: {}
   }
@@ -2311,6 +2323,7 @@ export namespace Prisma {
     readonly email: FieldRef<"Profile", 'String'>
     readonly signature: FieldRef<"Profile", 'String'>
     readonly userId: FieldRef<"Profile", 'String'>
+    readonly bgImageUrl: FieldRef<"Profile", 'String'>
   }
     
 
@@ -9504,7 +9517,8 @@ export namespace Prisma {
     phone: 'phone',
     email: 'email',
     signature: 'signature',
-    userId: 'userId'
+    userId: 'userId',
+    bgImageUrl: 'bgImageUrl'
   };
 
   export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
@@ -9684,6 +9698,7 @@ export namespace Prisma {
     email?: StringFilter<"Profile"> | string
     signature?: StringFilter<"Profile"> | string
     userId?: StringFilter<"Profile"> | string
+    bgImageUrl?: StringFilter<"Profile"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
@@ -9695,6 +9710,7 @@ export namespace Prisma {
     email?: SortOrder
     signature?: SortOrder
     userId?: SortOrder
+    bgImageUrl?: SortOrder
     user?: UserOrderByWithRelationInput
   }
 
@@ -9709,6 +9725,7 @@ export namespace Prisma {
     phone?: StringFilter<"Profile"> | string
     email?: StringFilter<"Profile"> | string
     signature?: StringFilter<"Profile"> | string
+    bgImageUrl?: StringFilter<"Profile"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
@@ -9720,6 +9737,7 @@ export namespace Prisma {
     email?: SortOrder
     signature?: SortOrder
     userId?: SortOrder
+    bgImageUrl?: SortOrder
     _count?: ProfileCountOrderByAggregateInput
     _max?: ProfileMaxOrderByAggregateInput
     _min?: ProfileMinOrderByAggregateInput
@@ -9736,6 +9754,7 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"Profile"> | string
     signature?: StringWithAggregatesFilter<"Profile"> | string
     userId?: StringWithAggregatesFilter<"Profile"> | string
+    bgImageUrl?: StringWithAggregatesFilter<"Profile"> | string
   }
 
   export type UserWhereInput = {
@@ -10135,6 +10154,7 @@ export namespace Prisma {
     phone?: string
     email?: string
     signature?: string
+    bgImageUrl?: string
     user: UserCreateNestedOneWithoutProfileInput
   }
 
@@ -10146,6 +10166,7 @@ export namespace Prisma {
     email?: string
     signature?: string
     userId: string
+    bgImageUrl?: string
   }
 
   export type ProfileUpdateInput = {
@@ -10155,6 +10176,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
     user?: UserUpdateOneRequiredWithoutProfileNestedInput
   }
 
@@ -10166,6 +10188,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProfileCreateManyInput = {
@@ -10176,6 +10199,7 @@ export namespace Prisma {
     email?: string
     signature?: string
     userId: string
+    bgImageUrl?: string
   }
 
   export type ProfileUpdateManyMutationInput = {
@@ -10185,6 +10209,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProfileUncheckedUpdateManyInput = {
@@ -10195,6 +10220,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type UserCreateInput = {
@@ -10631,6 +10657,7 @@ export namespace Prisma {
     email?: SortOrder
     signature?: SortOrder
     userId?: SortOrder
+    bgImageUrl?: SortOrder
   }
 
   export type ProfileMaxOrderByAggregateInput = {
@@ -10641,6 +10668,7 @@ export namespace Prisma {
     email?: SortOrder
     signature?: SortOrder
     userId?: SortOrder
+    bgImageUrl?: SortOrder
   }
 
   export type ProfileMinOrderByAggregateInput = {
@@ -10651,6 +10679,7 @@ export namespace Prisma {
     email?: SortOrder
     signature?: SortOrder
     userId?: SortOrder
+    bgImageUrl?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -12090,6 +12119,7 @@ export namespace Prisma {
     phone?: string
     email?: string
     signature?: string
+    bgImageUrl?: string
   }
 
   export type ProfileUncheckedCreateWithoutUserInput = {
@@ -12099,6 +12129,7 @@ export namespace Prisma {
     phone?: string
     email?: string
     signature?: string
+    bgImageUrl?: string
   }
 
   export type ProfileCreateOrConnectWithoutUserInput = {
@@ -12337,6 +12368,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type ProfileUncheckedUpdateWithoutUserInput = {
@@ -12346,6 +12378,7 @@ export namespace Prisma {
     phone?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     signature?: StringFieldUpdateOperationsInput | string
+    bgImageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupMessageCreateWithoutGroupInput = {
