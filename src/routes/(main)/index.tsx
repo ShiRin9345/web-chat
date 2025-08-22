@@ -79,6 +79,15 @@ function RouteComponent() {
         end: 'bottom top',
       },
     })
+    gsap.to('#bgImage', {
+      x: '1%',
+      y: '2%',
+      ease: 'power2.inOut',
+      yoyo: true,
+      repeat: -1,
+      duration: 4,
+    })
+
     return () => {
       tween.kill()
       if (tween.scrollTrigger) {
@@ -87,17 +96,20 @@ function RouteComponent() {
     }
   }, [])
   return (
-    <div className="overflow-y-auto h-dvh" id="scroll-container">
-      <div className="w-full  h-[calc(100vh+7.5rem)] flex relative items-center  justify-center ">
+    <div
+      className="overflow-y-auto overflow-x-hidden scrollbar-none h-dvh"
+      id="scroll-container"
+    >
+      <div className="w-full h-[calc(100vh+7.5rem)] flex relative items-center  justify-center ">
         {data?.bgImageUrl && (
           <img
-            className="absolute w-full h-full -z-10 inset-0  pointer-events-none object-cover"
+            className="absolute w-full h-full -z-10 inset-0  pointer-events-none scale-110 object-cover"
             alt="bgImage"
             src={data.bgImageUrl}
             id="bgImage"
           />
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col ">
           <form
             onSubmit={async (e) => {
               e.preventDefault()
@@ -105,10 +117,10 @@ function RouteComponent() {
               console.log(form.state.values)
             }}
           >
-            <div className="grid grid-cols-[150px_1fr] bg-white p-2 rounded-md gap-5">
+            <div className="grid grid-cols-[100px_1fr] bg-white px-4 py-2 rounded-md gap-5">
               <div
                 id="card"
-                className="bg-white rounded-lg w-[27rem] justify-self-center h-[9rem] col-span-2 border-1 flex relative -top-8 p-2"
+                className="bg-white rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 flex relative -top-8 p-2"
               >
                 <img
                   src={user?.imageUrl}
