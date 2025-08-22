@@ -1,43 +1,14 @@
-import axios from 'axios'
-import { useDropzone } from 'react-dropzone'
 import { ImagePlus } from 'lucide-react'
-import type { OssInfo } from '@/components/ImageDialog.tsx'
-import { messageType } from '@/components/chatInput.tsx'
+import { useContext } from 'react'
+import { DropContext } from '@/providers/dropProvider.tsx'
 import { cn } from '@/lib/utils.ts'
 
 const DropFile = () => {
-  const onDrop = async (uploadFiles: Array<File>) => {
-    const file = uploadFiles[0]
-    const response = await axios.get<OssInfo>('/api/oss-signature')
-    const ossInfo = response.data
-    const formdata = new FormData()
-
-    formdata.append('key', file.name)
-    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
-    formdata.append('policy', ossInfo.policy)
-    formdata.append('signature', ossInfo.Signature)
-    formdata.append('success_action_status', '200')
-    formdata.append('file', file)
-    await axios.post(ossInfo.host, formdata)
-    const targetUrl = ossInfo.host + '/' + file.name
-    await axios.post('/api/groupMessages', {
-      content: targetUrl,
-      type: messageType.IMAGE,
-    })
-  }
-  const { getRootProps, isDragActive } = useDropzone({
-    accept: {
-      'image/*': ['.jpeg', '.png', '.gif'],
-    },
-    onDrop,
-    noDragEventsBubbling: true,
-  })
-
+  const isDragActive = useContext(DropContext)
   return (
     <div
-      {...getRootProps()}
       className={cn(
-        'absolute inset-0 transition-all   duration-500 bg-transparent backdrop-blur-lg z-50 pointer-events-none overflow-hidden',
+        'absolute inset-0 transition-all opacity-100 duration-500 bg-transparent backdrop-blur-lg z-50 pointer-events-none overflow-hidden',
         !isDragActive && 'opacity-0',
       )}
     >
