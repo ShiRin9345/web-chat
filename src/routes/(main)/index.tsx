@@ -62,9 +62,18 @@ function RouteComponent() {
     return null
   }
   return (
-    <div className="w-full h-dvh flex relative items-center flex-col justify-center">
-      <WallpaperUpload />
-      <div className="flex flex-col">
+    <div className="w-full h-dvh flex relative items-center  justify-center ">
+      {data?.bgImageUrl && (
+        <img
+          className="absolute w-full h-1/3 -z-10 inset-0  pointer-events-none object-cover"
+          alt="bgImage"
+          src={data.bgImageUrl}
+        />
+      )}
+      <div className="flex flex-col relative">
+        <div className="left-0 top-0">
+          <WallpaperUpload />
+        </div>
         <form
           onSubmit={async (e) => {
             e.preventDefault()
