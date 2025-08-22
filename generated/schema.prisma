@@ -15,6 +15,19 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
+model Profile {
+  id        String @id @default(uuid())
+  position  String @default("")
+  sex       String @default("")
+  phone     String @default("")
+  email     String @default("")
+  signature String @default("")
+  userId    String @unique
+  user      User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model User {
   id                      String             @id @default(uuid())
   userId                  String             @unique
@@ -30,6 +43,7 @@ model User {
   NewFriendReceiveRequest NewFriendRequest[] @relation("requestReceiveUser")
   friends                 User[]             @relation("UserFriends")
   friendOf                User[]             @relation("UserFriends")
+  profile                 Profile?
 }
 
 model Group {
@@ -58,21 +72,24 @@ enum RequestState {
 model NewFriendRequest {
   id         String       @id @default(uuid())
   fromUserId String
-  from       User         @relation("requestSendUser", fields: [fromUserId], references: [userId])
+  from       User         @relation("requestSendUser", fields: [fromUserId], references: [userId], onDelete: Cascade)
   toUserId   String
-  to         User         @relation("requestReceiveUser", fields: [toUserId], references: [userId])
+  to         User         @relation("requestReceiveUser", fields: [toUserId], references: [userId], onDelete: Cascade)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   state      RequestState
+
+  @@index([fromUserId])
+  @@index([toUserId])
 }
 
 model GroupMessage {
   id        String      @id @default(uuid())
   type      MessageType
   content   String
-  Group     Group       @relation(fields: [groupId], references: [id])
+  Group     Group       @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId   String
-  sender    User        @relation(fields: [senderId], references: [userId])
+  sender    User        @relation(fields: [senderId], references: [userId], onDelete: Cascade)
   senderId  String
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -85,10 +102,10 @@ model PrivateMessage {
   id             String       @id @default(uuid())
   content        String
   senderId       String
-  sender         User         @relation("sender", fields: [senderId], references: [userId])
+  sender         User         @relation("sender", fields: [senderId], references: [userId], onDelete: Cascade)
   receiverId     String
-  receiver       User         @relation("receiver", fields: [receiverId], references: [userId])
-  Conversation   Conversation @relation(fields: [conversationId], references: [id])
+  receiver       User         @relation("receiver", fields: [receiverId], references: [userId], onDelete: Cascade)
+  Conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId String
   type           MessageType
   createdAt      DateTime     @default(now())

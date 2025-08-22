@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios'
 import type { QueryClient } from '@tanstack/react-query'
-import type { GroupMessage, PrivateMessage } from 'generated/index'
+import type { GroupMessage, PrivateMessage, Profile } from 'generated/index'
 import type {
   ConversationWithMessagesWithUsers,
   GroupMessageAndCursor,
@@ -178,3 +178,11 @@ export const chatMessageInfiniteQueryOptions = ({
     },
     initialPageParam: undefined,
   })
+
+export const userProfileQueryOptions = queryOptions({
+  queryKey: ['userProfile'],
+  queryFn: async () => {
+    const response = await axios.get<Profile>('/api/profile')
+    return response.data
+  },
+})

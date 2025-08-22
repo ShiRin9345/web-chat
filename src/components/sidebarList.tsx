@@ -193,7 +193,6 @@ function LabelGroup({ group }: { group: Group }) {
     : []
   const lastMessage =
     messages.length > 0 ? messages[messages.length - 1].content : ''
-  console.log(isImage(lastMessage))
   const count = useCountSocket(group.id)
   return (
     <li>
