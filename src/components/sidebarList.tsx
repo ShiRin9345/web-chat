@@ -191,7 +191,8 @@ function LabelGroup({ group }: { group: Group }) {
   const messages = data
     ? data.pages.flatMap((page) => page.messages as Array<GroupMessage>)
     : []
-  const lastMessage = messages[messages.length - 1].content
+  const lastMessage =
+    messages.length > 0 ? messages[messages.length - 1].content : ''
   console.log(isImage(lastMessage))
   const count = useCountSocket(group.id)
   return (
