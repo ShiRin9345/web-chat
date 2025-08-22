@@ -5,6 +5,14 @@ import type {
   User,
 } from 'generated/index'
 
+export type GroupMessageWithSender = GroupMessage & {
+  sender: User
+}
+
+export type PrivateMessageWithSender = PrivateMessage & {
+  sender: User
+}
+
 export type MessageType = 'TEXT' | 'IMAGE' | 'PDF'
 export type ConversationWithMessagesWithUsers = Conversation & {
   messages: Array<PrivateMessage>

@@ -4,7 +4,7 @@ import { Loader } from 'lucide-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { UserResource } from '@clerk/types'
-import type { PrivateMessage } from 'generated/index'
+import type { PrivateMessageWithSender } from '@/type'
 import useChatSocket from '@/hooks/useChatSocket.ts'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 import PendingPage from '@/components/pendingPage.tsx'
@@ -38,7 +38,9 @@ const VirtualChatList: React.FC<Props> = ({
     )
 
   const messages = data
-    ? data.pages.flatMap((page) => page.messages as Array<PrivateMessage>)
+    ? data.pages.flatMap(
+        (page) => page.messages as Array<PrivateMessageWithSender>,
+      )
     : []
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? messages.length + 1 : messages.length,
@@ -117,6 +119,7 @@ const VirtualChatList: React.FC<Props> = ({
                     content={message?.content}
                     type={message.type}
                     user={user as UserResource}
+                    sender={message.sender}
                   />
                 )}
               </div>
