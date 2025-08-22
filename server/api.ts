@@ -3,16 +3,13 @@ import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
-import { RequestState } from '@prisma/client'
+import { type GroupMessage, RequestState } from '@prisma/client'
 import db from './db.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
-import type {
-  GroupMessage,
-  NewFriendRequest,
-  PrivateMessage,
-} from '@prisma/client'
+import type { NewFriendRequest, PrivateMessage } from '@prisma/client'
 import type { UIMessage } from 'ai'
+import type { GroupMessageWithSender } from '@/type'
 
 dotenv.config()
 
@@ -31,6 +28,9 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
         skip: 1,
         take: Number(limit),
         orderBy: { createdAt: 'asc' },
+        include: {
+          sender: true,
+        },
       })
     } else {
       if (limit) {
@@ -40,6 +40,9 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
           },
           take: Number(limit),
           orderBy: { createdAt: 'asc' },
+          include: {
+            sender: true,
+          },
         })
       } else {
         messages = await db.groupMessage.findMany({
@@ -47,6 +50,9 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
             groupId: groupId as string,
           },
           orderBy: { createdAt: 'asc' },
+          include: {
+            sender: true,
+          },
         })
         return res.json(messages)
       }
@@ -106,6 +112,9 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
         skip: 1,
         take: Number(limit),
         orderBy: { createdAt: 'asc' },
+        include: {
+          sender: true,
+        },
       })
     } else {
       if (limit) {
@@ -124,6 +133,9 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
           },
           take: Number(limit),
           orderBy: { createdAt: 'asc' },
+          include: {
+            sender: true,
+          },
         })
       } else {
         messages = await db.privateMessage.findMany({
@@ -140,6 +152,9 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
             ],
           },
           orderBy: { createdAt: 'asc' },
+          include: {
+            sender: true,
+          },
         })
         return res.json(messages)
       }

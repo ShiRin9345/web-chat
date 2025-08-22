@@ -168,6 +168,18 @@ code {
     bottom: anchor(bottom);
     right: calc(anchor(right) - 3rem);
   }
+  .image_download_link_right {
+    position: absolute;
+    position-anchor: --image;
+    bottom: anchor(bottom);
+    right: calc(anchor(left) + 2rem);
+  }
+  .pdf_download_link_right {
+    position: absolute;
+    position-anchor: --pdf;
+    bottom: anchor(bottom);
+    right: calc(anchor(left) + 2rem);
+  }
 
 }
 

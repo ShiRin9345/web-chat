@@ -1,33 +1,50 @@
 import { forwardRef } from 'react'
 import { ArrowDownToLine } from 'lucide-react'
 import { Document, Page } from 'react-pdf'
-import type { MessageType } from '../../type'
+import type { MessageType, User } from 'generated/index'
 import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import PendingPage from '@/components/pendingPage.tsx'
+import { cn } from '@/lib/utils.ts'
 
 interface MessageItemProps {
   content: string
   type: MessageType
   user: UserResource
   index: number
+  sender: User
 }
 
 export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
-  ({ content, type, user, index }, ref) => {
+  ({ content, type, user, index, sender }, ref) => {
+    const isSelfMessage = sender.userId === user.id
     return (
       <div
         data-index={index}
-        className="w-full mt-2  flex p-2 rounded-sm items-start space-x-2"
+        className={cn(
+          'w-full mt-2  flex p-2 rounded-sm items-start space-x-2',
+          isSelfMessage && 'flex-row-reverse space-x-0',
+        )}
         ref={ref}
       >
-        <div className="flex items-start  ">
-          <img src={user.imageUrl} alt="Avatar" className="rounded-full h-12" />
+        <div className="flex items-start ml-2">
+          <img
+            src={isSelfMessage ? user.imageUrl : sender.imageUrl}
+            alt="Avatar"
+            className="rounded-full h-12"
+          />
         </div>
-        <div className="flex w-full space-y-2 flex-col">
-          <span className="font-semibold">{user.fullName}</span>
+        <div className="flex w-full space-y-2 flex-col ">
+          <span className={cn('font-semibold', isSelfMessage && 'ml-auto')}>
+            {sender.fullName}
+          </span>
           {type === 'TEXT' && (
-            <p className="text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2  ">
+            <p
+              className={cn(
+                'text-sm max-w-[20rem] break-words text-white bg-blue-500 rounded-md self-start py-1 px-2',
+                isSelfMessage && 'ml-auto',
+              )}
+            >
               {content}
             </p>
           )}
@@ -36,11 +53,19 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
               <img
                 src={content}
                 alt="image message"
-                className="max-h-[25rem] image-anchor w-auto object-contain object-left max-w-1/2 rounded-md self-start"
+                className={cn(
+                  'max-h-[25rem]  image-anchor w-auto object-contain object-left max-w-1/2 rounded-md self-start',
+                  isSelfMessage && 'ml-auto',
+                )}
                 loading="lazy"
               />
               <a
-                className="image_download_link rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white "
+                className={cn(
+                  ' rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white',
+                  isSelfMessage
+                    ? 'image_download_link_right'
+                    : 'image_download_link',
+                )}
                 href={content}
                 download
               >
@@ -58,7 +83,12 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
                 <Page loading={<PendingPage />} pageNumber={1} height={300} />
               </Document>
               <a
-                className="pdf_download_link rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white "
+                className={cn(
+                  'rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white',
+                  isSelfMessage
+                    ? 'pdf_download_link_right'
+                    : 'pdf_download_link',
+                )}
                 href={content}
                 download
               >
