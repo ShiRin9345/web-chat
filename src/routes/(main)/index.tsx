@@ -69,7 +69,7 @@ function RouteComponent() {
   useGSAP(() => {
     const tween = gsap.to('#bgImage', {
       y: '20%',
-      scale: 1.05,
+      scale: 1.2,
       ease: 'none',
       scrollTrigger: {
         trigger: '#bgImage',
@@ -91,16 +91,13 @@ function RouteComponent() {
       <div className="w-full  h-[calc(100vh+7.5rem)] flex relative items-center  justify-center ">
         {data?.bgImageUrl && (
           <img
-            className="absolute w-full h-[250px] -z-10 inset-0  pointer-events-none object-cover"
+            className="absolute w-full h-full -z-10 inset-0  pointer-events-none object-cover"
             alt="bgImage"
             src={data.bgImageUrl}
             id="bgImage"
           />
         )}
-        <div className="flex flex-col relative">
-          <div className="right-0 top-16 absolute">
-            <WallpaperUpload />
-          </div>
+        <div className="flex flex-col">
           <form
             onSubmit={async (e) => {
               e.preventDefault()
@@ -108,12 +105,20 @@ function RouteComponent() {
               console.log(form.state.values)
             }}
           >
-            <div className="grid grid-cols-[150px_1fr] gap-5">
-              <img
-                src={user?.imageUrl}
-                alt="avatar"
-                className="size-32 rounded-full aspect-square col-span-2"
-              />
+            <div className="grid grid-cols-[150px_1fr] bg-white p-2 rounded-md gap-5">
+              <div
+                id="card"
+                className="bg-white rounded-lg w-[27rem] justify-self-center h-[9rem] col-span-2 border-1 flex relative -top-8 p-2"
+              >
+                <img
+                  src={user?.imageUrl}
+                  alt="avatar"
+                  className="size-32 rounded-full aspect-square "
+                />
+                <div className="right-2 top-16 absolute">
+                  <WallpaperUpload />
+                </div>
+              </div>
               <form.Field
                 name="position"
                 children={(field) => (
