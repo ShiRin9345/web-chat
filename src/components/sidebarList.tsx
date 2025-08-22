@@ -1,11 +1,16 @@
-import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import { ArrowRight, Loader, Plus } from 'lucide-react'
 import { toast } from 'sonner'
-import type { Group, User } from 'generated/index'
+import type { Group, GroupMessage, User } from 'generated/index'
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +28,8 @@ import {
   StatusIndicator,
   StatusLabel,
 } from '@/components/ui/shadcn-io/status'
+import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
+import { isImage, isPDF } from '@/lib/checkFileType.ts'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
@@ -176,12 +183,31 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
 }
 
 function LabelGroup({ group }: { group: Group }) {
+  const { data } = useInfiniteQuery(
+    chatMessageInfiniteQueryOptions({
+      groupId: group.id,
+    }),
+  )
+  const messages = data
+    ? data.pages.flatMap((page) => page.messages as Array<GroupMessage>)
+    : []
+  const lastMessage = messages[messages.length - 1].content
+  console.log(isImage(lastMessage))
   const count = useCountSocket(group.id)
   return (
     <li>
       <AnimatedLink url="/group/$groupId" groupId={group.id}>
-        <button className="w-full cursor-pointer text-md  text-left rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
-          {group.name} {count}
+        <button className="w-full cursor-pointer text-md  flex items-center justify-between rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
+          <span>
+            {group.name} {count}
+          </span>
+          <span className="text-zinc-500 text-xs max-w-[70px] truncate">
+            {isImage(lastMessage)
+              ? isPDF(lastMessage)
+                ? '[pdf]'
+                : '[file]'
+              : lastMessage}
+          </span>
         </button>
       </AnimatedLink>
     </li>

@@ -22,17 +22,19 @@ function RouteComponent() {
   )
 
   return (
-    <div className="flex relative flex-col h-screen">
-      <DropFile />
-      <ChatHeader roomId={conversation?.id as string} />
-      <VirtualChatList
-        friendUserId={friendUserId}
-        conversationId={conversation?.id}
-      />
-      <ChatInput
-        conversationId={conversation?.id as string}
-        friendUserId={friendUserId}
-      />
+    <div>
+      <div className="flex relative flex-col h-screen">
+        <DropFile />
+        <ChatHeader roomId={conversation?.id as string} />
+        <VirtualChatList
+          friendUserId={friendUserId}
+          conversationId={conversation?.id}
+        />
+        <ChatInput
+          conversationId={conversation?.id as string}
+          friendUserId={friendUserId}
+        />
+      </div>
     </div>
   )
 }
