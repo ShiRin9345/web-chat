@@ -4,7 +4,7 @@ import {
   queryOptions,
 } from '@tanstack/react-query'
 import axios from 'axios'
-import type { QueryClient } from '@tanstack/react-query'
+import type { MutationOptions, QueryClient } from '@tanstack/react-query'
 import type {
   GroupMessage,
   PrivateMessage,
@@ -28,6 +28,31 @@ interface ChatInputMutateOptionsProps {
   queryClient: QueryClient
   sender: User
 }
+
+interface profileWallpaperProps {
+  queryClient: QueryClient
+}
+export const profileWallpaperMutationOptions = ({
+  queryClient,
+}: profileWallpaperProps) =>
+  mutationOptions({
+    mutationKey: ['wallpaper'],
+    mutationFn: async (imageUrl: string) => {
+      try {
+        const response = await axios.patch<Profile>('/api/profile', {
+          data: {
+            bgImageUrl: imageUrl,
+          },
+        })
+        return response.data
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    onSuccess: (profile) => {
+      queryClient.setQueryData(['userProfile'], profile)
+    },
+  })
 
 export const chatInputMutateOptions = ({
   groupId,
