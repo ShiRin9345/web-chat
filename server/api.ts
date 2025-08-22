@@ -3,13 +3,17 @@ import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
-import { type GroupMessage, RequestState } from '@prisma/client'
+import { RequestState } from '@prisma/client'
 import db from './db.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from './io.ts'
 import { client, config } from './oss-client.ts'
-import type { NewFriendRequest, PrivateMessage } from '@prisma/client'
+import { generateCode } from './util/generateCode.ts'
+import type {
+  GroupMessage,
+  NewFriendRequest,
+  PrivateMessage,
+} from '@prisma/client'
 import type { UIMessage } from 'ai'
-import type { GroupMessageWithSender } from '@/type'
 
 dotenv.config()
 
@@ -279,10 +283,17 @@ router.get('/users', requireAuth(), async (req, res) => {
   try {
     const users = await db.user.findMany({
       where: {
-        fullName: {
-          contains: name as string,
-          mode: 'insensitive',
-        },
+        OR: [
+          {
+            fullName: {
+              contains: name as string,
+              mode: 'insensitive',
+            },
+          },
+          {
+            code: name as string,
+          },
+        ],
       },
     })
     res.json(users)
@@ -381,11 +392,22 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
       return res.json(user)
     }
     const clerkUser = await clerkClient.users.getUser(userId as string)
+    let code = ''
+    let currentUser = null
+    do {
+      code = generateCode(1000000, 1999999)
+      currentUser = await db.user.findUnique({
+        where: {
+          code,
+        },
+      })
+    } while (currentUser)
     user = await db.user.create({
       data: {
         userId: userId as string,
         fullName: clerkUser.fullName as string,
         imageUrl: clerkUser.imageUrl,
+        code,
       },
     })
     const clientUser = await clerkClient.users.getUser(userId as string)

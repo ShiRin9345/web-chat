@@ -21,6 +21,7 @@ model User {
   groupMessage            GroupMessage[]
   fullName                String
   imageUrl                String
+  code                    String             @unique
   groups                  Group[]
   sentPrivateMessage      PrivateMessage[]   @relation("sender")
   receivedPrivateMessage  PrivateMessage[]   @relation("receiver")
@@ -84,9 +85,9 @@ model PrivateMessage {
   id             String       @id @default(uuid())
   content        String
   senderId       String
-  sender         User         @relation("sender", fields: [senderId], references: [id])
+  sender         User         @relation("sender", fields: [senderId], references: [userId])
   receiverId     String
-  receiver       User         @relation("receiver", fields: [receiverId], references: [id])
+  receiver       User         @relation("receiver", fields: [receiverId], references: [userId])
   Conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId String
   type           MessageType
