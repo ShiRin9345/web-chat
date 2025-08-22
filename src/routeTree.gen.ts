@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRouteImport } from './routes/test'
 import { Route as mainRouteRouteImport } from './routes/(main)/route'
 import { Route as mainIndexRouteImport } from './routes/(main)/index'
 import { Route as mainGroupRouteRouteImport } from './routes/(main)/group/route'
@@ -26,6 +27,11 @@ const mainGroupGroupIdLazyRouteImport = createFileRoute(
   '/(main)/group/$groupId',
 )()
 
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const mainRouteRoute = mainRouteRouteImport.update({
   id: '/(main)',
   getParentRoute: () => rootRouteImport,
@@ -88,6 +94,7 @@ const mainConversationFriendUserIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof mainIndexRoute
+  '/test': typeof TestRoute
   '/conversation': typeof mainConversationRouteRouteWithChildren
   '/group': typeof mainGroupRouteRouteWithChildren
   '/conversation/$friendUserId': typeof mainConversationFriendUserIdRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/friendRequest': typeof mainFriendRequestIndexRoute
 }
 export interface FileRoutesByTo {
+  '/test': typeof TestRoute
   '/conversation': typeof mainConversationRouteRouteWithChildren
   '/group': typeof mainGroupRouteRouteWithChildren
   '/': typeof mainIndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(main)': typeof mainRouteRouteWithChildren
+  '/test': typeof TestRoute
   '/(main)/conversation': typeof mainConversationRouteRouteWithChildren
   '/(main)/group': typeof mainGroupRouteRouteWithChildren
   '/(main)/': typeof mainIndexRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/test'
     | '/conversation'
     | '/group'
     | '/conversation/$friendUserId'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/friendRequest'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/test'
     | '/conversation'
     | '/group'
     | '/'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(main)'
+    | '/test'
     | '/(main)/conversation'
     | '/(main)/group'
     | '/(main)/'
@@ -166,6 +178,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   mainRouteRoute: typeof mainRouteRouteWithChildren
+  TestRoute: typeof TestRoute
   authInitialIndexRoute: typeof authInitialIndexRoute
   authSignInIndexRoute: typeof authSignInIndexRoute
   authSignUpIndexRoute: typeof authSignUpIndexRoute
@@ -173,6 +186,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(main)': {
       id: '/(main)'
       path: '/'
@@ -300,6 +320,7 @@ const mainRouteRouteWithChildren = mainRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   mainRouteRoute: mainRouteRouteWithChildren,
+  TestRoute: TestRoute,
   authInitialIndexRoute: authInitialIndexRoute,
   authSignInIndexRoute: authSignInIndexRoute,
   authSignUpIndexRoute: authSignUpIndexRoute,

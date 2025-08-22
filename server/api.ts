@@ -408,6 +408,9 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
         fullName: clerkUser.fullName as string,
         imageUrl: clerkUser.imageUrl,
         code,
+        profile: {
+          create: {},
+        },
       },
     })
     const clientUser = await clerkClient.users.getUser(userId as string)
@@ -427,6 +430,21 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
   } catch (e) {
     console.log(e)
     res.status(500).send('Something went wrong to initial user')
+  }
+})
+
+router.get('/profile', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req) as { userId: string }
+  try {
+    const profile = await db.profile.findUnique({
+      where: {
+        userId,
+      },
+    })
+    res.json(profile)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch profile')
   }
 })
 
@@ -491,6 +509,25 @@ router.get('/friendRequest', requireAuth(), async (req, res) => {
   } catch (e) {
     console.error(e)
     res.status(500).send('Something went wrong to friendRequest')
+  }
+})
+
+router.patch('/profile', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req) as { userId: string }
+  const { data } = req.body
+  try {
+    const profile = await db.profile.update({
+      where: {
+        userId,
+      },
+      data: {
+        ...data,
+      },
+    })
+    res.json(profile)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to profile')
   }
 })
 
