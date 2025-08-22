@@ -2,7 +2,9 @@ import { Image } from 'lucide-react'
 import { useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUser } from '@clerk/clerk-react'
 import type { MessageType } from '@/type'
+import type { User } from 'generated/index'
 import {
   Dialog,
   DialogContent,
@@ -36,6 +38,12 @@ const ImageDialog = ({
 }) => {
   const [files, setFiles] = useState<Array<File> | undefined>()
   const [open, setOpen] = useState<boolean>(false)
+  const { user } = useUser()
+  const sender = {
+    imageUrl: user?.imageUrl,
+    fullName: user?.fullName,
+    userId: user?.id,
+  }
   const queryClient = useQueryClient()
   const { mutateAsync } = useMutation(
     chatInputMutateOptions({
@@ -43,6 +51,7 @@ const ImageDialog = ({
       conversationId,
       friendUserId,
       groupId,
+      sender: sender as User,
     }),
   )
   const handleDrop = async (uploadFiles: Array<File>) => {

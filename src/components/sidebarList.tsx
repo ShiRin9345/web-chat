@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
-import { ArrowRight, Loader, Plus } from 'lucide-react'
+import { ArrowRight, Loader, Plus, UserIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Group, GroupMessage, User } from 'generated/index'
 import {
@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/shadcn-io/status'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 import { isImage, isPDF } from '@/lib/checkFileType.ts'
+import { Pill, PillIcon } from '@/components/ui/shadcn-io/pill'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
@@ -198,9 +199,11 @@ function LabelGroup({ group }: { group: Group }) {
     <li>
       <AnimatedLink url="/group/$groupId" groupId={group.id}>
         <button className="w-full cursor-pointer text-md  flex items-center justify-between rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
-          <span>
-            {group.name} {count}
-          </span>
+          <span>{group.name}</span>
+          <Pill>
+            <PillIcon icon={UserIcon} />
+            {count} users
+          </Pill>
           <span className="text-zinc-500 text-xs max-w-[70px] truncate">
             {isImage(lastMessage)
               ? isPDF(lastMessage)

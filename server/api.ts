@@ -85,6 +85,9 @@ router.post('/privateMessage', requireAuth(), async (req, res) => {
         type: type,
         conversationId: conversationId,
       },
+      include: {
+        sender: true,
+      },
     })
     const io = getIo()
     io.to(conversationId).emit('new_message', privateMessage)
@@ -184,6 +187,9 @@ router.post('/groupMessages', requireAuth(), async (req, res) => {
         groupId,
         senderId: userId as string,
         type,
+      },
+      include: {
+        sender: true,
       },
     })
     const io = getIo()

@@ -5,12 +5,19 @@ import {
 } from '@tanstack/react-query'
 import axios from 'axios'
 import type { QueryClient } from '@tanstack/react-query'
-import type { GroupMessage, PrivateMessage, Profile } from 'generated/index'
+import type {
+  GroupMessage,
+  PrivateMessage,
+  Profile,
+  User,
+} from 'generated/index'
 import type {
   ConversationWithMessagesWithUsers,
   GroupMessageAndCursor,
+  GroupMessageWithSender,
   MessageType,
   PrivateMessageAndCursor,
+  PrivateMessageWithSender,
 } from '@/type'
 
 interface ChatInputMutateOptionsProps {
@@ -19,6 +26,7 @@ interface ChatInputMutateOptionsProps {
   friendUserId?: string
 
   queryClient: QueryClient
+  sender: User
 }
 
 export const chatInputMutateOptions = ({
@@ -26,6 +34,7 @@ export const chatInputMutateOptions = ({
   conversationId,
   friendUserId,
   queryClient,
+  sender,
 }: ChatInputMutateOptionsProps) =>
   mutationOptions({
     mutationKey: ['messages', groupId || friendUserId],
@@ -38,7 +47,7 @@ export const chatInputMutateOptions = ({
     }) => {
       try {
         if (groupId) {
-          const response = await axios.post<GroupMessage>(
+          const response = await axios.post<GroupMessageWithSender>(
             '/api/groupMessages',
             {
               content,
@@ -48,7 +57,7 @@ export const chatInputMutateOptions = ({
           )
           return response.data
         } else {
-          const response = await axios.post<PrivateMessage>(
+          const response = await axios.post<PrivateMessageWithSender>(
             '/api/privateMessage',
             {
               content,
@@ -79,6 +88,7 @@ export const chatInputMutateOptions = ({
                       id: `optimistic-${Date.now()}`,
                       content,
                       type,
+                      sender,
                     },
                   ],
                 },
@@ -93,6 +103,7 @@ export const chatInputMutateOptions = ({
               id: `optimistic-${Date.now()}`,
               content,
               type,
+              sender,
             }),
           }
           return {
