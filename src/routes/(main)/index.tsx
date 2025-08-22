@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
+import WallpaperUpload from '@/components/wallpaperUpload.tsx'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
@@ -57,12 +58,12 @@ function RouteComponent() {
       }
     },
   })
-  if (isLoading && !data) {
+  if (isLoading) {
     return null
   }
   return (
     <div className="w-full h-dvh flex relative items-center flex-col justify-center">
-      <input type="file" />
+      <WallpaperUpload />
       <div className="flex flex-col">
         <form
           onSubmit={async (e) => {
