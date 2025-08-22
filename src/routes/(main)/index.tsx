@@ -6,6 +6,8 @@ import { z } from 'zod'
 import axios from 'axios'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
+import { useRef } from 'react'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
 import { RegionSelector } from '@/routes/test.tsx'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group.tsx'
@@ -14,7 +16,6 @@ import { Input } from '@/components/ui/input.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import WallpaperUpload from '@/components/wallpaperUpload.tsx'
-import { useGSAP } from '@gsap/react'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
@@ -36,6 +37,7 @@ gsap.registerPlugin(ScrollTrigger)
 function RouteComponent() {
   const { data, isLoading } = useQuery(userProfileQueryOptions)
   const { user } = useUser()
+  const scopeRef = useRef<HTMLInputElement>(null)
   const form = useForm({
     defaultValues: {
       email: data?.email,
@@ -67,7 +69,7 @@ function RouteComponent() {
     return null
   }
   useGSAP(() => {
-    const tween = gsap.to('#bgImage', {
+    gsap.to('#bgImage', {
       y: '20%',
       scale: 1.2,
       ease: 'none',
@@ -87,18 +89,12 @@ function RouteComponent() {
       repeat: -1,
       duration: 4,
     })
-
-    return () => {
-      tween.kill()
-      if (tween.scrollTrigger) {
-        tween.scrollTrigger.kill()
-      }
-    }
-  }, [])
+  }, [{ scope: scopeRef }])
   return (
     <div
       className="overflow-y-auto overflow-x-hidden scrollbar-none h-dvh"
       id="scroll-container"
+      ref={scopeRef}
     >
       <div className="w-full h-[calc(100vh+7.5rem)] flex relative items-center  justify-center ">
         {data?.bgImageUrl && (
