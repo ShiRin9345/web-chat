@@ -33,7 +33,7 @@ const WallpaperUpload = () => {
       <Wallpaper />
       <input
         ref={inputRef}
-        className="invisible"
+        className="invisible w-0"
         type="file"
         onChange={handleChange}
       />

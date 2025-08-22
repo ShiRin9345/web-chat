@@ -4,6 +4,8 @@ import { useUser } from '@clerk/clerk-react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import axios from 'axios'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
 import { RegionSelector } from '@/routes/test.tsx'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group.tsx'
@@ -12,6 +14,7 @@ import { Input } from '@/components/ui/input.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import WallpaperUpload from '@/components/wallpaperUpload.tsx'
+import { useGSAP } from '@gsap/react'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
@@ -27,6 +30,8 @@ const profileFormSchema = z.object({
   phone: z.string(),
   signature: z.string(),
 })
+
+gsap.registerPlugin(ScrollTrigger)
 
 function RouteComponent() {
   const { data, isLoading } = useQuery(userProfileQueryOptions)
@@ -61,105 +66,127 @@ function RouteComponent() {
   if (isLoading) {
     return null
   }
+  useGSAP(() => {
+    const tween = gsap.to('#bgImage', {
+      y: '20%',
+      scale: 1.05,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#bgImage',
+        scroller: '#scroll-container',
+        scrub: true,
+        start: 'top top',
+        end: 'bottom top',
+      },
+    })
+    return () => {
+      tween.kill()
+      if (tween.scrollTrigger) {
+        tween.scrollTrigger.kill()
+      }
+    }
+  }, [])
   return (
-    <div className="w-full h-dvh flex relative items-center  justify-center ">
-      {data?.bgImageUrl && (
-        <img
-          className="absolute w-full h-1/3 -z-10 inset-0  pointer-events-none object-cover"
-          alt="bgImage"
-          src={data.bgImageUrl}
-        />
-      )}
-      <div className="flex flex-col relative">
-        <div className="left-0 top-0">
-          <WallpaperUpload />
-        </div>
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault()
-            await form.handleSubmit()
-            console.log(form.state.values)
-          }}
-        >
-          <div className="grid grid-cols-[150px_1fr] gap-5">
-            <span>Avatar</span>
-            <img
-              src={user?.imageUrl}
-              alt="avatar"
-              className="size-32 rounded-full aspect-square"
-            />
-            <form.Field
-              name="position"
-              children={(field) => (
-                <>
-                  <span>Position</span>
-                  <RegionSelector
-                    initialRegion={data?.position as string}
-                    handelChange={field.handleChange}
-                  />
-                </>
-              )}
-            />
-            <form.Field
-              name="sex"
-              children={(field) => (
-                <>
-                  <span>Sex</span>
-                  <RadioGroup
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                    className="flex-row flex mt-2"
-                  >
-                    <RadioGroupItem value="man" id="man" />
-                    <Label htmlFor="man">男</Label>
-                    <RadioGroupItem value="woman" id="woman" />
-                    <Label htmlFor="man">女</Label>
-                  </RadioGroup>
-                </>
-              )}
-            />
-            <form.Field
-              name="phone"
-              children={(field) => (
-                <>
-                  <span>Phone</span>
-                  <Input
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </>
-              )}
-            />
-            <form.Field
-              name="email"
-              children={(field) => (
-                <>
-                  <span>Email</span>
-                  <Input
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </>
-              )}
-            />
-            <form.Field
-              name="signature"
-              children={(field) => (
-                <>
-                  <span>Signature</span>
-                  <Textarea
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </>
-              )}
-            />
-
-            <Button className="col-span-2" type="submit">
-              Change
-            </Button>
+    <div className="overflow-y-auto h-dvh" id="scroll-container">
+      <div className="w-full  h-[calc(100vh+7.5rem)] flex relative items-center  justify-center ">
+        {data?.bgImageUrl && (
+          <img
+            className="absolute w-full h-[250px] -z-10 inset-0  pointer-events-none object-cover"
+            alt="bgImage"
+            src={data.bgImageUrl}
+            id="bgImage"
+          />
+        )}
+        <div className="flex flex-col relative">
+          <div className="right-0 top-16 absolute">
+            <WallpaperUpload />
           </div>
-        </form>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault()
+              await form.handleSubmit()
+              console.log(form.state.values)
+            }}
+          >
+            <div className="grid grid-cols-[150px_1fr] gap-5">
+              <img
+                src={user?.imageUrl}
+                alt="avatar"
+                className="size-32 rounded-full aspect-square col-span-2"
+              />
+              <form.Field
+                name="position"
+                children={(field) => (
+                  <>
+                    <span>Position</span>
+                    <RegionSelector
+                      initialRegion={data?.position as string}
+                      handelChange={field.handleChange}
+                    />
+                  </>
+                )}
+              />
+              <form.Field
+                name="sex"
+                children={(field) => (
+                  <>
+                    <span>Sex</span>
+                    <RadioGroup
+                      value={field.state.value}
+                      onValueChange={field.handleChange}
+                      className="flex-row flex mt-2"
+                    >
+                      <RadioGroupItem value="man" id="man" />
+                      <Label htmlFor="man">男</Label>
+                      <RadioGroupItem value="woman" id="woman" />
+                      <Label htmlFor="man">女</Label>
+                    </RadioGroup>
+                  </>
+                )}
+              />
+              <form.Field
+                name="phone"
+                children={(field) => (
+                  <>
+                    <span>Phone</span>
+                    <Input
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </>
+                )}
+              />
+              <form.Field
+                name="email"
+                children={(field) => (
+                  <>
+                    <span>Email</span>
+                    <Input
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </>
+                )}
+              />
+              <form.Field
+                name="signature"
+                children={(field) => (
+                  <>
+                    <span>Signature</span>
+                    <Textarea
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </>
+                )}
+              />
+
+              <Button className="col-span-2" type="submit">
+                Change
+              </Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )
