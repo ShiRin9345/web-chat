@@ -6,6 +6,7 @@ import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import PendingPage from '@/components/pendingPage.tsx'
 import { cn } from '@/lib/utils.ts'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 
 interface MessageItemProps {
   content: string
@@ -27,13 +28,13 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
         )}
         ref={ref}
       >
-        <div className="flex items-start ml-2">
-          <img
+        <Avatar className="ml-2 size-12">
+          <AvatarImage
             src={isSelfMessage ? user.imageUrl : sender.imageUrl}
-            alt="Avatar"
-            className="rounded-full h-12"
+            alt="avatar"
           />
-        </div>
+          <AvatarFallback>Avatar</AvatarFallback>
+        </Avatar>
         <div className="flex w-full space-y-2 flex-col ">
           <span className={cn('font-semibold', isSelfMessage && 'ml-auto')}>
             {sender.fullName}
