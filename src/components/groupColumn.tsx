@@ -3,8 +3,11 @@ import gsap from 'gsap'
 import { useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
+import { useUser } from '@clerk/clerk-react'
+import { Edit, Loader } from 'lucide-react'
 import type { User } from 'generated/index'
 import type { GroupWithMembersAndModeratorsAndOwner } from '@/type'
+import type { UserResource } from '@clerk/types'
 import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
 import {
   groupWithMembersAndModeratorsAndOwnerQueryOptions,
@@ -15,9 +18,6 @@ import { Button } from '@/components/ui/button.tsx'
 import { useUserOnline } from '@/hooks/useUserOnline.ts'
 import { Status, StatusIndicator } from '@/components/ui/shadcn-io/status'
 import { Badge } from '@/components/ui/badge.tsx'
-import { Edit } from 'lucide-react'
-import { useUser } from '@clerk/clerk-react'
-import type { UserResource } from '@clerk/types'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -112,7 +112,9 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
   const { user: self } = useUser()
   const queryClient = useQueryClient()
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
-  const { mutate } = useMutation(kickMutationOptions({ queryClient, groupId }))
+  const { mutate, isPending } = useMutation(
+    kickMutationOptions({ queryClient, groupId }),
+  )
   return (
     <div className="flex items-center gap-2">
       <Avatar>
@@ -125,7 +127,8 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
       </Status>
       {type === 'owner' && <Badge variant="destructive">Owner</Badge>}
       {type === 'moderator' && <Badge variant="moderator">Moderator</Badge>}
-      {canEdit(role, self, type, user) && (
+      {isPending && <Loader className="animate-spin size-5" />}
+      {canEdit(role, self, type, user) && !isPending && (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button variant="ghost" size="icon" className="cursor-pointer ">
