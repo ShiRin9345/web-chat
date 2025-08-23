@@ -260,6 +260,44 @@ export const friendOnlineStatusQueryOptions = (userId: string) =>
     initialData: false,
   })
 
+interface changeRoleMutationProps {
+  queryClient: QueryClient
+  groupId: string
+  userId: string
+}
+export const changeRoleMutationOptions = ({
+  queryClient,
+  groupId,
+  userId,
+}: changeRoleMutationProps) =>
+  mutationOptions({
+    mutationKey: ['changeRole', groupId, userId],
+    mutationFn: async (role: 'moderator' | 'member') => {
+      try {
+        const response =
+          await axios.patch<GroupWithMembersAndModeratorsAndOwner>(
+            '/api/role',
+            {
+              groupId,
+              userId,
+              role,
+            },
+          )
+        return response.data
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    onSuccess: (
+      newGroup: GroupWithMembersAndModeratorsAndOwner | undefined,
+    ) => {
+      queryClient.setQueryData(
+        ['groupWithMembersAndModeratorsAndOwner', groupId],
+        newGroup,
+      )
+    },
+  })
+
 interface kickMutationProps {
   queryClient: QueryClient
   groupId: string

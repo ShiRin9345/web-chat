@@ -10,6 +10,7 @@ import type { GroupWithMembersAndModeratorsAndOwner } from '@/type'
 import type { UserResource } from '@clerk/types'
 import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
 import {
+  changeRoleMutationOptions,
   groupWithMembersAndModeratorsAndOwnerQueryOptions,
   kickMutationOptions,
 } from '@/features/reactQuery/options.ts'
@@ -115,6 +116,13 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
   const { mutate, isPending } = useMutation(
     kickMutationOptions({ queryClient, groupId }),
   )
+  const { mutate: roleMutate, isPending: isRolePending } = useMutation(
+    changeRoleMutationOptions({
+      userId: user.userId,
+      groupId,
+      queryClient,
+    }),
+  )
   return (
     <div className="flex items-center gap-2">
       <Avatar>
@@ -127,7 +135,9 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
       </Status>
       {type === 'owner' && <Badge variant="destructive">Owner</Badge>}
       {type === 'moderator' && <Badge variant="moderator">Moderator</Badge>}
-      {isPending && <Loader className="animate-spin size-5" />}
+      {(isPending || isRolePending) && (
+        <Loader className="animate-spin size-5" />
+      )}
       {canEdit(role, self, type, user) && !isPending && (
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -145,10 +155,12 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
                 <DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem>member</DropdownMenuItem>
-                    {role === 'owner' && (
-                      <DropdownMenuItem>moderator</DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem onClick={() => roleMutate('member')}>
+                      member
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => roleMutate('moderator')}>
+                      moderator
+                    </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
