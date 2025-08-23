@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useParams } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import DropProvider from '@/providers/dropProvider.tsx'
 
 export const Route = createFileRoute('/(main)/group')({

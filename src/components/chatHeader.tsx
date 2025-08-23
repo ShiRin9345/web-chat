@@ -5,14 +5,6 @@ import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet.tsx'
 import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
 
 interface Props {

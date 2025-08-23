@@ -1,9 +1,4 @@
-import {
-  queryOptions,
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { queryOptions, useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useForm } from '@tanstack/react-form'
@@ -32,6 +27,7 @@ import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.t
 import { isImage, isPDF } from '@/lib/checkFileType.ts'
 import { Pill, PillIcon } from '@/components/ui/shadcn-io/pill'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
+import { useUserOnline } from '@/hooks/useUserOnline.ts'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
@@ -102,47 +98,8 @@ const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
   )
 }
 
-const friendOnlineStatusQueryOptions = (userId: string) =>
-  queryOptions({
-    queryKey: ['friendOnlineStatus', userId],
-    queryFn: async () => {
-      const response = await axios.get<boolean>('/api/isOnline', {
-        params: {
-          userId: userId,
-        },
-      })
-      return response.data
-    },
-    initialData: false,
-  })
-
 const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
-  const { socket } = useSocket()
-  const queryClient = useQueryClient()
-  const { data: online } = useQuery(
-    friendOnlineStatusQueryOptions(friend.userId),
-  )
-  useEffect(() => {
-    if (!socket) return
-    const handleOnline = () => {
-      queryClient.setQueryData(
-        ['friendOnlineStatus', friend.userId],
-        () => true,
-      )
-    }
-    const handleOffline = () => {
-      queryClient.setQueryData(
-        ['friendOnlineStatus', friend.userId],
-        () => false,
-      )
-    }
-    socket.on(`${friend.userId}_online`, handleOnline)
-    socket.on(`${friend.userId}_offline`, handleOffline)
-    return () => {
-      socket.off(`${friend.userId}_online`, handleOnline)
-      socket.off(`${friend.userId}_offline`, handleOffline)
-    }
-  }, [socket])
+  const { online } = useUserOnline(friend)
   return (
     <AnimatedLink
       url="/conversation/$friendUserId"
@@ -168,7 +125,7 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
   groups,
 }) => {
   return (
-    <div className="px-2">
+    <div className="px-2 ">
       <ul>
         {groups?.map &&
           groups.map((group, index) => (

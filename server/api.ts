@@ -362,6 +362,42 @@ router.get('/group', requireAuth(), async (req, res) => {
   }
 })
 
+router.patch('/kick', requireAuth(), async (req, res) => {
+  const { groupId, userId } = req.body as { userId: string; groupId: string }
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        members: true,
+        moderators: true,
+      },
+    })
+    const isModerator = !!group?.moderators.some((m) => m.userId === userId)
+    const isMember = !!group?.members.some((m) => m.userId === userId)
+    if (!isMember && !isModerator) {
+      return res.status(400).send('User is not in this group')
+    }
+    const updatedGroup = await db.group.update({
+      where: { id: groupId },
+      data: {
+        members: {
+          disconnect: isMember ? { userId } : undefined,
+        },
+        moderators: {
+          disconnect: isModerator ? { userId } : undefined,
+        },
+      },
+      include: { members: true, moderators: true, owner: true },
+    })
+    res.json(updatedGroup)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to update kick')
+  }
+})
+
 router.get('/groupCount', requireAuth(), async (req, res) => {
   res.send(groupUsers.get(req.query.groupId as string))
 })
@@ -560,6 +596,38 @@ router.patch('/profile', requireAuth(), async (req, res) => {
   } catch (e) {
     console.error(e)
     res.status(500).send('Something went wrong to profile')
+  }
+})
+
+router.get('/canAccess', requireAuth(), async (req, res) => {
+  const { groupId } = req.query as { groupId: string }
+  const { userId } = getAuth(req) as { userId: string }
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    if (!group) {
+      return res.status(404).send('Not found group')
+    }
+    const existing =
+      group.owner.userId === userId ||
+      group.moderators.some((m) => m.userId === userId) ||
+      group.members.some((m) => m.userId === userId)
+    if (existing) {
+      res.status(200).send('User already exists')
+    } else {
+      res.status(404).send('Not found user')
+    }
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to canAccess')
   }
 })
 
