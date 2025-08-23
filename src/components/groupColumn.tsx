@@ -4,7 +4,7 @@ import { useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { Edit, Loader } from 'lucide-react'
+import { Crown, Edit, Loader, ShieldUser } from 'lucide-react'
 import type { User } from 'generated/index'
 import type { GroupWithMembersAndModeratorsAndOwner } from '@/type'
 import type { UserResource } from '@clerk/types'
@@ -40,7 +40,7 @@ const GroupColumn = () => {
   )
   useGSAP(() => {
     gsap.to('#column', {
-      width: open ? 320 : 0,
+      width: open ? 310 : 0,
       duration: 0.2,
       ease: 'none',
     })
@@ -75,17 +75,22 @@ const MemberList: React.FC<MemberListProps> = ({ group }) => {
         ? 'moderator'
         : 'member'
   return (
-    <div className="flex flex-col gap-2 ml-2 max-h-[300px] overflow-y-auto pb-2 border-b">
+    <div className="flex flex-col gap-2 ml-2 max-h-[310px] w-[300px] overflow-y-auto pb-2 border-b">
       <h2 className="mb-2 font-medium whitespace-nowrap">
         Group members {userCount}
       </h2>
       {group && <AvatarLabel role={role} type="owner" user={group.owner} />}
 
       {group?.moderators.map((moderator) => (
-        <AvatarLabel type="moderator" role={role} user={moderator} />
+        <AvatarLabel
+          key={moderator.id}
+          type="moderator"
+          role={role}
+          user={moderator}
+        />
       ))}
       {group?.members.map((member) => (
-        <AvatarLabel type="member" role={role} user={member} />
+        <AvatarLabel key={member.id} type="member" role={role} user={member} />
       ))}
     </div>
   )
@@ -95,17 +100,6 @@ interface AvatarLabelProps {
   user: User
   type: 'member' | 'moderator' | 'owner'
   role: 'member' | 'moderator' | 'owner'
-}
-function canEdit(
-  role: string,
-  self: UserResource | null | undefined,
-  type: string,
-  user: User,
-): boolean {
-  return (
-    (role === 'owner' && self?.id !== user.userId) ||
-    (role === 'moderator' && self?.id !== user.userId && type !== 'owner')
-  )
 }
 
 const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
@@ -123,27 +117,49 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
       queryClient,
     }),
   )
+  function canEdit(
+    role: string,
+    self: UserResource | null | undefined,
+    type: string,
+    user: User,
+  ): boolean {
+    return (
+      ((role === 'owner' && self?.id !== user.userId) ||
+        (role === 'moderator' &&
+          self?.id !== user.userId &&
+          type !== 'owner')) &&
+      !isPending &&
+      !isRolePending
+    )
+  }
+
   return (
     <div className="flex items-center gap-2">
       <Avatar>
         <AvatarImage src={user.imageUrl} alt="avatar" />
         <AvatarFallback>Avatar</AvatarFallback>
       </Avatar>
-      <span className="text-sm text-zinc-500">{user.fullName}</span>
+      <span className="text-sm text-zinc-500 w-20">{user.fullName}</span>
       <Status status={`${online ? 'online' : 'offline'}`}>
         <StatusIndicator />
       </Status>
-      {type === 'owner' && <Badge variant="destructive">Owner</Badge>}
-      {type === 'moderator' && <Badge variant="moderator">Moderator</Badge>}
+      {type === 'owner' && (
+        <Badge variant="destructive">
+          <Crown /> Owner
+        </Badge>
+      )}
+      {type === 'moderator' && (
+        <Badge variant="moderator">
+          <ShieldUser /> Moderator
+        </Badge>
+      )}
       {(isPending || isRolePending) && (
         <Loader className="animate-spin size-5" />
       )}
-      {canEdit(role, self, type, user) && !isPending && (
+      {canEdit(role, self, type, user) && (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="cursor-pointer ">
-              <Edit />
-            </Button>
+            <Edit className="cursor-pointer size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuGroup>
