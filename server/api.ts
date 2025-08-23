@@ -328,6 +328,24 @@ router.get('/groups', requireAuth(), async (req, res) => {
   }
 })
 
+router.get('/group', requireAuth(), async (req, res) => {
+  try {
+    const { groupId } = req.query as { groupId: string }
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        members: true,
+      },
+    })
+    res.json(group)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch group')
+  }
+})
+
 router.get('/groupCount', requireAuth(), async (req, res) => {
   res.send(groupUsers.get(req.query.groupId as string))
 })

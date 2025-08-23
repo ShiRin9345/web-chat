@@ -1,5 +1,6 @@
 import type {
   Conversation,
+  Group,
   GroupMessage,
   PrivateMessage,
   User,
@@ -26,4 +27,8 @@ export type PrivateMessageAndCursor = {
 export type GroupMessageAndCursor = {
   messages: Array<GroupMessage>
   nextCursor: string
+}
+
+export type GroupWithMembers = Group & {
+  members: Array<User>
 }
