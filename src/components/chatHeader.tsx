@@ -1,10 +1,19 @@
-import { House, Phone, Video } from 'lucide-react'
+import { House, Menu, Phone, Video } from 'lucide-react'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { useSocket } from '@/providers/socketProvider.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet.tsx'
+import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
 
 interface Props {
   roomId: string
@@ -13,6 +22,7 @@ interface Props {
 const ChatHeader: React.FC<Props> = ({ roomId }) => {
   const { socket } = useSocket()
   const [videoCount, setVideoCount] = useState<number>(0)
+  const { changeOpen } = useGroupColumnStore()
   useEffect(() => {
     const getVideoCount = async () => {
       const response = await axios.get<number>('/api/videoCount', {
@@ -39,7 +49,7 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
   }, [socket])
   return (
     <>
-      <div className="h-12 w-full p-2 relative">
+      <div className="h-12 w-full p-2 flex relative">
         <Button variant="ghost" size="icon">
           <AnimatedLink url="/">
             <House />
@@ -49,6 +59,14 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
           <AnimatedLink url="/video/$roomId" roomId={roomId}>
             <Video />
           </AnimatedLink>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-auto"
+          onClick={changeOpen}
+        >
+          <Menu />
         </Button>
         {videoCount > 0 && (
           <p className="absolute animate-pulse bg-emerald-500/80 p-2 right-5  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">

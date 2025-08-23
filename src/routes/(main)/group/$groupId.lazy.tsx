@@ -1,9 +1,13 @@
 import { createLazyFileRoute, useParams } from '@tanstack/react-router'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import ChatHeader from '@/components/chatHeader.tsx'
 import ChatInput from '@/components/chatInput.tsx'
 import PendingPage from '@/components/pendingPage.tsx'
 import VirtualChatList from '@/components/virtualChatList.tsx'
 import DropFile from '@/components/dropFile.tsx'
+import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
+import GroupColumn from '@/components/groupColumn.tsx'
 
 export const Route = createLazyFileRoute('/(main)/group/$groupId')({
   component: Home,
@@ -16,8 +20,13 @@ export default function Home() {
     <div className="flex relative flex-col h-screen">
       <DropFile />
       <ChatHeader roomId={groupId} />
-      <VirtualChatList groupId={groupId} />
-      <ChatInput groupId={groupId} />
+      <div className="flex h-full ">
+        <div className="flex flex-col w-full h-full">
+          <VirtualChatList groupId={groupId} />
+          <ChatInput groupId={groupId} />
+        </div>
+        <GroupColumn />
+      </div>
     </div>
   )
 }

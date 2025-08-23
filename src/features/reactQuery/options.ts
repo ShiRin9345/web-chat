@@ -15,6 +15,7 @@ import type {
   ConversationWithMessagesWithUsers,
   GroupMessageAndCursor,
   GroupMessageWithSender,
+  GroupWithMembers,
   MessageType,
   PrivateMessageAndCursor,
   PrivateMessageWithSender,
@@ -222,3 +223,20 @@ export const userProfileQueryOptions = queryOptions({
     return response.data
   },
 })
+
+export const groupWithMembersQueryOptions = (groupId: string) =>
+  queryOptions({
+    queryKey: ['groupWithMembers', groupId],
+    queryFn: async () => {
+      try {
+        const response = await axios.get<GroupWithMembers>('/api/group', {
+          params: {
+            groupId,
+          },
+        })
+        return response.data
+      } catch (e) {
+        console.error(e)
+      }
+    },
+  })
