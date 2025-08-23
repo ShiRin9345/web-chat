@@ -36,7 +36,6 @@ model User {
   fullName                String
   imageUrl                String
   code                    String             @unique
-  groups                  Group[]
   sentPrivateMessage      PrivateMessage[]   @relation("sender")
   receivedPrivateMessage  PrivateMessage[]   @relation("receiver")
   conversations           Conversation[]
@@ -45,15 +44,22 @@ model User {
   friends                 User[]             @relation("UserFriends")
   friendOf                User[]             @relation("UserFriends")
   profile                 Profile?
+  moderatorGroup          Group[]            @relation("moderator")
+  memberGroup             Group[]            @relation("member")
+  ownerGroup              Group[]            @relation("owner")
 }
 
 model Group {
   id            String         @id @default(uuid())
   name          String
   groupMessages GroupMessage[]
-  members       User[]
+  members       User[]         @relation("member")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+  owner         User           @relation("owner", fields: [ownerId], references: [userId])
+  ownerId       String
+
+  moderators User[] @relation("moderator")
 
   @@index(name)
 }

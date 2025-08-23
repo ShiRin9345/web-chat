@@ -143,7 +143,8 @@ exports.Prisma.GroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  ownerId: 'ownerId'
 };
 
 exports.Prisma.NewFriendRequestScalarFieldEnum = {
