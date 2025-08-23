@@ -631,6 +631,41 @@ router.get('/canAccess', requireAuth(), async (req, res) => {
   }
 })
 
+router.patch('/role', requireAuth(), async (req, res) => {
+  const { groupId, userId, role } = req.body as {
+    userId: string
+    groupId: string
+  }
+  try {
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        members: { disconnect: { userId } },
+        moderators: { disconnect: { userId } },
+      },
+    })
+    const newGroup = await db.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        ...(role === 'member'
+          ? { members: { connect: { userId } } }
+          : { moderators: { connect: { userId } } }),
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    res.json(newGroup)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to update role')
+  }
+})
+
 router.post('/chat', (req, res) => {
   const { messages }: { messages: Array<UIMessage> } = req.body
   const result = streamText({
@@ -640,4 +675,5 @@ router.post('/chat', (req, res) => {
   })
   result.pipeUIMessageStreamToResponse(res)
 })
+
 export default router
