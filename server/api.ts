@@ -314,11 +314,25 @@ router.get('/groups', requireAuth(), async (req, res) => {
   try {
     const groups = await db.group.findMany({
       where: {
-        members: {
-          some: {
-            userId: userId as string,
+        OR: [
+          {
+            members: {
+              some: {
+                userId: userId as string,
+              },
+            },
           },
-        },
+          {
+            moderators: {
+              some: {
+                userId: userId as string,
+              },
+            },
+          },
+          {
+            ownerId: userId as string,
+          },
+        ],
       },
     })
     res.json(groups)
@@ -337,6 +351,8 @@ router.get('/group', requireAuth(), async (req, res) => {
       },
       include: {
         members: true,
+        owner: true,
+        moderators: true,
       },
     })
     res.json(group)
@@ -356,11 +372,7 @@ router.post('/group', requireAuth(), async (req, res) => {
   const group = await db.group.create({
     data: {
       name,
-      members: {
-        connect: {
-          userId: userId as string,
-        },
-      },
+      ownerId: userId as string,
     },
   })
   groupUsers.set(group.id, 1)
@@ -442,11 +454,7 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
     const group = await db.group.create({
       data: {
         name: userName as string,
-        members: {
-          connect: {
-            userId: userId as string,
-          },
-        },
+        ownerId: userId as string,
       },
     })
     groupUsers.set(group.id, 1)
