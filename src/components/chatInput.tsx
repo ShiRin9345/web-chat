@@ -68,11 +68,10 @@ const ChatInput: React.FC<Props> = ({
         await form.handleSubmit()
         form.reset()
       }}
-      className="pb-2"
     >
       <form.Field name="content">
         {(field) => (
-          <div className="bg-white/90  flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
+          <div className="bg-white/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
             <div className="flex items-center justify-center space-x-5 ">
               <Textarea
                 placeholder="Type your message here..."

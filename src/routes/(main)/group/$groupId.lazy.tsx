@@ -17,8 +17,8 @@ export default function Home() {
     <div className="flex relative flex-col h-screen">
       <DropFile />
       <ChatHeader roomId={groupId} />
-      <div className="flex h-full ">
-        <div className="flex flex-col w-full h-full">
+      <div className="flex h-full min-h-0 w-full">
+        <div className="flex flex-col min-h-0 w-full h-full">
           <VirtualChatList groupId={groupId} />
           <ChatInput groupId={groupId} />
         </div>
