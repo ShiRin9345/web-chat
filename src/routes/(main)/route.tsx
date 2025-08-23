@@ -36,20 +36,26 @@ function RouteComponent() {
   const { isSignedIn, isLoaded } = useCheckAuth()
   const location = useLocation()
   const gsapContainerRef = useRef<HTMLDivElement>(null)
-  useGSAP(() => {
-    if (!gsapContainerRef.current) return
-    gsap.fromTo(
-      '#gsapContainer',
-      {
-        opacity: 0,
-      },
-      {
-        opacity: 1,
-        duration: 0.125,
-        ease: 'power2.inOut',
-      },
-    )
-  }, [location, gsapContainerRef.current])
+  useGSAP(
+    () => {
+      if (!gsapContainerRef.current) return
+      gsap.fromTo(
+        '#gsapContainer',
+        {
+          opacity: 0,
+        },
+        {
+          opacity: 1,
+          duration: 0.125,
+          ease: 'power2.inOut',
+        },
+      )
+    },
+    {
+      dependencies: [location, gsapContainerRef.current],
+      scope: gsapContainerRef,
+    },
+  )
 
   if (!isLoaded || !isSignedIn) {
     return <PendingPage />
