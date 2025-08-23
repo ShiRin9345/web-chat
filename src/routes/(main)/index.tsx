@@ -36,9 +36,32 @@ const profileFormSchema = z.object({
 gsap.registerPlugin(ScrollTrigger)
 
 function RouteComponent() {
-  const { data, isLoading } = useQuery(userProfileQueryOptions)
+  const { data } = useQuery(userProfileQueryOptions)
   const { user } = useUser()
   const scopeRef = useRef<HTMLInputElement>(null)
+  useGSAP(() => {
+    gsap.to('#bgImage', {
+      y: '20%',
+      scale: 1.2,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '#bgImage',
+        scroller: '#scroll-container',
+        scrub: true,
+        start: 'top top',
+        end: 'bottom top',
+      },
+    })
+    gsap.to('#bgImage', {
+      x: () => 'random(10, 30)',
+      y: () => 'random(10, 30)',
+      repeatRefresh: true,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      duration: 4,
+    })
+  }, [{ scope: scopeRef }])
   const form = useForm({
     defaultValues: {
       email: data?.email,
@@ -66,32 +89,6 @@ function RouteComponent() {
       }
     },
   })
-  if (isLoading) {
-    return null
-  }
-  useGSAP(() => {
-    gsap.to('#bgImage', {
-      y: '20%',
-      scale: 1.2,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '#bgImage',
-        scroller: '#scroll-container',
-        scrub: true,
-        start: 'top top',
-        end: 'bottom top',
-      },
-    })
-    gsap.to('#bgImage', {
-      x: () => 'random(10, 30)',
-      y: () => 'random(10, 30)',
-      repeatRefresh: true,
-      ease: 'sine.inOut',
-      yoyo: true,
-      repeat: -1,
-      duration: 4,
-    })
-  }, [{ scope: scopeRef }])
   return (
     <div
       className="overflow-y-auto overflow-x-hidden scrollbar-none h-dvh"

@@ -29,6 +29,8 @@ export type GroupMessageAndCursor = {
   nextCursor: string
 }
 
-export type GroupWithMembers = Group & {
+export type GroupWithMembersAndModeratorsAndOwner = Group & {
   members: Array<User>
+  owner: User
+  moderators: Array<User>
 }

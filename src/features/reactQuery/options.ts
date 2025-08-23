@@ -4,7 +4,7 @@ import {
   queryOptions,
 } from '@tanstack/react-query'
 import axios from 'axios'
-import type { MutationOptions, QueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 import type {
   GroupMessage,
   PrivateMessage,
@@ -15,7 +15,7 @@ import type {
   ConversationWithMessagesWithUsers,
   GroupMessageAndCursor,
   GroupMessageWithSender,
-  GroupWithMembers,
+  GroupWithMembersAndModeratorsAndOwner,
   MessageType,
   PrivateMessageAndCursor,
   PrivateMessageWithSender,
@@ -224,16 +224,21 @@ export const userProfileQueryOptions = queryOptions({
   },
 })
 
-export const groupWithMembersQueryOptions = (groupId: string) =>
+export const groupWithMembersAndModeratorsAndOwnerQueryOptions = (
+  groupId: string,
+) =>
   queryOptions({
-    queryKey: ['groupWithMembers', groupId],
+    queryKey: ['groupWithMembersAndModeratorsAndOwner', groupId],
     queryFn: async () => {
       try {
-        const response = await axios.get<GroupWithMembers>('/api/group', {
-          params: {
-            groupId,
+        const response = await axios.get<GroupWithMembersAndModeratorsAndOwner>(
+          '/api/group',
+          {
+            params: {
+              groupId,
+            },
           },
-        })
+        )
         return response.data
       } catch (e) {
         console.error(e)

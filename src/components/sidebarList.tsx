@@ -221,8 +221,11 @@ function LabelGroup({ group }: { group: Group }) {
 function useCountSocket(groupId: string) {
   const { socket } = useSocket()
   const [count, setCount] = useState<number>(0)
+  console.log(groupId)
   useEffect(() => {
-    const callback = (newCount: number) => setCount(newCount)
+    const callback = (newCount: number) => {
+      setCount(newCount)
+    }
     socket.on(`${groupId}_count`, callback)
     const getGroupCount = async () => {
       const response = await axios.get<number>('/api/groupCount', {
