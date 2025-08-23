@@ -245,3 +245,52 @@ export const groupWithMembersAndModeratorsAndOwnerQueryOptions = (
       }
     },
   })
+
+export const friendOnlineStatusQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ['friendOnlineStatus', userId],
+    queryFn: async () => {
+      const response = await axios.get<boolean>('/api/isOnline', {
+        params: {
+          userId: userId,
+        },
+      })
+      return response.data
+    },
+    initialData: false,
+  })
+
+interface kickMutationProps {
+  queryClient: QueryClient
+  groupId: string
+}
+export const kickMutationOptions = ({
+  queryClient,
+  groupId,
+}: kickMutationProps) =>
+  mutationOptions({
+    mutationKey: ['kick', groupId],
+    mutationFn: async (userId: string) => {
+      try {
+        const response =
+          await axios.patch<GroupWithMembersAndModeratorsAndOwner>(
+            '/api/kick',
+            {
+              groupId,
+              userId,
+            },
+          )
+        return response.data
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    onSuccess: (
+      newGroup: GroupWithMembersAndModeratorsAndOwner | undefined,
+    ) => {
+      queryClient.setQueryData(
+        ['groupWithMembersAndModeratorsAndOwner', groupId],
+        newGroup,
+      )
+    },
+  })

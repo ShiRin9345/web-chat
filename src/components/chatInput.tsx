@@ -68,6 +68,7 @@ const ChatInput: React.FC<Props> = ({
         await form.handleSubmit()
         form.reset()
       }}
+      className="pb-2"
     >
       <form.Field name="content">
         {(field) => (

@@ -172,13 +172,13 @@ code {
     position: absolute;
     position-anchor: --image;
     bottom: anchor(bottom);
-    right: calc(anchor(left) + 2rem);
+    right: calc(anchor(left) + 1.5rem);
   }
   .pdf_download_link_right {
     position: absolute;
     position-anchor: --pdf;
     bottom: anchor(bottom);
-    right: calc(anchor(left) + 2rem);
+    right: calc(anchor(left) + 1.5rem);
   }
 
 }
