@@ -62,11 +62,25 @@ async function changeGroupOnlineCount(socket: Socket, changeNum: number) {
   const userId = socket.handshake.auth.userId as string
   const groups = await db.group.findMany({
     where: {
-      members: {
-        some: {
-          userId,
+      OR: [
+        {
+          members: {
+            some: {
+              userId,
+            },
+          },
         },
-      },
+        {
+          moderators: {
+            some: {
+              userId,
+            },
+          },
+        },
+        {
+          ownerId: userId,
+        },
+      ],
     },
   })
   for (const group of groups) {
