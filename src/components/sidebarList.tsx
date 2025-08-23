@@ -31,6 +31,7 @@ import {
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 import { isImage, isPDF } from '@/lib/checkFileType.ts'
 import { Pill, PillIcon } from '@/components/ui/shadcn-io/pill'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 
 const SidebarList = () => {
   const { type } = useColumnStore()
@@ -309,11 +310,10 @@ function AddUserSidebarList() {
                   key={user.id}
                 >
                   <div className="flex items-center gap-2">
-                    <img
-                      src={user.imageUrl}
-                      className="size-10 rounded-full aspect-square object-cover"
-                      alt="avatar"
-                    />
+                    <Avatar>
+                      <AvatarImage src={user.imageUrl} alt="avatar" />
+                      <AvatarFallback>Avatar</AvatarFallback>
+                    </Avatar>
                     <span>{user.fullName}</span>
                   </div>
                   {friends?.every((friend) => friend.id !== user.id) ? (

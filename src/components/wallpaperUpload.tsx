@@ -29,7 +29,10 @@ const WallpaperUpload = () => {
     mutate(targetUrl)
   }
   return (
-    <button onClick={() => inputRef.current?.click()}>
+    <button
+      className="cursor-pointer"
+      onClick={() => inputRef.current?.click()}
+    >
       <Wallpaper />
       <input
         ref={inputRef}

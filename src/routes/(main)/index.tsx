@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import WallpaperUpload from '@/components/wallpaperUpload.tsx'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
@@ -82,8 +83,9 @@ function RouteComponent() {
       },
     })
     gsap.to('#bgImage', {
-      x: () => 'random(10, 50)',
-      y: () => 'random(10, 50)',
+      x: () => 'random(10, 30)',
+      y: () => 'random(10, 30)',
+      repeatRefresh: true,
       ease: 'sine.inOut',
       yoyo: true,
       repeat: -1,
@@ -118,11 +120,10 @@ function RouteComponent() {
                 id="card"
                 className="bg-white rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 flex relative -top-8 p-2"
               >
-                <img
-                  src={user?.imageUrl}
-                  alt="avatar"
-                  className="size-32 rounded-full aspect-square "
-                />
+                <Avatar className="size-32">
+                  <AvatarImage src={user?.imageUrl} alt="avatar" />
+                  <AvatarFallback>avatar</AvatarFallback>
+                </Avatar>
                 <div className="right-2 top-16 absolute">
                   <WallpaperUpload />
                 </div>
