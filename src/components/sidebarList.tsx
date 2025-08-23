@@ -41,7 +41,7 @@ const SidebarList = () => {
 export default SidebarList
 
 const friendQueryOptions = queryOptions({
-  queryKey: ['frineds'],
+  queryKey: ['friends'],
   queryFn: async () => {
     const response = await axios.get<Array<User>>('/api/friends')
     return response.data
