@@ -49,7 +49,12 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <AppClerkProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider
+        themes={['light', 'dark', 'orange']}
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+      >
         <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
           <SocketProvider>
             <RouterProvider router={router} />
