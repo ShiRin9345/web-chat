@@ -39,20 +39,22 @@ function RouteComponent() {
   const { data } = useQuery(userProfileQueryOptions)
   const { user } = useUser()
   const scopeRef = useRef<HTMLInputElement>(null)
+  const bgImageRef = useRef<HTMLImageElement>(null)
   useGSAP(() => {
-    gsap.to('#bgImage', {
+    if (!bgImageRef.current) return
+    gsap.to(bgImageRef.current, {
       y: '20%',
       scale: 1.2,
       ease: 'none',
       scrollTrigger: {
-        trigger: '#bgImage',
+        trigger: bgImageRef.current,
         scroller: '#scroll-container',
         scrub: true,
         start: 'top top',
         end: 'bottom top',
       },
     })
-    gsap.to('#bgImage', {
+    gsap.to(bgImageRef.current, {
       x: () => 'random(10, 30)',
       y: () => 'random(10, 30)',
       repeatRefresh: true,
@@ -101,7 +103,7 @@ function RouteComponent() {
             className="absolute w-full h-full -z-10 inset-0  pointer-events-none scale-110 object-cover"
             alt="bgImage"
             src={data.bgImageUrl}
-            id="bgImage"
+            ref={bgImageRef}
           />
         )}
         <div className="flex flex-col ">

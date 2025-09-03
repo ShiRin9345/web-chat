@@ -1,17 +1,24 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Optimized backend server for web-chat application",
+  "main": "src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon  --exec ts-node server.ts",
-    "buld": "tsc",
-    "dev": "ts-node server.ts",
+    "start": "nodemon --exec \"ts-node --esm\" src/server.ts",
+    "build": "tsc",
+    "dev": "ts-node --esm src/server.ts",
     "migrate": "prisma migrate dev --name",
-    "reset": "prisma migrate reset"
+    "reset": "prisma migrate reset",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
   },
-  "keywords": [],
+  "keywords": [
+    "chat",
+    "backend",
+    "socket.io",
+    "prisma"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
@@ -27,6 +34,7 @@
     "ali-oss": "^6.23.0",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
     "express-session": "^1.18.2",
     "nodemon": "^3.1.10",
     "peer": "^1.0.2",
@@ -36,6 +44,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
+    "eslint": "^8.57.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }

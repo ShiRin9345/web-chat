@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
 import axios from 'axios'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Group } from '../../../generated/index.d.ts'
 import UserSidebar from '@/components/UserSidebar.tsx'
 import {
@@ -36,26 +36,24 @@ function RouteComponent() {
   const { isSignedIn, isLoaded } = useCheckAuth()
   const location = useLocation()
   const gsapContainerRef = useRef<HTMLDivElement>(null)
-  useGSAP(
-    () => {
-      if (!gsapContainerRef.current) return
-      gsap.fromTo(
-        '#gsapContainer',
-        {
-          opacity: 0,
-        },
-        {
-          opacity: 1,
-          duration: 0.125,
-          ease: 'power2.inOut',
-        },
-      )
-    },
-    {
-      dependencies: [location, gsapContainerRef.current],
-      scope: gsapContainerRef,
-    },
-  )
+  // 监听路由变化，处理页面过渡
+  useEffect(() => {
+    if (!gsapContainerRef.current) return
+
+    // 路由变化时，先淡入显示新内容
+    gsap.fromTo(
+      gsapContainerRef.current,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+        delay: 0.1, // 稍微延迟，确保新内容已渲染
+      },
+    )
+  }, [location.pathname])
+
+  // 移除 useGSAP，避免不必要的动画冲突
 
   if (!isLoaded || !isSignedIn) {
     return <PendingPage />
