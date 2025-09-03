@@ -15,7 +15,6 @@ export class OSSService {
 
       const location = (await client.getBucketLocation(config.bucket)).location
       const host = `https://${config.bucket}.${location}.aliyuncs.com`
-
       logger.info('OSS signature generated successfully')
       return { ...signature, host }
     } catch (error) {
