@@ -74,11 +74,11 @@ function RouteComponent() {
     <div className="flex relative flex-col h-screen bg-gray-50 dark:bg-gray-900 orange:bg-orange-50">
       {/* Header */}
       <div className="h-12 w-full p-2 flex relative items-center bg-white dark:bg-gray-800 orange:bg-orange-100">
-        <AnimatedLink url="/">
-          <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon">
+          <AnimatedLink url="/">
             <ArrowLeft className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
-          </Button>
-        </AnimatedLink>
+          </AnimatedLink>
+        </Button>
         <div className="ml-3 flex items-center gap-2">
           <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400 orange:text-orange-600" />
           <span className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">

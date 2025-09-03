@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form'
 import { CirclePlus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import type { User } from 'generated/index'
 import EmojiPicker from '@/components/emojiPicker.tsx'
@@ -30,6 +30,7 @@ const ChatInput: React.FC<Props> = ({
 }) => {
   const queryClient = useQueryClient()
   const { user } = useUser()
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const sender = {
     imageUrl: user?.imageUrl,
     fullName: user?.fullName,
@@ -44,6 +45,11 @@ const ChatInput: React.FC<Props> = ({
       queryClient,
     }),
   )
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.focus()
+    }
+  }, [])
   const form = useForm({
     onSubmit: async ({ value }) => {
       await mutateAsync({ content: value.content, type: 'TEXT' })
@@ -74,6 +80,7 @@ const ChatInput: React.FC<Props> = ({
           <div className="bg-white/90 dark:bg-gray-900/90 orange:bg-orange-50/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
             <div className="flex items-center justify-center space-x-5 ">
               <Textarea
+                ref={textAreaRef}
                 placeholder="Type your message here..."
                 value={field.state.value}
                 disabled={form.state.isSubmitting}

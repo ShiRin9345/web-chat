@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
-import { ArrowRight, Loader, Plus, UserIcon } from 'lucide-react'
+import { ArrowRight, Check, Loader, Plus, UserIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 import type { User } from 'generated/index'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import { Button } from '@/components/ui/button.tsx'
@@ -18,6 +19,15 @@ const addUserFormSchema = z.object({
 const AddUserSidebarList = () => {
   const [searchResults, setSearchResults] = useState<Array<User>>([])
   const [isSearching, setIsSearching] = useState(false)
+
+  // 获取当前好友列表，用于过滤搜索结果
+  const { data: currentFriends } = useQuery({
+    queryKey: ['friends'],
+    queryFn: async () => {
+      const response = await axios.get<Array<User>>('/api/friends')
+      return response.data
+    },
+  })
 
   const form = useForm({
     defaultValues: {
@@ -34,7 +44,14 @@ const AddUserSidebarList = () => {
         const response = await axios.get<Array<User>>('/api/users', {
           params: { name: value.name },
         })
-        setSearchResults(response.data)
+
+        // 过滤掉已经是好友的用户
+        const filteredResults = response.data.filter(
+          (user) =>
+            !currentFriends?.some((friend) => friend.userId === user.userId),
+        )
+
+        setSearchResults(filteredResults)
       } catch (error) {
         toast.error('Failed to search users')
       } finally {
@@ -64,7 +81,7 @@ const AddUserSidebarList = () => {
         <AnimatedLink url="/friendRequest">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 orange:text-orange-800 flex items-center gap-2 hover:text-gray-900 dark:hover:text-white orange:hover:text-orange-900 transition-colors cursor-pointer">
             <Plus className="h-4 w-4" />
-            Add New Friend
+            See Friend Requests
           </h3>
         </AnimatedLink>
 
@@ -141,6 +158,47 @@ const AddUserSidebarList = () => {
                     <UserIcon className="h-3 w-3 mr-1" />
                     Add
                   </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* 显示当前好友列表，让用户知道哪些人已经是好友 */}
+      {currentFriends && currentFriends.length > 0 && (
+        <>
+          <Separator />
+          <div className="space-y-2">
+            <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 orange:text-orange-700 uppercase tracking-wide">
+              Current Friends
+            </h4>
+            <div className="space-y-1">
+              {currentFriends.map((friend) => (
+                <div
+                  key={friend.id}
+                  className="flex items-center gap-3 p-2 bg-green-50 dark:bg-green-900/20 orange:bg-green-100 rounded-md"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={friend.imageUrl} alt="avatar" />
+                    <AvatarFallback className="text-sm">
+                      {friend.fullName ? friend.fullName.charAt(0) : 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
+                      {friend.fullName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700 truncate">
+                      Code: {friend.code}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-green-600 dark:text-green-400 orange:text-green-700">
+                    <Check className="h-3 w-3" />
+                    <span className="text-xs font-medium">Added</span>
+                  </div>
                 </div>
               ))}
             </div>
