@@ -36,9 +36,9 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
           <AvatarFallback>Avatar</AvatarFallback>
         </Avatar>
         <div className="flex w-full space-y-2 flex-col ">
-          <span className={cn('font-semibold', isSelfMessage && 'ml-auto')}>
-            {sender.fullName}
-          </span>
+                  <span className={cn('font-semibold text-gray-900 dark:text-white', isSelfMessage && 'ml-auto')}>
+          {sender.fullName}
+        </span>
           {type === 'TEXT' && (
             <p
               className={cn(
@@ -62,7 +62,7 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
               />
               <a
                 className={cn(
-                  ' rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white',
+                  ' rounded-full hover:bg-zinc-300 dark:hover:bg-gray-600 p-1 transition duration-200 bg-white dark:bg-gray-800',
                   isSelfMessage
                     ? 'image_download_link_right'
                     : 'image_download_link',
@@ -85,7 +85,7 @@ export const MessageItem = forwardRef<HTMLDivElement, MessageItemProps>(
               </Document>
               <a
                 className={cn(
-                  'rounded-full hover:bg-zinc-300 p-1 transition duration-200 bg-white',
+                  'rounded-full hover:bg-zinc-300 dark:hover:bg-gray-600 p-1 transition duration-200 bg-white dark:bg-gray-800',
                   isSelfMessage
                     ? 'pdf_download_link_right'
                     : 'pdf_download_link',

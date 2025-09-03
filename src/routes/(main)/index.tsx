@@ -114,14 +114,16 @@ function RouteComponent() {
               console.log(form.state.values)
             }}
           >
-            <div className="grid grid-cols-[100px_1fr] bg-white px-4 py-2 rounded-md gap-5">
+            <div className="grid grid-cols-[100px_1fr] bg-white dark:bg-gray-800 px-4 py-2 rounded-md gap-5 shadow-lg dark:shadow-gray-900/50">
               <div
                 id="card"
-                className="bg-white rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 flex relative -top-8 p-2"
+                className="bg-white dark:bg-gray-700 rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 border-gray-200 dark:border-gray-600 flex relative -top-8 p-2 shadow-md dark:shadow-gray-900/30"
               >
                 <Avatar className="size-32">
                   <AvatarImage src={user?.imageUrl} alt="avatar" />
-                  <AvatarFallback>avatar</AvatarFallback>
+                  <AvatarFallback className="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300">
+                    avatar
+                  </AvatarFallback>
                 </Avatar>
                 <div className="right-2 top-16 absolute">
                   <WallpaperUpload />
@@ -131,7 +133,9 @@ function RouteComponent() {
                 name="position"
                 children={(field) => (
                   <>
-                    <span>Position</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Position
+                    </span>
                     <RegionSelector
                       initialRegion={data?.position as string}
                       handelChange={field.handleChange}
@@ -143,16 +147,28 @@ function RouteComponent() {
                 name="sex"
                 children={(field) => (
                   <>
-                    <span>Sex</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Sex
+                    </span>
                     <RadioGroup
                       value={field.state.value}
                       onValueChange={field.handleChange}
                       className="flex-row flex mt-2"
                     >
                       <RadioGroupItem value="man" id="man" />
-                      <Label htmlFor="man">男</Label>
+                      <Label
+                        htmlFor="man"
+                        className="text-gray-700 dark:text-gray-300"
+                      >
+                        男
+                      </Label>
                       <RadioGroupItem value="woman" id="woman" />
-                      <Label htmlFor="man">女</Label>
+                      <Label
+                        htmlFor="woman"
+                        className="text-gray-700 dark:text-gray-300"
+                      >
+                        女
+                      </Label>
                     </RadioGroup>
                   </>
                 )}
@@ -161,10 +177,13 @@ function RouteComponent() {
                 name="phone"
                 children={(field) => (
                   <>
-                    <span>Phone</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Phone
+                    </span>
                     <Input
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     />
                   </>
                 )}
@@ -173,10 +192,13 @@ function RouteComponent() {
                 name="email"
                 children={(field) => (
                   <>
-                    <span>Email</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Email
+                    </span>
                     <Input
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400"
                     />
                   </>
                 )}
@@ -185,16 +207,22 @@ function RouteComponent() {
                 name="signature"
                 children={(field) => (
                   <>
-                    <span>Signature</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                      Signature
+                    </span>
                     <Textarea
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 resize-none"
                     />
                   </>
                 )}
               />
 
-              <Button className="col-span-2" type="submit">
+              <Button
+                className="col-span-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white"
+                type="submit"
+              >
                 Change
               </Button>
             </div>

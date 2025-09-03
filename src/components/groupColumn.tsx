@@ -48,9 +48,9 @@ const GroupColumn = () => {
   return (
     <div
       id="column"
-      className="bg-zinc-100 border-l h-full flex gap-2 flex-col w-[320px] "
+      className="bg-zinc-100 dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 h-full flex gap-2 flex-col w-[320px] "
     >
-      <h1 className="text-center font-bold text-xl border-b">{group?.name}</h1>
+      <h1 className="text-center font-bold text-xl border-b border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">{group?.name}</h1>
       <MemberList group={group} />
       <Button variant="destructive" className="mt-auto mx-8 mb-2">
         Quit
@@ -75,8 +75,8 @@ const MemberList: React.FC<MemberListProps> = ({ group }) => {
         ? 'moderator'
         : 'member'
   return (
-    <div className="flex flex-col gap-2 ml-2 max-h-[310px] w-[300px] overflow-y-auto pb-2 border-b">
-      <h2 className="mb-2 font-medium whitespace-nowrap">
+    <div className="flex flex-col gap-2 ml-2 max-h-[310px] w-[300px] overflow-y-auto pb-2 border-b border-gray-200 dark:border-gray-700">
+      <h2 className="mb-2 font-medium whitespace-nowrap text-gray-900 dark:text-white">
         Group members {userCount}
       </h2>
       {group && <AvatarLabel role={role} type="owner" user={group.owner} />}
@@ -139,7 +139,7 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
         <AvatarImage src={user.imageUrl} alt="avatar" />
         <AvatarFallback>Avatar</AvatarFallback>
       </Avatar>
-      <span className="text-sm text-zinc-500 w-20">{user.fullName}</span>
+      <span className="text-sm text-zinc-500 dark:text-gray-400 w-20">{user.fullName}</span>
       <Status status={`${online ? 'online' : 'offline'}`}>
         <StatusIndicator />
       </Status>

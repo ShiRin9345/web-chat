@@ -12,9 +12,9 @@ const DropFile = () => {
         !isDragActive && 'opacity-0',
       )}
     >
-      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[35rem] h-[13rem] bg-white flex flex-col items-center justify-center rounded-lg gap-2 py-4">
-        <ImagePlus />
-        <p className="font-semibold">Drag and drop your file here.</p>
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[35rem] h-[13rem] bg-white dark:bg-gray-800 flex flex-col items-center justify-center rounded-lg gap-2 py-4">
+        <ImagePlus className="text-gray-600 dark:text-gray-400" />
+        <p className="font-semibold text-gray-900 dark:text-white">Drag and drop your file here.</p>
       </div>
     </div>
   )
