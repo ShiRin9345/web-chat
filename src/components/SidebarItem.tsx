@@ -40,7 +40,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           {title}
         </span>
         {subtitle && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700">
+          <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700 truncate max-w-[100px]">
             {subtitle}
           </p>
         )}

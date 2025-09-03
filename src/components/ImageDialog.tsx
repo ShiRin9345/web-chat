@@ -75,6 +75,7 @@ const ImageDialog = ({
     mutateAsync({ content: targetUrl, type: type as MessageType })
     scrollBottom()
     setFiles(undefined)
+    setOpen(false)
   }
   return (
     <Dialog
@@ -91,7 +92,7 @@ const ImageDialog = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>Send image</DialogHeader>
-        <Dropzone onDrop={handleDrop} src={files}>
+        <Dropzone onDrop={handleDrop} src={files} accept={{ 'image/*': [] }}>
           <DropzoneEmptyState />
           <DropzoneContent />
         </Dropzone>

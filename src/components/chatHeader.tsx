@@ -63,7 +63,7 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
           <Menu className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
         </Button>
         {videoCount > 0 && (
-          <p className="absolute animate-pulse bg-emerald-500/80 p-2 right-5  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">
+          <p className="absolute animate-pulse bg-emerald-500/80 p-2 left-1/2 -translate-x-1/2  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">
             <Phone className="text-white" />
             <span className="text-secondary">
               {videoCount} people is calling
