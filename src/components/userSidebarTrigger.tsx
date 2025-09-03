@@ -8,7 +8,7 @@ const UserSidebarTrigger = () => {
     <Button
       variant="ghost"
       size="icon"
-      className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 orange:hover:bg-orange-100 transition-colors"
+      className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 orange:hover:bg-orange-100 cursor-pointer transition-colors"
       onClick={toggleSidebar}
     >
       {open ? (
