@@ -56,8 +56,32 @@ export const onlineUsersRedis = {
   // 获取所有在线用户ID
   async getOnlineUsers(): Promise<string[]> {
     const keys = await redis.keys('online:*')
-    return keys.map(key => key.replace('online:', ''))
-  }
+    return keys.map((key) => key.replace('online:', ''))
+  },
+
+  // 新增：引用计数方法
+  async incrementReferenceCount(userId: string): Promise<number> {
+    const key = `user:${userId}:ref_count`
+    const count = await redis.incr(key)
+    await redis.expire(key, 86400) // 24小时过期
+    return count
+  },
+
+  async decrementReferenceCount(userId: string): Promise<number> {
+    const key = `user:${userId}:ref_count`
+    const count = await redis.decr(key)
+    if (count <= 0) {
+      await redis.del(key)
+      return 0
+    }
+    return count
+  },
+
+  async getReferenceCount(userId: string): Promise<number> {
+    const key = `user:${userId}:ref_count`
+    const count = await redis.get(key)
+    return count ? parseInt(count) : 0
+  },
 }
 
 // 群组用户管理
@@ -97,7 +121,7 @@ export const groupUsersRedis = {
   async deleteGroupCount(groupId: string): Promise<void> {
     const key = `group:${groupId}:count`
     await redis.del(key)
-  }
+  },
 }
 
 // 视频房间用户管理
@@ -137,7 +161,7 @@ export const groupVideoUsersRedis = {
   async deleteVideoRoomCount(roomId: string): Promise<void> {
     const key = `video:${roomId}:count`
     await redis.del(key)
-  }
+  },
 }
 
 // 清理过期数据
@@ -147,7 +171,7 @@ export const cleanupRedis = {
     // Redis 的 EXPIRE 会自动清理过期数据
     // 这里可以添加额外的清理逻辑
     console.log('🧹 Redis cleanup completed')
-  }
+  },
 }
 
 export default redis
