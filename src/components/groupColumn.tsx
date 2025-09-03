@@ -4,7 +4,7 @@ import { useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { Crown, Edit, Loader, ShieldUser } from 'lucide-react'
+import { Crown, Edit, Loader, Settings, ShieldUser, Users } from 'lucide-react'
 import type { User } from 'generated/index'
 import type { GroupWithMembersAndModeratorsAndOwner } from '@/type'
 import type { UserResource } from '@clerk/types'
@@ -38,26 +38,78 @@ const GroupColumn = () => {
   const { data: group } = useQuery(
     groupWithMembersAndModeratorsAndOwnerQueryOptions(groupId),
   )
+
   useGSAP(() => {
     gsap.to('#column', {
-      width: open ? 310 : 0,
-      duration: 0.2,
-      ease: 'none',
+      width: open ? 320 : 0,
+      duration: 0.3,
+      ease: 'power2.out',
     })
   }, [open])
+
   return (
     <div
       id="column"
-      className="bg-zinc-100 dark:bg-gray-800 orange:bg-orange-100 border-l border-gray-200 dark:border-gray-700 orange:border-orange-300 h-full flex gap-2 flex-col w-[320px] "
+      className="bg-white dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
     >
-      <h1 className="text-center font-bold text-xl border-b border-gray-200 dark:border-gray-700 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900">{group?.name}</h1>
-      <MemberList group={group} />
-      <Button variant="destructive" className="mt-auto mx-8 mb-2">
-        Quit
-      </Button>
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 orange:border-orange-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 orange:from-orange-50 orange:to-orange-100">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <Users className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 className="font-bold text-lg text-gray-900 dark:text-white orange:text-orange-900">
+              {group?.name || 'Group'}
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700">
+              Group Chat
+            </p>
+          </div>
+        </div>
+
+        {/* Group Stats */}
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-gray-600 dark:text-gray-400 orange:text-orange-700">
+              {group?.members.length || 0} members
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <span className="text-gray-600 dark:text-gray-400 orange:text-orange-700">
+              {group?.moderators.length || 0} moderators
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Members List */}
+      <div className="flex-1 overflow-hidden">
+        <MemberList group={group} />
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 orange:border-orange-200 bg-gray-50 dark:bg-gray-800 orange:bg-orange-100">
+        <Button
+          variant="outline"
+          className="w-full bg-white dark:bg-gray-700 orange:bg-orange-50 hover:bg-gray-100 dark:hover:bg-gray-600 orange:hover:bg-orange-200 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-700 dark:text-gray-300 orange:text-orange-800"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          Group Settings
+        </Button>
+        <Button
+          variant="destructive"
+          className="w-full mt-3 bg-red-500 hover:bg-red-600 text-white"
+        >
+          Leave Group
+        </Button>
+      </div>
     </div>
   )
 }
+
 export default GroupColumn
 
 interface MemberListProps {
@@ -74,24 +126,54 @@ const MemberList: React.FC<MemberListProps> = ({ group }) => {
       : group?.moderators.some((moderator) => moderator.userId === user?.id)
         ? 'moderator'
         : 'member'
-  return (
-    <div className="flex flex-col gap-2 ml-2 max-h-[310px] w-[300px] overflow-y-auto pb-2 border-b border-gray-200 dark:border-gray-700 orange:border-orange-300">
-      <h2 className="mb-2 font-medium whitespace-nowrap text-gray-900 dark:text-white orange:text-orange-900">
-        Group members {userCount}
-      </h2>
-      {group && <AvatarLabel role={role} type="owner" user={group.owner} />}
 
-      {group?.moderators.map((moderator) => (
-        <AvatarLabel
-          key={moderator.id}
-          type="moderator"
-          role={role}
-          user={moderator}
-        />
-      ))}
-      {group?.members.map((member) => (
-        <AvatarLabel key={member.id} type="member" role={role} user={member} />
-      ))}
+  return (
+    <div className="p-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Users className="w-5 h-5 text-gray-600 dark:text-gray-400 orange:text-orange-600" />
+        <h2 className="font-semibold text-gray-900 dark:text-white orange:text-orange-900">
+          Members ({userCount})
+        </h2>
+      </div>
+
+      <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+        {/* Owner */}
+        {group && (
+          <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 orange:from-orange-50 orange:to-orange-100 rounded-lg p-3 border border-amber-200 dark:border-amber-700 orange:border-orange-200">
+            <AvatarLabel role={role} type="owner" user={group.owner} />
+          </div>
+        )}
+
+        {/* Moderators */}
+        {group?.moderators.map((moderator) => (
+          <div
+            key={moderator.id}
+            className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 orange:from-orange-50 orange:to-orange-100 rounded-lg p-3 border border-blue-200 dark:border-blue-700 orange:border-orange-200"
+          >
+            <AvatarLabel
+              key={moderator.id}
+              type="moderator"
+              role={role}
+              user={moderator}
+            />
+          </div>
+        ))}
+
+        {/* Members */}
+        {group?.members.map((member) => (
+          <div
+            key={member.id}
+            className="bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-800 dark:to-slate-800 orange:from-orange-50 orange:to-orange-100 rounded-lg p-3 border border-gray-200 dark:border-gray-600 orange:border-orange-200"
+          >
+            <AvatarLabel
+              key={member.id}
+              type="member"
+              role={role}
+              user={member}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -117,6 +199,7 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
       queryClient,
     }),
   )
+
   function canEdit(
     role: string,
     self: UserResource | null | undefined,
@@ -134,56 +217,94 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <Avatar>
-        <AvatarImage src={user.imageUrl} alt="avatar" />
-        <AvatarFallback>Avatar</AvatarFallback>
-      </Avatar>
-      <span className="text-sm text-zinc-500 dark:text-gray-400 orange:text-orange-700 w-20">{user.fullName}</span>
-      <Status status={`${online ? 'online' : 'offline'}`}>
-        <StatusIndicator />
-      </Status>
-      {type === 'owner' && (
-        <Badge variant="destructive">
-          <Crown /> Owner
-        </Badge>
-      )}
-      {type === 'moderator' && (
-        <Badge variant="moderator">
-          <ShieldUser /> Moderator
-        </Badge>
-      )}
-      {(isPending || isRolePending) && (
-        <Loader className="animate-spin size-5" />
-      )}
-      {canEdit(role, self, type, user) && (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Edit className="cursor-pointer size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => mutate(user.userId)}>
-                Kick
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem onClick={() => roleMutate('member')}>
-                      member
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => roleMutate('moderator')}>
-                      moderator
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
+    <div className="flex items-center gap-3">
+      <div className="relative">
+        <Avatar className="w-10 h-10 ring-2 ring-white dark:ring-gray-800 orange:ring-orange-100">
+          <AvatarImage src={user.imageUrl} alt={user.fullName} />
+          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-medium">
+            {(user.fullName && user.fullName.charAt(0).toUpperCase()) || 'U'}
+          </AvatarFallback>
+        </Avatar>
+        <div className="absolute -bottom-1 -right-1">
+          <Status status={`${online ? 'online' : 'offline'}`}>
+            <StatusIndicator />
+          </Status>
+        </div>
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
+            {user.fullName}
+          </span>
+          {type === 'owner' && (
+            <Badge variant="destructive" className="text-xs px-2 py-1">
+              <Crown className="w-3 h-3 mr-1" />
+              Owner
+            </Badge>
+          )}
+          {type === 'moderator' && (
+            <Badge
+              variant="secondary"
+              className="text-xs px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 orange:bg-orange-100 orange:text-orange-800"
+            >
+              <ShieldUser className="w-3 h-3 mr-1" />
+              Mod
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2">
+        {(isPending || isRolePending) && (
+          <Loader className="animate-spin w-4 h-4 text-gray-500" />
+        )}
+
+        {canEdit(role, self, type, user) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700 orange:hover:bg-orange-200"
+              >
+                <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400 orange:text-orange-600" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  onClick={() => mutate(user.userId)}
+                  className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+                >
+                  <span className="mr-2">🚫</span>
+                  Remove Member
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <span className="mr-2">👑</span>
+                    Change Role
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem onClick={() => roleMutate('member')}>
+                        <span className="mr-2">👤</span>
+                        Member
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => roleMutate('moderator')}>
+                        <span className="mr-2">🛡️</span>
+                        Moderator
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
     </div>
   )
 }
