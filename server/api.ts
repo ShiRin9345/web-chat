@@ -296,9 +296,12 @@ router.get('/users', requireAuth(), async (req, res) => {
               mode: 'insensitive',
             },
           },
-          {
-            code: name as string,
+                  {
+          code: {
+            startsWith: name as string,
+            mode: 'insensitive',
           },
+        },
         ],
       },
     })

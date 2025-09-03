@@ -40,7 +40,10 @@ export class UserService {
               },
             },
             {
-              code: name,
+              code: {
+                startsWith: name,
+                mode: 'insensitive',
+              },
             },
           ],
         },
