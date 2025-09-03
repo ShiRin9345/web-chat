@@ -110,8 +110,11 @@ const VirtualChatList: React.FC<Props> = ({
               >
                 {isLoaderRow ? (
                   hasNextPage ? (
-                    <div className="w-full  flex items-center justify-center">
+                    <div className="w-full flex items-center justify-center py-4">
                       <Loader className="animate-spin" />
+                      <span className="ml-2 text-gray-500 dark:text-gray-400 orange:text-orange-600">
+                        Loading more messages...
+                      </span>
                     </div>
                   ) : (
                     <span className="text-gray-500 dark:text-gray-400 orange:text-orange-600">

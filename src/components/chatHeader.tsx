@@ -42,20 +42,22 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
   return (
     <>
       <div className="h-12 w-full p-2 flex relative bg-white dark:bg-gray-900 orange:bg-orange-100">
-        <Button variant="ghost" size="icon">
-          <AnimatedLink url="/">
+        <AnimatedLink url="/">
+          <Button variant="ghost" size="icon" className="cursor-pointer">
             <House className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
-          </AnimatedLink>
-        </Button>
-        <Button variant="ghost" size="icon">
-          <AnimatedLink url="/video/$roomId" roomId={roomId}>
+          </Button>
+        </AnimatedLink>
+
+        <AnimatedLink url="/video/$roomId" roomId={roomId}>
+          <Button variant="ghost" size="icon" className="cursor-pointer">
             <Video className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
-          </AnimatedLink>
-        </Button>
+          </Button>
+        </AnimatedLink>
+
         <Button
           variant="ghost"
           size="icon"
-          className="ml-auto"
+          className="ml-auto cursor-pointer"
           onClick={changeOpen}
         >
           <Menu className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
