@@ -61,6 +61,8 @@ const ImageDialog = ({
     const ossInfo = response.data
     const formdata = new FormData()
 
+    console.log(file.size)
+
     formdata.append('key', file.name)
     formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
     formdata.append('policy', ossInfo.policy)
