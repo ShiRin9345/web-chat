@@ -62,7 +62,7 @@ const AddUserSidebarList = () => {
     <div className="px-2 space-y-4">
       <div className="space-y-2">
         <AnimatedLink url="/friendRequest">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 orange:text-orange-800 flex items-center gap-2 hover:text-gray-900 dark:hover:text-white orange:hover:text-orange-900 transition-colors cursor-pointer">
             <Plus className="h-4 w-4" />
             Add New Friend
           </h3>
@@ -107,14 +107,14 @@ const AddUserSidebarList = () => {
         <>
           <Separator />
           <div className="space-y-2">
-            <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <h4 className="text-xs font-medium text-gray-500 dark:text-gray-400 orange:text-orange-700 uppercase tracking-wide">
               Search Results
             </h4>
             <div className="space-y-1">
               {searchResults.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 rounded-md transition-colors"
+                  className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 orange:hover:bg-orange-100 rounded-md transition-colors"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.imageUrl} alt="avatar" />
@@ -124,10 +124,10 @@ const AddUserSidebarList = () => {
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
                       {user.fullName}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700 truncate">
                       Code: {user.code}
                     </p>
                   </div>

@@ -16,10 +16,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   icon,
   title,
   subtitle,
-  iconBgColor = 'bg-gray-100',
-  iconTextColor = 'text-gray-600',
-  hoverBgColor = 'hover:bg-zinc-50 dark:hover:bg-gray-800',
-  hoverIconBgColor = 'group-hover:bg-gray-200',
+  iconBgColor = 'bg-gray-100 dark:bg-gray-700 orange:bg-orange-200',
+  iconTextColor = 'text-gray-600 dark:text-gray-300 orange:text-orange-700',
+  hoverBgColor = 'hover:bg-zinc-50 dark:hover:bg-gray-800 orange:hover:bg-orange-100',
+  hoverIconBgColor = 'group-hover:bg-gray-200 dark:group-hover:bg-gray-600 orange:group-hover:bg-orange-300',
   children,
   className = '',
 }) => {
@@ -36,11 +36,13 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       </div>
 
       <div className="flex-1 min-w-0">
-        <span className="font-semibold text-gray-900 dark:text-white text-lg">
+        <span className="font-semibold text-gray-900 dark:text-white orange:text-orange-900 text-lg">
           {title}
         </span>
         {subtitle && (
-          <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700">
+            {subtitle}
+          </p>
         )}
       </div>
 

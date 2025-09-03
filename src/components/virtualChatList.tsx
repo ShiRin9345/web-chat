@@ -76,7 +76,7 @@ const VirtualChatList: React.FC<Props> = ({
     <div
       ref={parentRef}
       id="topDiv"
-      className="p-2 flex-1 h-full overflow-auto bg-zinc-100 dark:bg-gray-900 scrollbar-none relative "
+      className="p-2 flex-1 h-full overflow-auto bg-zinc-100 dark:bg-gray-900 orange:bg-orange-50 scrollbar-none relative "
     >
       <div
         style={{
@@ -110,7 +110,7 @@ const VirtualChatList: React.FC<Props> = ({
                       <Loader className="animate-spin" />
                     </div>
                   ) : (
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-gray-500 dark:text-gray-400 orange:text-orange-600">
                       Nothing more to load...
                     </span>
                   )

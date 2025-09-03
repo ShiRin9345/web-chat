@@ -6,7 +6,7 @@ import { ThemeToggle } from '@/components/themeToggle.tsx'
 
 const ChatSideBar = () => {
   return (
-    <div className="flex flex-col pt-2 px-2 bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col pt-2 px-2 bg-gray-50 dark:bg-gray-900 orange:bg-orange-50">
       <section className="flex justify-between items-center">
         <UserSidebarTrigger />
         <div className="flex items-center gap-2">

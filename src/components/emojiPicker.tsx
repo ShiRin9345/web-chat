@@ -20,7 +20,7 @@ const EmojiPicker: React.FC<Props> = ({ onChange }) => {
       <PopoverContent
         side="top"
         sideOffset={40}
-        className="bg-transparent border-none shadow-none drop-shadow-none dark:bg-gray-900 dark:border-gray-700"
+        className="bg-transparent border-none shadow-none drop-shadow-none dark:bg-gray-900 dark:border-gray-700 orange:bg-orange-50 orange:border-orange-300"
       >
         <Picker
           data={data}

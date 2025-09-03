@@ -71,7 +71,7 @@ const ChatInput: React.FC<Props> = ({
     >
       <form.Field name="content">
         {(field) => (
-          <div className="bg-white/90 dark:bg-gray-900/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
+          <div className="bg-white/90 dark:bg-gray-900/90 orange:bg-orange-50/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
             <div className="flex items-center justify-center space-x-5 ">
               <Textarea
                 placeholder="Type your message here..."
@@ -85,7 +85,7 @@ const ChatInput: React.FC<Props> = ({
                     form.reset()
                   }
                 }}
-                className="bg-white dark:bg-gray-800 resize-none  max-h-[10rem] focus-visible:ring-0! focus-visible:border-input dark:text-white dark:placeholder:text-gray-400"
+                className="bg-white dark:bg-gray-800 orange:bg-orange-100 resize-none  max-h-[10rem] focus-visible:ring-0! focus-visible:border-input dark:text-white orange:text-orange-900 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600"
               />
               <Button
                 variant="send"

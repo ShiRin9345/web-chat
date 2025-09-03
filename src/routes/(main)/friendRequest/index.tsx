@@ -71,17 +71,17 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex relative flex-col h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex relative flex-col h-screen bg-gray-50 dark:bg-gray-900 orange:bg-orange-50">
       {/* Header */}
-      <div className="h-12 w-full p-2 flex relative items-center bg-white dark:bg-gray-800">
+      <div className="h-12 w-full p-2 flex relative items-center bg-white dark:bg-gray-800 orange:bg-orange-100">
         <AnimatedLink url="/">
           <Button variant="ghost" size="icon">
-            <ArrowLeft />
+            <ArrowLeft className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
           </Button>
         </AnimatedLink>
         <div className="ml-3 flex items-center gap-2">
-          <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-          <span className="font-semibold text-lg text-gray-900 dark:text-white">
+          <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400 orange:text-orange-600" />
+          <span className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">
             Friend Requests
           </span>
           {sentRequests.length + receivedRequests.length > 0 && (
@@ -97,22 +97,22 @@ function RouteComponent() {
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading ? (
           <div className="flex items-center justify-center h-32">
-            <Loader className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400" />
+            <Loader className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400 orange:text-orange-600" />
           </div>
         ) : sentRequests.length > 0 || receivedRequests.length > 0 ? (
           <div className="space-y-6">
             {/* 收到的请求 */}
             {receivedRequests.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white orange:text-orange-900 mb-4 flex items-center gap-2">
+                  <UserPlus className="h-5 w-5 text-blue-600 dark:text-blue-400 orange:text-orange-600" />
                   Received Requests
                 </h3>
                 <div className="space-y-4">
                   {receivedRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-gray-800 orange:bg-orange-100 rounded-lg border border-gray-200 dark:border-gray-700 orange:border-orange-300 p-4 shadow-sm hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center gap-4">
                         <Avatar className="h-16 w-16">
@@ -120,7 +120,7 @@ function RouteComponent() {
                             src={request.from.imageUrl}
                             alt="avatar"
                           />
-                          <AvatarFallback className="text-lg">
+                          <AvatarFallback className="text-lg bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
                             {request.from.fullName
                               ? request.from.fullName.charAt(0)
                               : 'U'}
@@ -129,7 +129,7 @@ function RouteComponent() {
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">
                               {request.from.fullName}
                             </h3>
                             <Badge
@@ -150,7 +150,7 @@ function RouteComponent() {
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
                             Code: {request.from.code}
                           </p>
                         </div>
@@ -172,7 +172,7 @@ function RouteComponent() {
                                 }
                                 variant="outline"
                                 size="sm"
-                                className="border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="border-red-300 dark:border-red-600 orange:border-red-400 text-red-600 dark:text-red-400 orange:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 orange:hover:bg-red-100"
                               >
                                 <X className="h-4 w-4 mr-1" />
                                 Reject
@@ -203,20 +203,20 @@ function RouteComponent() {
             {/* 发送的请求 */}
             {sentRequests.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                  <ArrowLeft className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white orange:text-orange-900 mb-4 flex items-center gap-2">
+                  <ArrowLeft className="h-5 w-5 text-green-600 dark:text-green-400 orange:text-orange-600" />
                   Sent Requests
                 </h3>
                 <div className="space-y-4">
                   {sentRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 shadow-sm hover:shadow-md transition-shadow"
+                      className="bg-white dark:bg-gray-800 orange:bg-orange-100 rounded-lg border border-gray-200 dark:border-gray-700 orange:border-orange-300 p-4 shadow-sm hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center gap-4">
                         <Avatar className="h-16 w-16">
                           <AvatarImage src={request.to.imageUrl} alt="avatar" />
-                          <AvatarFallback className="text-lg">
+                          <AvatarFallback className="text-lg bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
                             {request.to.fullName
                               ? request.to.fullName.charAt(0)
                               : 'U'}
@@ -225,7 +225,7 @@ function RouteComponent() {
 
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">
                               {request.to.fullName}
                             </h3>
                             <Badge
@@ -246,7 +246,7 @@ function RouteComponent() {
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
                             Code: {request.to.code}
                           </p>
                         </div>
@@ -278,11 +278,11 @@ function RouteComponent() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <Users className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <Users className="h-16 w-16 text-gray-300 dark:text-gray-600 orange:text-orange-300 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white orange:text-orange-900 mb-2">
               No Friend Requests
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 max-w-sm">
+            <p className="text-gray-500 dark:text-gray-400 orange:text-orange-700 max-w-sm">
               When someone sends you a friend request, it will appear here. You
               can choose to accept or reject it.
             </p>

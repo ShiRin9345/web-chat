@@ -3,6 +3,7 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant orange (&:is(.orange *));
 
 body {
   @apply m-0;
@@ -209,7 +210,7 @@ code {
 }
 @layer components {
   .chatInput_icon {
-    @apply cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500;
+    @apply cursor-pointer text-zinc-300 dark:text-zinc-400 orange:text-orange-400 transform duration-200 hover:text-zinc-500 dark:hover:text-zinc-300 orange:hover:text-orange-600;
   }
   .image_download_link {
     position: absolute;
