@@ -17,6 +17,7 @@ import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import WallpaperUpload from '@/components/wallpaperUpload.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
+import { FontSelector } from '@/components/fontSelector'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
