@@ -8,7 +8,7 @@ const UserSidebar = () => {
   return (
     <AppSidebar>
       <SidebarContent>
-        <div className="w-full h-dvh flex flex-col items-center gap-6 py-2">
+        <div className="w-full h-dvh flex flex-col items-center gap-6 py-2 bg-gray-50 dark:bg-gray-900">
           <GroupAddIcon />
           <div onClick={() => setType('ADD_USER')}>
             <ToolTipIcon content="add new frind">

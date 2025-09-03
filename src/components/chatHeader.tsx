@@ -41,7 +41,7 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
   }, [socket])
   return (
     <>
-      <div className="h-12 w-full p-2 flex relative">
+      <div className="h-12 w-full p-2 flex relative bg-white dark:bg-gray-900">
         <Button variant="ghost" size="icon">
           <AnimatedLink url="/">
             <House />

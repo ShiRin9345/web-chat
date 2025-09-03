@@ -57,7 +57,7 @@ function LabelGroup({ group }: { group: Group }) {
         iconTextColor="text-transparent"
         hoverIconBgColor=""
         children={
-          <Pill className="bg-blue-50 text-blue-700 border-blue-200">
+          <Pill className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
             <PillIcon icon={UserIcon} />
             <span className="text-xs font-medium">{count} users</span>
           </Pill>

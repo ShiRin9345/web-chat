@@ -12,6 +12,7 @@ import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 import { SocketProvider } from '@/providers/socketProvider.tsx'
 import AppClerkProvider from '@/integrations/clerk/provider.tsx'
+import { ThemeProvider } from '@/components/themeProvider.tsx'
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
@@ -48,11 +49,13 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <AppClerkProvider>
-      <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-        <SocketProvider>
-          <RouterProvider router={router} />
-        </SocketProvider>
-      </TanStackQueryProvider.Provider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+          <SocketProvider>
+            <RouterProvider router={router} />
+          </SocketProvider>
+        </TanStackQueryProvider.Provider>
+      </ThemeProvider>
     </AppClerkProvider>,
   )
 }

@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { CirclePlus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
+import { useUser } from '@clerk/clerk-react'
 import type { User } from 'generated/index'
 import EmojiPicker from '@/components/emojiPicker.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
@@ -9,7 +10,6 @@ import { Button } from '@/components/ui/button.tsx'
 import ImageDialog from '@/components/ImageDialog.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
-import { useUser } from '@clerk/clerk-react'
 
 export const messageType = {
   IMAGE: 'IMAGE',
@@ -71,7 +71,7 @@ const ChatInput: React.FC<Props> = ({
     >
       <form.Field name="content">
         {(field) => (
-          <div className="bg-white/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
+          <div className="bg-white/90 dark:bg-gray-900/90 flex backdrop-blur-md  pt-2 flex-col px-5 w-full">
             <div className="flex items-center justify-center space-x-5 ">
               <Textarea
                 placeholder="Type your message here..."
@@ -85,7 +85,7 @@ const ChatInput: React.FC<Props> = ({
                     form.reset()
                   }
                 }}
-                className="bg-white resize-none  max-h-[10rem] focus-visible:ring-0! focus-visible:border-input"
+                className="bg-white dark:bg-gray-800 resize-none  max-h-[10rem] focus-visible:ring-0! focus-visible:border-input dark:text-white dark:placeholder:text-gray-400"
               />
               <Button
                 variant="send"

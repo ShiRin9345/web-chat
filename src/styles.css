@@ -13,8 +13,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body, html {
-  height: 100%
+body,
+html {
+  height: 100%;
 }
 
 code {
@@ -146,15 +147,15 @@ code {
     display: none;
   }
   .image-anchor {
-    anchor-name: --image
+    anchor-name: --image;
   }
   .pdf-anchor {
-    anchor-name: --pdf
+    anchor-name: --pdf;
   }
 }
 @layer components {
   .chatInput_icon {
-    @apply cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500
+    @apply cursor-pointer text-zinc-300 transform duration-200 hover:text-zinc-500;
   }
   .image_download_link {
     position: absolute;
@@ -180,9 +181,8 @@ code {
     bottom: anchor(bottom);
     right: calc(anchor(left) + 1.5rem);
   }
-
 }
 
 .cl-internal-1dauvpw {
-  display: none
+  display: none;
 }

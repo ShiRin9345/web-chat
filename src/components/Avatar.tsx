@@ -7,7 +7,7 @@ const Avatar = () => {
   return (
     <div className="flex items-center space-x-2 ">
       <div className="flex flex-col justify-center items-center">
-        <span className="text-center  text-md font-semibold">
+        <span className="text-center text-md font-semibold text-gray-900 dark:text-white">
           {user?.fullName}
         </span>
         <Indicator />
