@@ -41,15 +41,15 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
   }, [socket])
   return (
     <>
-      <div className="h-12 w-full p-2 flex relative bg-white dark:bg-gray-900">
+      <div className="h-12 w-full p-2 flex relative bg-white dark:bg-gray-900 orange:bg-orange-100">
         <Button variant="ghost" size="icon">
           <AnimatedLink url="/">
-            <House />
+            <House className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
           </AnimatedLink>
         </Button>
         <Button variant="ghost" size="icon">
           <AnimatedLink url="/video/$roomId" roomId={roomId}>
-            <Video />
+            <Video className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
           </AnimatedLink>
         </Button>
         <Button
@@ -58,11 +58,11 @@ const ChatHeader: React.FC<Props> = ({ roomId }) => {
           className="ml-auto"
           onClick={changeOpen}
         >
-          <Menu />
+          <Menu className="text-gray-600 dark:text-gray-300 orange:text-orange-600" />
         </Button>
         {videoCount > 0 && (
           <p className="absolute animate-pulse bg-emerald-500/80 p-2 right-5  h-10 -bottom-15 gap-2 flex rounded-lg z-10  text-white">
-            <Phone />
+            <Phone className="text-white" />
             <span className="text-secondary">
               {videoCount} people is calling
             </span>

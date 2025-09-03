@@ -30,7 +30,7 @@ const WallpaperUpload = () => {
   }
   return (
     <button
-      className="cursor-pointer text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+      className="cursor-pointer text-gray-700 dark:text-gray-300 orange:text-orange-700 hover:text-gray-900 dark:hover:text-white orange:hover:text-orange-900 transition-colors"
       onClick={() => inputRef.current?.click()}
     >
       <Wallpaper />

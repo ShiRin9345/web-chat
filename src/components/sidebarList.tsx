@@ -45,12 +45,11 @@ const ContactSidebarList = () => {
       <Accordion type="multiple">
         <AnimatedLink url="/">
           <SidebarItem
-            icon={<Home className="w-5 h-5" />}
+            icon={
+              <Home className="w-5 h-5 text-gray-600 dark:text-gray-300 orange:text-orange-600" />
+            }
             title="Home"
             subtitle="Main dashboard"
-            iconBgColor="bg-gray-100"
-            iconTextColor="text-gray-600"
-            hoverIconBgColor="group-hover:bg-gray-200"
           />
         </AnimatedLink>
         <AccordionItem value="groups">

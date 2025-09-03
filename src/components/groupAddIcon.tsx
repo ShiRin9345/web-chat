@@ -18,7 +18,7 @@ const GroupAddIcon = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <ToolTipIcon content="create new group">
-          <Plus className="text-emerald-500" />
+          <Plus className="text-emerald-500 dark:text-emerald-400 orange:text-orange-600" />
         </ToolTipIcon>
       </DialogTrigger>
       <DialogContent>
@@ -39,7 +39,7 @@ export function ToolTipIcon({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="bg-zinc-100 dark:bg-gray-700 cursor-pointer hover:bg-zinc-200 dark:hover:bg-gray-600 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
+        <div className="bg-zinc-100 dark:bg-gray-700 orange:bg-orange-100 cursor-pointer hover:bg-zinc-200 dark:hover:bg-gray-600 orange:hover:bg-orange-200 size-12 rounded-full flex items-center transition duration-300 hover:rounded-2xl justify-center ">
           {children}
         </div>
       </TooltipTrigger>
