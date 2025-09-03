@@ -30,9 +30,8 @@ const WallpaperUpload = () => {
 
       const compressedFile = await imageCompression(file, options)
 
-      // 生成唯一的文件名
-      const timestamp = Date.now()
-      const fileName = `wallpaper_${timestamp}.webp`
+      // 生成文件名：原文件名 + WebP后缀
+      const fileName = file.name.replace(/\.[^/.]+$/, '.webp')
 
       // 上传压缩后的WebP文件
       const response = await axios.get<OssInfo>('/api/oss-signature')
@@ -50,25 +49,63 @@ const WallpaperUpload = () => {
       const targetUrl = ossInfo.host + '/' + fileName
       mutate(targetUrl)
     } catch (error) {
-      // 不支持webp格式，尝试上传原文件
+      // WebP转换失败，尝试压缩为JPEG格式
       try {
+        console.log('WebP转换失败，尝试JPEG压缩:', error)
+
         const file = e.target.files[0]
+
+        // 压缩为JPEG格式
+        const jpegOptions = {
+          maxSizeMB: 1, // 最大文件大小1MB
+          maxWidthOrHeight: 1920, // 最大宽度或高度1920px
+          useWebWorker: true, // 使用Web Worker提升性能
+          fileType: 'image/jpeg', // 输出JPEG格式
+        }
+
+        const jpegCompressedFile = await imageCompression(file, jpegOptions)
+
+        // 生成文件名：原文件名 + JPEG后缀
+        const fileName = file.name.replace(/\.[^/.]+$/, '.jpg')
+
+        // 上传压缩后的JPEG文件
         const response = await axios.get<OssInfo>('/api/oss-signature')
         const ossInfo = response.data
         const formdata = new FormData()
 
-        formdata.append('key', file.name)
+        formdata.append('key', fileName)
         formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
         formdata.append('policy', ossInfo.policy)
         formdata.append('signature', ossInfo.Signature)
         formdata.append('success_action_status', '200')
-        formdata.append('file', file)
+        formdata.append('file', jpegCompressedFile)
 
         await axios.post(ossInfo.host, formdata)
-        const targetUrl = ossInfo.host + '/' + file.name
+        const targetUrl = ossInfo.host + '/' + fileName
         mutate(targetUrl)
       } catch (fallbackError) {
-        console.error('原文件上传也失败:', fallbackError)
+        // 最后的备选方案：上传原文件
+        try {
+          const file = e.target.files[0]
+          const response = await axios.get<OssInfo>('/api/oss-signature')
+          const ossInfo = response.data
+          const formdata = new FormData()
+
+          formdata.append('key', file.name)
+          formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+          formdata.append('policy', ossInfo.policy)
+          formdata.append('signature', ossInfo.Signature)
+          formdata.append('success_action_status', '200')
+          formdata.append('file', file)
+
+          await axios.post(ossInfo.host, formdata)
+          const targetUrl = ossInfo.host + '/' + file.name
+          mutate(targetUrl)
+
+          console.log('原文件上传成功')
+        } catch (finalError) {
+          console.error('所有上传方式都失败:', finalError)
+        }
       }
     } finally {
       setIsProcessing(false)
