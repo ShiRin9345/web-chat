@@ -55,9 +55,17 @@ const ContactSidebarList = () => {
     <>
       <Accordion type="multiple">
         <AnimatedLink url="/">
-          <button className="w-full cursor-pointer text-lg text-md  text-left rounded-sm font-semibold transition duration-200 px-2 hover:bg-zinc-100 h-10">
-            Home
-          </button>
+          <div className="w-full flex items-center gap-3 p-3 hover:bg-zinc-50 hover:shadow-sm transition-all duration-200 rounded-lg cursor-pointer group">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                🏠
+              </div>
+            </div>
+            <div className="flex-1">
+              <span className="font-semibold text-gray-900 text-lg">Home</span>
+              <p className="text-xs text-gray-500">Main dashboard</p>
+            </div>
+          </div>
         </AnimatedLink>
         <AccordionItem value="groups">
           <AccordionTrigger className="!no-underline cursor-pointer ">
@@ -84,16 +92,9 @@ const FriendList: React.FC<{ friends: Array<User> | undefined }> = ({
   friends,
 }) => {
   return (
-    <div className="px-2">
+    <div className="px-2 space-y-1">
       {friends?.map &&
-        friends.map((friend, index) => (
-          <React.Fragment key={friend.id}>
-            <FriendItem friend={friend} />
-            {index < friends.length - 1 && (
-              <Separator className="my-[0.45rem]" />
-            )}
-          </React.Fragment>
-        ))}
+        friends.map((friend) => <FriendItem key={friend.id} friend={friend} />)}
     </div>
   )
 }
@@ -105,17 +106,36 @@ const FriendItem: React.FC<{ friend: User }> = ({ friend }) => {
       url="/conversation/$friendUserId"
       friendUserId={friend.userId}
     >
-      <div className="w-full flex items-center gap-2 p-2 hover:bg-zinc-100 transition duration-200 rounded-md cursor-pointer h-12">
-        <img
-          src={friend.imageUrl}
-          className="size-8 rounded-full aspect-square"
-          alt="avatar"
-        />
-        <span> {friend.fullName}</span>
-        <Status status={`${online ? 'online' : 'offline'}`}>
-          <StatusLabel />
-          <StatusIndicator />
-        </Status>
+      <div className="w-full flex items-center gap-3 p-3 hover:bg-zinc-50 hover:shadow-sm transition-all duration-200 rounded-lg cursor-pointer group">
+        <div className="relative">
+          <img
+            src={friend.imageUrl}
+            className="size-10 rounded-full aspect-square object-cover ring-2 ring-white shadow-sm"
+            alt="avatar"
+          />
+          {/* 在线状态指示器 */}
+          <div
+            className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
+              online ? 'bg-green-500' : 'bg-gray-400'
+            }`}
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-gray-900 truncate">
+              {friend.fullName}
+            </span>
+            {online && (
+              <span className="text-xs text-green-600 font-medium">Online</span>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 truncate">
+            {online ? 'Available for chat' : 'Last seen recently'}
+          </p>
+        </div>
+
+        {/* 移除旧的 Status 组件，使用自定义的在线状态指示器 */}
       </div>
     </AnimatedLink>
   )
@@ -125,18 +145,9 @@ const GroupList: React.FC<{ groups: Array<Group> | undefined }> = ({
   groups,
 }) => {
   return (
-    <div className="px-2 ">
-      <ul>
-        {groups?.map &&
-          groups.map((group, index) => (
-            <React.Fragment key={group.id}>
-              <LabelGroup group={group} />
-              {index < groups.length - 1 && (
-                <Separator className="my-[0.45rem]" />
-              )}
-            </React.Fragment>
-          ))}
-      </ul>
+    <div className="px-2 space-y-1">
+      {groups?.map &&
+        groups.map((group) => <LabelGroup key={group.id} group={group} />)}
     </div>
   )
 }
@@ -154,24 +165,37 @@ function LabelGroup({ group }: { group: Group }) {
     messages.length > 0 ? messages[messages.length - 1].content : ''
   const count = useCountSocket(group.id)
   return (
-    <li>
-      <AnimatedLink url="/group/$groupId" groupId={group.id}>
-        <button className="w-full cursor-pointer text-md  flex items-center justify-between rounded-sm font-semibold  transition duration-200 px-2 hover:bg-zinc-100 h-10">
-          <span>{group.name}</span>
-          <Pill>
-            <PillIcon icon={UserIcon} />
-            {count} users
-          </Pill>
-          <span className="text-zinc-500 text-xs max-w-[70px] truncate">
-            {isImage(lastMessage)
-              ? isPDF(lastMessage)
-                ? '[pdf]'
-                : '[file]'
-              : lastMessage}
-          </span>
-        </button>
-      </AnimatedLink>
-    </li>
+    <AnimatedLink url="/group/$groupId" groupId={group.id}>
+      <div className="w-full flex items-center gap-3 p-3 hover:bg-zinc-50 hover:shadow-sm transition-all duration-200 rounded-lg cursor-pointer group">
+        <div className="flex-shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            {group.name.charAt(0).toUpperCase()}
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-semibold text-gray-900 truncate">
+              {group.name}
+            </span>
+            <Pill className="bg-blue-50 text-blue-700 border-blue-200">
+              <PillIcon icon={UserIcon} />
+              <span className="text-xs font-medium">{count} users</span>
+            </Pill>
+          </div>
+
+          <p className="text-xs text-gray-500 truncate">
+            {lastMessage
+              ? isImage(lastMessage)
+                ? isPDF(lastMessage)
+                  ? '📄 PDF file'
+                  : '🖼️ Image'
+                : lastMessage
+              : 'No messages yet'}
+          </p>
+        </div>
+      </div>
+    </AnimatedLink>
   )
 }
 
