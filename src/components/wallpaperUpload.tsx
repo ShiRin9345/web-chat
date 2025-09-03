@@ -28,13 +28,7 @@ const WallpaperUpload = () => {
         fileType: 'image/webp', // 输出WebP格式
       }
 
-      console.log('开始压缩图片...')
       const compressedFile = await imageCompression(file, options)
-      console.log('图片压缩完成:', {
-        原始大小: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
-        压缩后大小: `${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`,
-        压缩比例: `${((1 - compressedFile.size / file.size) * 100).toFixed(1)}%`,
-      })
 
       // 生成唯一的文件名
       const timestamp = Date.now()
@@ -56,6 +50,7 @@ const WallpaperUpload = () => {
       const targetUrl = ossInfo.host + '/' + fileName
       mutate(targetUrl)
     } catch (error) {
+      // 不支持webp格式，尝试上传原文件
       try {
         const file = e.target.files[0]
         const response = await axios.get<OssInfo>('/api/oss-signature')
