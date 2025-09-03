@@ -173,7 +173,7 @@ router.get(
   requireAuth(),
   asyncHandler(async (req, res) => {
     const { userId } = req.query as { userId: string }
-    const isOnline = await userService.checkOnlineStatus(userId, onlineUsers)
+    const isOnline = await onlineUsersRedis.isOnline(userId)
     res.send(isOnline)
   }),
 )
