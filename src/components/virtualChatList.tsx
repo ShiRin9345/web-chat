@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import { Loader } from 'lucide-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -37,11 +37,15 @@ const VirtualChatList: React.FC<Props> = ({
       }),
     )
 
-  const messages = data
-    ? data.pages.flatMap(
-        (page) => page.messages as Array<PrivateMessageWithSender>,
-      )
-    : []
+  const messages = useMemo(
+    () =>
+      data
+        ? data.pages.flatMap(
+            (page) => page.messages as Array<PrivateMessageWithSender>,
+          )
+        : [],
+    [data],
+  )
   const rowVirtualizer = useVirtualizer({
     count: hasNextPage ? messages.length + 1 : messages.length,
     getScrollElement: () => parentRef.current,
