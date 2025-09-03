@@ -40,6 +40,11 @@ const GroupColumn = () => {
   )
 
   useGSAP(() => {
+    gsap.set('#column', {
+      width: open ? 320 : 0,
+    })
+  }, [])
+  useGSAP(() => {
     gsap.to('#column', {
       width: open ? 320 : 0,
       duration: 0.3,
