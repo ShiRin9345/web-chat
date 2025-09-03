@@ -4,10 +4,15 @@ import { convertToModelMessages, streamText } from 'ai'
 import { deepseek } from '@ai-sdk/deepseek'
 import dotenv from 'dotenv'
 import { RequestState } from '@prisma/client'
-import db from './db.ts'
-import { getIo, groupUsers, groupVideoUsers, onlineUsers } from './io.ts'
-import { client, config } from './oss-client.ts'
-import { generateCode } from './util/generateCode.ts'
+import db from './db.js'
+import { getIo } from './io.js'
+import {
+  groupUsersRedis,
+  groupVideoUsersRedis,
+  onlineUsersRedis,
+} from './redis.js'
+import { client, config } from './oss-client.js'
+import { generateCode } from './util/generateCode.js'
 import type {
   GroupMessage,
   NewFriendRequest,
@@ -28,7 +33,7 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
         where: {
           groupId: groupId as string,
         },
-        cursor: { id: cursor },
+        cursor: { id: cursor as string },
         skip: 1,
         take: Number(limit),
         orderBy: { createdAt: 'asc' },
@@ -71,6 +76,7 @@ router.get('/groupMessages', requireAuth(), async (req, res) => {
     res.status(500).send('Something went wrong to fetch messages')
   }
 })
+
 router.post('/privateMessage', requireAuth(), async (req, res) => {
   const { content, friendUserId, type, conversationId } = req.body
   const { userId } = getAuth(req)
@@ -97,25 +103,18 @@ router.post('/privateMessage', requireAuth(), async (req, res) => {
     res.status(500).send('Something went wrong to fetch messages')
   }
 })
+
 router.get('/privateMessages', requireAuth(), async (req, res) => {
+  const { conversationId, cursor, limit } = req.query
+  const { userId } = getAuth(req)
   try {
-    const { cursor, limit, userId, otherUserId } = req.query
     let messages: Array<PrivateMessage> = []
     if (cursor) {
       messages = await db.privateMessage.findMany({
         where: {
-          OR: [
-            {
-              senderId: userId as string,
-              receiverId: otherUserId as string,
-            },
-            {
-              senderId: otherUserId as string,
-              receiverId: userId as string,
-            },
-          ],
+          conversationId: conversationId as string,
         },
-        cursor: { id: cursor },
+        cursor: { id: cursor as string },
         skip: 1,
         take: Number(limit),
         orderBy: { createdAt: 'asc' },
@@ -127,16 +126,7 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
       if (limit) {
         messages = await db.privateMessage.findMany({
           where: {
-            OR: [
-              {
-                senderId: userId as string,
-                receiverId: otherUserId as string,
-              },
-              {
-                senderId: otherUserId as string,
-                receiverId: userId as string,
-              },
-            ],
+            conversationId: conversationId as string,
           },
           take: Number(limit),
           orderBy: { createdAt: 'asc' },
@@ -147,16 +137,7 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
       } else {
         messages = await db.privateMessage.findMany({
           where: {
-            OR: [
-              {
-                senderId: userId as string,
-                receiverId: otherUserId as string,
-              },
-              {
-                senderId: otherUserId as string,
-                receiverId: userId as string,
-              },
-            ],
+            conversationId: conversationId as string,
           },
           orderBy: { createdAt: 'asc' },
           include: {
@@ -173,142 +154,79 @@ router.get('/privateMessages', requireAuth(), async (req, res) => {
     res.json({ messages, nextCursor })
   } catch (e) {
     console.error(e)
-    res.status(500).send('Something went wrong to fetch private messages')
+    res.status(500).send('Something went wrong to fetch messages')
   }
 })
 
-router.post('/groupMessages', requireAuth(), async (req, res) => {
+router.post('/groupMessage', requireAuth(), async (req, res) => {
   const { content, groupId, type } = req.body
   const { userId } = getAuth(req)
   try {
-    const message = await db.groupMessage.create({
+    const groupMessage = await db.groupMessage.create({
       data: {
-        content,
-        groupId,
         senderId: userId as string,
-        type,
+        groupId: groupId as string,
+        content: content,
+        type: type,
       },
       include: {
         sender: true,
       },
     })
     const io = getIo()
-
-    io.to(groupId).emit(`new_message`, message)
-
-    res.json(message)
-  } catch (e) {
-    console.error(e)
-  }
-})
-
-router.get('/friends', requireAuth(), async (req, res) => {
-  try {
-    const { userId } = getAuth(req) as { userId: string }
-    const userWithFriends = await db.user.findUnique({
-      where: {
-        userId,
-      },
-      include: {
-        friends: {
-          select: {
-            id: true,
-            userId: true,
-            fullName: true,
-            imageUrl: true,
-          },
-        },
-      },
-    })
-    res.json(userWithFriends?.friends)
-  } catch (e) {
-    console.error(e)
-    res.status(500).send('Something went wrong to fetch friends')
-  }
-})
-
-router.post('/handleRequest', requireAuth(), async (req, res) => {
-  const { request, state } = req.body as {
-    request: NewFriendRequest
-    state: string
-  }
-  try {
-    const newRequest = await db.newFriendRequest.update({
-      where: {
-        id: request.id,
-      },
-      data: {
-        state: state === 'agreed' ? RequestState.AGREED : RequestState.REJECTED,
-      },
-    })
-    if (state === 'agreed') {
-      await db.user.update({
-        where: {
-          userId: request.fromUserId,
-        },
-        data: {
-          friends: {
-            connect: { userId: request.toUserId },
-          },
-        },
-      })
-      await db.user.update({
-        where: {
-          userId: request.toUserId,
-        },
-        data: {
-          friends: {
-            connect: { userId: request.fromUserId },
-          },
-        },
-      })
-      await db.conversation.create({
-        data: {
-          members: {
-            connect: [
-              {
-                userId: request.fromUserId,
-              },
-              {
-                userId: request.toUserId,
-              },
-            ],
-          },
-        },
-      })
-    }
-    return res.json(newRequest)
+    io.to(groupId).emit('new_message', groupMessage)
+    res.json(groupMessage)
   } catch (e) {
     console.error(e)
     res.status(500).send('Something went wrong to fetch messages')
   }
 })
 
-router.get('/users', requireAuth(), async (req, res) => {
-  const { name } = req.query
+router.post('/conversation', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { otherUserId } = req.body
   try {
-    const users = await db.user.findMany({
-      where: {
-        OR: [
-          {
-            fullName: {
-              contains: name as string,
-              mode: 'insensitive',
-            },
-          },
-                  {
-          code: {
-            startsWith: name as string,
-            mode: 'insensitive',
-          },
+    const conversation = await db.conversation.create({
+      data: {
+        members: {
+          connect: [
+            { userId: userId as string },
+            { userId: otherUserId as string },
+          ],
         },
-        ],
+      },
+      include: {
+        members: true,
       },
     })
-    res.json(users)
+    res.json(conversation)
   } catch (e) {
-    console.log(e)
-    res.status(500).send('Something went wrong to fetch users')
+    console.error(e)
+    res.status(500).send('Something went wrong to create conversation')
+  }
+})
+
+router.get('/conversations', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  try {
+    const conversations = await db.conversation.findMany({
+      where: {
+        members: {
+          some: { userId: userId as string },
+        },
+      },
+      include: {
+        members: true,
+        messages: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+        },
+      },
+    })
+    res.json(conversations)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to fetch conversations')
   }
 })
 
@@ -320,22 +238,23 @@ router.get('/groups', requireAuth(), async (req, res) => {
         OR: [
           {
             members: {
-              some: {
-                userId: userId as string,
-              },
+              some: { userId: userId as string },
             },
           },
           {
             moderators: {
-              some: {
-                userId: userId as string,
-              },
+              some: { userId: userId as string },
             },
           },
           {
             ownerId: userId as string,
           },
         ],
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
       },
     })
     res.json(groups)
@@ -345,77 +264,23 @@ router.get('/groups', requireAuth(), async (req, res) => {
   }
 })
 
-router.get('/group', requireAuth(), async (req, res) => {
-  try {
-    const { groupId } = req.query as { groupId: string }
-    const group = await db.group.findUnique({
-      where: {
-        id: groupId,
-      },
-      include: {
-        members: true,
-        owner: true,
-        moderators: true,
-      },
-    })
-    res.json(group)
-  } catch (e) {
-    console.error(e)
-    res.status(500).send('Something went wrong to fetch group')
-  }
-})
-
-router.patch('/kick', requireAuth(), async (req, res) => {
-  const { groupId, userId } = req.body as { userId: string; groupId: string }
-  try {
-    const group = await db.group.findUnique({
-      where: {
-        id: groupId,
-      },
-      include: {
-        members: true,
-        moderators: true,
-      },
-    })
-    const isModerator = !!group?.moderators.some((m) => m.userId === userId)
-    const isMember = !!group?.members.some((m) => m.userId === userId)
-    if (!isMember && !isModerator) {
-      return res.status(400).send('User is not in this group')
-    }
-    const updatedGroup = await db.group.update({
-      where: { id: groupId },
-      data: {
-        members: {
-          disconnect: isMember ? { userId } : undefined,
-        },
-        moderators: {
-          disconnect: isModerator ? { userId } : undefined,
-        },
-      },
-      include: { members: true, moderators: true, owner: true },
-    })
-    res.json(updatedGroup)
-  } catch (e) {
-    console.error(e)
-    res.status(500).send('Something went wrong to update kick')
-  }
-})
-
-router.get('/groupCount', requireAuth(), async (req, res) => {
-  res.send(groupUsers.get(req.query.groupId as string))
-})
-
 router.post('/group', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
   const { name } = req.body
-  const group = await db.group.create({
-    data: {
-      name,
-      ownerId: userId as string,
-    },
-  })
-  groupUsers.set(group.id, 1)
-  res.json(group)
+  try {
+    const group = await db.group.create({
+      data: {
+        name,
+        ownerId: userId as string,
+      },
+    })
+    // 初始化群组用户数量为1（创建者）
+    await groupUsersRedis.setGroupCount(group.id, 1)
+    res.json(group)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to create group')
+  }
 })
 
 router.get('/conversation', requireAuth(), async (req, res) => {
@@ -449,10 +314,16 @@ router.get('/conversation', requireAuth(), async (req, res) => {
   }
 })
 
-router.get('/videoCount', requireAuth(), (req, res) => {
+router.get('/videoCount', requireAuth(), async (req, res) => {
   const { roomId } = req.query
   const videoRoomId = `video_${roomId}`
-  res.send(groupVideoUsers.get(videoRoomId) || 0)
+  try {
+    const count = await groupVideoUsersRedis.getVideoRoomCount(videoRoomId)
+    res.send(count)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to get video count')
+  }
 })
 
 router.post('/initialUser', requireAuth(), async (req, res) => {
@@ -496,33 +367,24 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
         ownerId: userId as string,
       },
     })
-    groupUsers.set(group.id, 1)
-    return res.json(user)
-  } catch (e) {
-    console.log(e)
-    res.status(500).send('Something went wrong to initial user')
-  }
-})
-
-router.get('/profile', requireAuth(), async (req, res) => {
-  const { userId } = getAuth(req) as { userId: string }
-  try {
-    const profile = await db.profile.findUnique({
-      where: {
-        userId,
-      },
-    })
-    res.json(profile)
+    // 初始化群组用户数量为1（创建者）
+    await groupUsersRedis.setGroupCount(group.id, 1)
+    res.json(user)
   } catch (e) {
     console.error(e)
-    res.status(500).send('Something went wrong to fetch profile')
+    res.status(500).send('Something went wrong to create user')
   }
 })
 
 router.get('/isOnline', requireAuth(), async (req, res) => {
   const { userId } = req.query as { userId: string }
-  const isOnline = onlineUsers.has(userId)
-  res.send(isOnline)
+  try {
+    const isOnline = await onlineUsersRedis.isOnline(userId)
+    res.send(isOnline)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to check online status')
+  }
 })
 
 router.get('/oss-signature', requireAuth(), async (_req, res) => {
@@ -617,44 +479,29 @@ router.get('/canAccess', requireAuth(), async (req, res) => {
       },
     })
     if (!group) {
-      return res.status(404).send('Not found group')
+      return res.status(404).send('Group not found')
     }
-    const existing =
-      group.owner.userId === userId ||
-      group.moderators.some((m) => m.userId === userId) ||
-      group.members.some((m) => m.userId === userId)
-    if (existing) {
-      res.status(200).send('User already exists')
+    const isOwner = group.ownerId === userId
+    const isModerator = group.moderators.some((mod) => mod.userId === userId)
+    const isMember = group.members.some((member) => member.userId === userId)
+    if (isOwner || isModerator || isMember) {
+      res.json(true)
     } else {
-      res.status(404).send('Not found user')
+      res.json(false)
     }
   } catch (e) {
     console.error(e)
-    res.status(500).send('Something went wrong to canAccess')
+    res.status(500).send('Something went wrong to check access')
   }
 })
 
-router.patch('/role', requireAuth(), async (req, res) => {
-  const { groupId, userId, role } = req.body as {
-    userId: string
-    groupId: string
-  }
+router.post('/groupMember', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { groupId } = req.body
   try {
-    await db.group.update({
-      where: { id: groupId },
-      data: {
-        members: { disconnect: { userId } },
-        moderators: { disconnect: { userId } },
-      },
-    })
-    const newGroup = await db.group.update({
+    const group = await db.group.findUnique({
       where: {
         id: groupId,
-      },
-      data: {
-        ...(role === 'member'
-          ? { members: { connect: { userId } } }
-          : { moderators: { connect: { userId } } }),
       },
       include: {
         owner: true,
@@ -662,10 +509,208 @@ router.patch('/role', requireAuth(), async (req, res) => {
         members: true,
       },
     })
-    res.json(newGroup)
+    if (!group) {
+      return res.status(404).send('Group not found')
+    }
+    const isOwner = group.ownerId === userId
+    const isModerator = group.moderators.some((mod) => mod.userId === userId)
+    const isMember = group.members.some((member) => member.userId === userId)
+    if (isOwner || isModerator || isMember) {
+      return res.status(400).send('User is already a member of this group')
+    }
+    // 使用 connect 来添加用户到群组
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        members: {
+          connect: { userId: userId as string },
+        },
+      },
+    })
+    // 增加群组用户数量
+    await groupUsersRedis.incrementGroupCount(groupId)
+    res.json({ success: true })
   } catch (e) {
     console.error(e)
-    res.status(500).send('Something went wrong to update role')
+    res.status(500).send('Something went wrong to add group member')
+  }
+})
+
+router.delete('/groupMember', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { groupId } = req.query as { groupId: string }
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    if (!group) {
+      return res.status(404).send('Group not found')
+    }
+    const isOwner = group.ownerId === userId
+    const isModerator = group.moderators.some((mod) => mod.userId === userId)
+    const isMember = group.members.some((member) => member.userId === userId)
+    if (!isOwner && !isModerator && !isMember) {
+      return res.status(400).send('User is not a member of this group')
+    }
+    if (isOwner) {
+      return res.status(400).send('Owner cannot leave the group')
+    }
+    // 使用 disconnect 来移除用户从群组
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        members: {
+          disconnect: { userId: userId as string },
+        },
+      },
+    })
+    // 减少群组用户数量
+    await groupUsersRedis.decrementGroupCount(groupId)
+    res.json({ success: true })
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to remove group member')
+  }
+})
+
+router.post('/groupModerator', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { groupId, moderatorUserId } = req.body
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    if (!group) {
+      return res.status(404).send('Group not found')
+    }
+    const isOwner = group.ownerId === userId
+    if (!isOwner) {
+      return res.status(400).send('Only owner can add moderators')
+    }
+    const isModerator = group.moderators.some(
+      (mod) => mod.userId === moderatorUserId,
+    )
+    if (isModerator) {
+      return res.status(400).send('User is already a moderator')
+    }
+    // 使用 connect 来添加用户到群组
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        moderators: {
+          connect: { userId: moderatorUserId as string },
+        },
+      },
+    })
+    res.json({ success: true })
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to add group moderator')
+  }
+})
+
+router.delete('/groupModerator', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { groupId, moderatorUserId } = req.query as {
+    groupId: string
+    moderatorUserId: string
+  }
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    if (!group) {
+      return res.status(404).send('Group not found')
+    }
+    const isOwner = group.ownerId === userId
+    if (!isOwner) {
+      return res.status(400).send('Only owner can remove moderators')
+    }
+    // 使用 disconnect 来移除用户从群组
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        moderators: {
+          disconnect: { userId: moderatorUserId as string },
+        },
+      },
+    })
+    res.json({ success: true })
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to remove group moderator')
+  }
+})
+
+router.post('/groupKick', requireAuth(), async (req, res) => {
+  const { userId } = getAuth(req)
+  const { groupId, kickUserId } = req.body
+  try {
+    const group = await db.group.findUnique({
+      where: {
+        id: groupId,
+      },
+      include: {
+        owner: true,
+        moderators: true,
+        members: true,
+      },
+    })
+    if (!group) {
+      return res.status(404).send('Group not found')
+    }
+    const isOwner = group.ownerId === userId
+    const isModerator = group.moderators.some((mod) => mod.userId === userId)
+    if (!isOwner && !isModerator) {
+      return res.status(400).send('Only owner and moderators can kick members')
+    }
+    // 使用 disconnect 来移除用户从群组
+    await db.group.update({
+      where: { id: groupId },
+      data: {
+        members: {
+          disconnect: { userId: kickUserId as string },
+        },
+      },
+    })
+    // 减少群组用户数量
+    await groupUsersRedis.decrementGroupCount(groupId)
+    res.json({ success: true })
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to kick group member')
+  }
+})
+
+router.get('/groupCount', requireAuth(), async (req, res) => {
+  try {
+    const { groupId } = req.query
+    const count = await groupUsersRedis.getGroupCount(groupId as string)
+    res.send(count)
+  } catch (e) {
+    console.error(e)
+    res.status(500).send('Something went wrong to get group count')
   }
 })
 

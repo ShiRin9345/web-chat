@@ -8,7 +8,12 @@ import { friendService } from '../services/friendService.ts'
 import { conversationService } from '../services/conversationService.ts'
 import { ossService } from '../services/ossService.ts'
 import { aiService } from '../services/aiService.ts'
-import { getIo, groupUsers, groupVideoUsers, onlineUsers } from '../../io.ts'
+import { getIo } from '../../io.ts'
+import {
+  groupUsersRedis,
+  groupVideoUsersRedis,
+  onlineUsersRedis,
+} from '../../redis.ts'
 
 const router = express.Router()
 
@@ -134,7 +139,7 @@ router.post(
     if (user) {
       const groups = await groupService.getGroups(userId as string)
       if (groups.length > 0) {
-        groupUsers.set(groups[0].id, 1)
+        await groupUsersRedis.setGroupCount(groups[0].id, 1)
       }
     }
 
@@ -202,7 +207,7 @@ router.post(
     const { name } = req.body
     const group = await groupService.createGroup({ name }, userId as string)
 
-    groupUsers.set(group.id, 1)
+    await groupUsersRedis.setGroupCount(group.id, 1)
     res.json(group)
   }),
 )
@@ -222,10 +227,7 @@ router.get(
   requireAuth(),
   asyncHandler(async (req, res) => {
     const { groupId } = req.query
-    const count = await groupService.getGroupMemberCount(
-      groupId as string,
-      groupUsers,
-    )
+    const count = await groupUsersRedis.getGroupCount(groupId as string)
     res.send(count)
   }),
 )
@@ -266,10 +268,7 @@ router.get(
   requireAuth(),
   asyncHandler(async (req, res) => {
     const { roomId } = req.query
-    const count = await groupService.getVideoUserCount(
-      roomId as string,
-      groupVideoUsers,
-    )
+    const count = await groupVideoUsersRedis.getVideoRoomCount(roomId as string)
     res.send(count)
   }),
 )

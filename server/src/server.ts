@@ -7,7 +7,7 @@ import type { AddressInfo } from 'node:net'
 
 import { config } from './config/index.ts'
 import router from './routes/index.ts'
-import { getIo, groupVideoUsers, initIo } from '../io.ts'
+import { getIo, initIo } from '../io.ts'
 import { errorHandler } from './utils/errorHandler.ts'
 import { logger } from './utils/logger.ts'
 

@@ -6,7 +6,8 @@ import { clerkMiddleware } from '@clerk/express'
 import { instrument } from '@socket.io/admin-ui'
 import { ExpressPeerServer } from 'peer'
 import router from './api.ts'
-import { getIo, groupVideoUsers, initIo } from './io.ts'
+import { getIo, initIo } from './io.ts'
+import { groupVideoUsersRedis } from './redis.ts'
 import type { AddressInfo } from 'node:net'
 
 dotenv.config()
@@ -25,21 +26,23 @@ const peer = ExpressPeerServer(peerServer, {
   path: '/',
 })
 
-peer.on('connection', (client) => {
+peer.on('connection', async (client) => {
   const tokenArr = client.getId().split('_')
   const groupId = tokenArr[tokenArr.length - 1]
   const roomId = `video_${groupId}`
-  groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) + 1)
+  const count = await groupVideoUsersRedis.incrementVideoRoomCount(roomId)
   const io = getIo()
-  io.to(groupId).emit('user_join_video', groupVideoUsers.get(roomId))
+  io.to(groupId).emit('user_join_video', count)
 })
-peer.on('disconnect', (client) => {
+
+peer.on('disconnect', async (client) => {
   const groupId = client.getId().split('_')[1]
   const roomId = `video_${groupId}`
   const io = getIo()
-  groupVideoUsers.set(roomId, (groupVideoUsers.get(roomId) || 0) - 1)
-  io.to(groupId).emit('user_leave_video', groupVideoUsers.get(roomId))
+  const count = await groupVideoUsersRedis.decrementVideoRoomCount(roomId)
+  io.to(groupId).emit('user_leave_video', count)
 })
+
 peerApp.use('/peerjs', peer)
 
 server.listen(process.env.PORT, () => {
