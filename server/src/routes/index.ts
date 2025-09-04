@@ -1,6 +1,8 @@
 import path from 'node:path'
+import fs from 'node:fs'
 import express from 'express'
 import { getAuth, requireAuth } from '@clerk/express'
+import { v4 as uuidv4 } from 'uuid'
 import { asyncHandler } from '../utils/errorHandler.ts'
 import { messageService } from '../services/messageService.ts'
 import { userService } from '../services/userService.ts'
@@ -14,6 +16,47 @@ import { __dirname, upload } from '../services/uploadService.ts'
 import { client } from '../../oss-client.ts'
 
 const router = express.Router()
+
+// 存储上传进度的Map
+const uploadProgress = new Map()
+
+// SSE进度推送端点 - 单独的GET接口
+router.get('/upload-progress/:uploadId', (req, res) => {
+  const { uploadId } = req.params
+
+  // 设置SSE响应头
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control',
+  })
+
+  // 发送初始连接确认
+  res.write(`data: ${JSON.stringify({ type: 'connected', uploadId })}\n\n`)
+
+  // 监听进度更新
+  const interval = setInterval(() => {
+    const progress = uploadProgress.get(uploadId)
+    if (progress) {
+      res.write(`data: ${JSON.stringify(progress)}\n\n`)
+
+      // 如果上传完成，清理并关闭连接
+      if (progress.type === 'completed' || progress.type === 'error') {
+        uploadProgress.delete(uploadId)
+        clearInterval(interval)
+        res.end()
+      }
+    }
+  }, 100) // 每100ms检查一次
+
+  // 客户端断开连接时清理
+  req.on('close', () => {
+    clearInterval(interval)
+    uploadProgress.delete(uploadId)
+  })
+})
 
 // Group Messages
 router.get(
@@ -327,27 +370,101 @@ router.get(
   }),
 )
 
+// 上传接口 - 只负责启动上传，立即返回
 router.post(
   '/upload',
   upload.single('file'),
   asyncHandler(async (req, res) => {
     const file = req.file
-    const progress = (p, _checkpoint) => {
-      console.log(p)
+    if (!file) {
+      return res.status(400).json({ message: 'No file uploaded' })
     }
+
+    // 生成唯一的上传ID
+    const uploadId = uuidv4()
     const originalname = Buffer.from(file.originalname, 'latin1').toString(
       'utf8',
     )
-    const result = await client.multipartUpload(originalname, file.path, {
-      progress,
-      parallel: 4,
-      partSize: 1024 * 1024 * 5,
-      meta: {
-        year: 2020,
-        people: 'test',
-      },
+
+    // 立即返回上传ID给前端
+    res.status(200).json({
+      message: 'Upload started',
+      uploadId,
+      fileName: originalname,
+      fileSize: file.size,
     })
-    res.status(200).json({ message: 'File uploaded successfully' })
+
+    // 异步处理上传（不阻塞响应）
+    setImmediate(async () => {
+      try {
+        const startTime = Date.now()
+
+        const progress = (p: number, checkpoint: any) => {
+          const currentTime = Date.now()
+          const elapsed = currentTime - startTime
+          const speed = elapsed > 0 ? ((file.size * p) / elapsed) * 1000 : 0
+
+          const progressData = {
+            type: 'progress',
+            uploadId,
+            progress: Math.round(p * 100),
+            fileName: originalname,
+            fileSize: file.size,
+            uploadedBytes: Math.round(file.size * p),
+            speed: Math.round((speed / 1024 / 1024) * 100) / 100, // MB/s
+            estimatedTimeLeft:
+              speed > 0 ? Math.round((file.size - file.size * p) / speed) : 0,
+            checkpoint,
+          }
+
+          uploadProgress.set(uploadId, progressData)
+        }
+
+        const originalname = Buffer.from(file.originalname, 'latin1').toString(
+          'utf8',
+        )
+
+        const result = await client.multipartUpload(originalname, file.path, {
+          progress,
+          parallel: 4,
+          partSize: 1024 * 1024 * 5,
+          meta: {
+            year: 2025,
+            people: 'test',
+            uid: req.userId || 'unknown',
+            pid: 0,
+            uploadId: uploadId,
+          },
+        })
+
+        // 上传完成
+        uploadProgress.set(uploadId, {
+          type: 'completed',
+          uploadId,
+          progress: 100,
+          fileName: originalname,
+          url: result.res.requestUrls[0],
+          totalTime: Date.now() - startTime,
+        })
+
+        // 删除本地文件
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path)
+        }
+      } catch (error) {
+        // 上传失败
+        uploadProgress.set(uploadId, {
+          type: 'error',
+          uploadId,
+          error: (error as Error).message,
+          fileName: originalname,
+        })
+
+        if (file.path && fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path)
+        }
+      }
+    })
   }),
 )
 
