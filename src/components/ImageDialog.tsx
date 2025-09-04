@@ -8,7 +8,9 @@ import type { User } from 'generated/index'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog.tsx'
 import {
@@ -57,19 +59,24 @@ const ImageDialog = ({
   const handleDrop = async (uploadFiles: Array<File>) => {
     setFiles(uploadFiles)
     const file = uploadFiles[0]
-    const response = await axios.get<OssInfo>('/api/oss-signature')
-    const ossInfo = response.data
+
     const formdata = new FormData()
 
-    console.log(file.size)
+    const response = await axios.get<OssInfo>('/api/oss-signature')
+    const ossInfo = response.data
+    if (file.size > 1024 * 1024 * 100) {
+      formdata.append('file', file)
+      await axios.post('/api/upload', formdata)
+    } else {
+      formdata.append('key', file.name)
+      formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+      formdata.append('policy', ossInfo.policy)
+      formdata.append('signature', ossInfo.Signature)
+      formdata.append('success_action_status', '200')
+      formdata.append('file', file)
+      await axios.post(ossInfo.host, formdata)
+    }
 
-    formdata.append('key', file.name)
-    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
-    formdata.append('policy', ossInfo.policy)
-    formdata.append('signature', ossInfo.Signature)
-    formdata.append('success_action_status', '200')
-    formdata.append('file', file)
-    await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
     const extension = file.name.split('.').pop()
     const type = extension === 'pdf' ? messageType.PDF : messageType.IMAGE
@@ -93,8 +100,17 @@ const ImageDialog = ({
         <Image className="chatInput_icon" />
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Send image</DialogHeader>
-        <Dropzone onDrop={handleDrop} src={files} accept={{ 'image/*': [] }}>
+        <DialogHeader>
+          <DialogTitle>Send Files</DialogTitle>
+          <DialogDescription>
+            Upload images or PDF files to share with others.
+          </DialogDescription>
+        </DialogHeader>
+        <Dropzone
+          onDrop={handleDrop}
+          src={files}
+          accept={{ 'image/*': [], 'application/pdf': [] }}
+        >
           <DropzoneEmptyState />
           <DropzoneContent />
         </Dropzone>

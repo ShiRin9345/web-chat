@@ -10,7 +10,7 @@ export class OSSService {
 
       const signature = client.calculatePostSignature({
         expiration: date.toISOString(),
-        conditions: [['content-length-range', 0, 1024 * 1024 * 100]],
+        conditions: [['content-length-range', 0, 1024 * 1024 * 1024]],
       })
 
       const location = (await client.getBucketLocation(config.bucket)).location

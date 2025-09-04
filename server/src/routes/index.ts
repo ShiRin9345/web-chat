@@ -1,3 +1,4 @@
+import path from 'node:path'
 import express from 'express'
 import { getAuth, requireAuth } from '@clerk/express'
 import { asyncHandler } from '../utils/errorHandler.ts'
@@ -9,6 +10,8 @@ import { conversationService } from '../services/conversationService.ts'
 import { ossService } from '../services/ossService.ts'
 import { aiService } from '../services/aiService.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from '../../io.ts'
+import { __dirname, upload } from '../services/uploadService.ts'
+import { client } from '../../oss-client.ts'
 
 const router = express.Router()
 
@@ -321,6 +324,30 @@ router.get(
   asyncHandler(async (req, res) => {
     const signature = await ossService.generateSignature()
     res.json(signature)
+  }),
+)
+
+router.post(
+  '/upload',
+  upload.single('file'),
+  asyncHandler(async (req, res) => {
+    const file = req.file
+    const progress = (p, _checkpoint) => {
+      console.log(p)
+    }
+    const originalname = Buffer.from(file.originalname, 'latin1').toString(
+      'utf8',
+    )
+    const result = await client.multipartUpload(originalname, file.path, {
+      progress,
+      parallel: 4,
+      partSize: 1024 * 1024 * 5,
+      meta: {
+        year: 2020,
+        people: 'test',
+      },
+    })
+    res.status(200).json({ message: 'File uploaded successfully' })
   }),
 )
 

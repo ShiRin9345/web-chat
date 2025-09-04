@@ -1,6 +1,6 @@
+import { RequestState } from '@prisma/client'
 import db from '../../db.ts'
 import { logger } from '../utils/logger.ts'
-import { RequestState } from '@prisma/client'
 import type {
   FriendRequestWithUsers,
   HandleFriendRequestRequest,
