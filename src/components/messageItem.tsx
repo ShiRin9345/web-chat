@@ -7,6 +7,7 @@ import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import PendingPage from '@/components/pendingPage.tsx'
 import { cn } from '@/lib/utils.ts'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
+import PDFDisplay from './PDFDisplay'
 
 interface MessageItemProps {
   content: string
@@ -81,14 +82,15 @@ export const MessageItem = memo(
               </ImageZoom>
             )}
             {type === 'PDF' && (
-              <div className="w-min pdf-anchor rounded-md overflow-hidden">
-                <Document
-                  file={content}
-                  loading={<PendingPage />}
-                  className="pointer-events-none"
-                >
-                  <Page loading={<PendingPage />} pageNumber={1} height={300} />
-                </Document>
+              <div
+                className={cn(
+                  'w-min pdf-anchor rounded-md overflow-hidden',
+                  isSelfMessage && 'ml-auto',
+                )}
+              >
+                <PDFDisplay
+                  fileName={content.split('/').pop() || 'Unknown File'}
+                />
                 <a
                   className={cn(
                     'rounded-full hover:bg-zinc-300 dark:hover:bg-gray-600 orange:hover:bg-orange-300 p-1 transition duration-200 bg-white dark:bg-gray-800 orange:bg-orange-100',

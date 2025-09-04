@@ -21,6 +21,7 @@ import {
 import { messageType } from '@/components/chatInput.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
+import { Progress } from './ui/progress'
 
 export type OssInfo = {
   OSSAccessKeyId: string
@@ -203,12 +204,16 @@ const ImageDialog = ({
               <span className="text-blue-600">{uploadProgress.progress}%</span>
             </div>
 
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+            {/* <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
               <div
                 className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                 style={{ width: `${uploadProgress.progress}%` }}
               />
-            </div>
+            </div> */}
+            <Progress
+              value={uploadProgress.progress}
+              indicatorClassName="bg-blue-600"
+            />
 
             <div className="flex justify-between text-xs text-gray-500">
               <span>
