@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
-import type { MessageType } from '@/type'
+
 import type { User } from 'generated/index'
+import type { MessageType } from '@/type'
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,7 @@ import {
 import { messageType } from '@/components/chatInput.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
-import { Progress } from './ui/progress'
+import { Progress } from '@/components/ui/progress'
 
 export type OssInfo = {
   OSSAccessKeyId: string
@@ -41,9 +42,15 @@ const ImageDialog = ({
 }) => {
   const [files, setFiles] = useState<Array<File> | undefined>()
   const [open, setOpen] = useState<boolean>(false)
-  const [uploadProgress, setUploadProgress] = useState<any>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [eventSource, setEventSource] = useState<EventSource | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<Map<string, any>>(
+    new Map(),
+  )
+  const [isUploading, setIsUploading] = useState<Map<string, boolean>>(
+    new Map(),
+  )
+  const [eventSources, setEventSources] = useState<Map<string, EventSource>>(
+    new Map(),
+  )
 
   const { user } = useUser()
   const sender = {
@@ -62,25 +69,19 @@ const ImageDialog = ({
     }),
   )
 
-  // 清理EventSource
   useEffect(() => {
     return () => {
-      if (eventSource) {
-        eventSource.close()
-      }
+      eventSources.forEach((es) => {
+        es.close()
+      })
     }
-  }, [eventSource])
+  }, [])
 
-  const handleDrop = async (uploadFiles: Array<File>) => {
-    const file = uploadFiles[0]
-    setFiles(uploadFiles)
-
+  const uploadFile = async (file: File) => {
     const response = await axios.get<OssInfo>('/api/oss-signature')
     const ossInfo = response.data
     if (file.size > 1024 * 1024 * 100) {
-      // 大文件：使用服务器上传 + 进度监控
-      setIsUploading(true)
-      setUploadProgress(null)
+      setIsUploading((prev) => new Map(prev).set(file.name, true))
 
       try {
         const formdata = new FormData()
@@ -92,7 +93,7 @@ const ImageDialog = ({
 
         // 2. 连接SSE监听进度（GET请求）
         const es = new EventSource(`/api/upload-progress/${uploadId}`)
-        setEventSource(es)
+        setEventSources((prev) => new Map(prev).set(file.name, es))
 
         es.onmessage = (event) => {
           const data = JSON.parse(event.data)
@@ -103,14 +104,18 @@ const ImageDialog = ({
               break
 
             case 'progress':
-              setUploadProgress(data)
+              setUploadProgress((prev) => new Map(prev).set(file.name, data))
               break
 
             case 'completed': {
-              setUploadProgress(data)
-              setIsUploading(false)
+              setUploadProgress((prev) => new Map(prev).set(file.name, data))
+              setIsUploading((prev) => new Map(prev).set(file.name, false))
               es.close()
-              setEventSource(null)
+              setEventSources((prev) => {
+                const newMap = new Map(prev)
+                newMap.delete(file.name)
+                return newMap
+              })
 
               // 上传完成，发送消息
               const targetUrl = ossInfo.host + '/' + file.name
@@ -120,16 +125,19 @@ const ImageDialog = ({
 
               mutateAsync({ content: targetUrl, type: type as MessageType })
               scrollBottom()
-              setFiles(undefined)
-              setOpen(false)
+              setFiles((prev) => prev?.filter((f) => f.name !== file.name))
               break
             }
 
             case 'error': {
               console.error('Upload failed:', data.error)
-              setIsUploading(false)
+              setIsUploading((prev) => new Map(prev).set(file.name, false))
               es.close()
-              setEventSource(null)
+              setEventSources((prev) => {
+                const newMap = new Map(prev)
+                newMap.delete(file.name)
+                return newMap
+              })
               break
             }
           }
@@ -137,13 +145,17 @@ const ImageDialog = ({
 
         es.onerror = (error) => {
           console.error('EventSource failed:', error)
-          setIsUploading(false)
+          setIsUploading((prev) => new Map(prev).set(file.name, false))
           es.close()
-          setEventSource(null)
+          setEventSources((prev) => {
+            const newMap = new Map(prev)
+            newMap.delete(file.name)
+            return newMap
+          })
         }
       } catch (error) {
         console.error('Upload start failed:', error)
-        setIsUploading(false)
+        setIsUploading((prev) => new Map(prev).set(file.name, false))
       }
     } else {
       // 小文件：直接上传到OSS
@@ -164,8 +176,19 @@ const ImageDialog = ({
 
       mutateAsync({ content: targetUrl, type: type as MessageType })
       scrollBottom()
-      setFiles(undefined)
-      setOpen(false)
+      setFiles((prev) => prev?.filter((f) => f.name !== file.name))
+    }
+  }
+  const handleDrop = async (uploadFiles: Array<File>) => {
+    setFiles((prev) => [
+      ...(prev || []),
+      ...uploadFiles.filter((f) => !prev?.some((p) => p.name === f.name)),
+    ])
+    for (const file of uploadFiles) {
+      if (files?.some((f) => f.name === file.name)) {
+        continue
+      }
+      uploadFile(file)
     }
   }
 
@@ -173,15 +196,6 @@ const ImageDialog = ({
     <Dialog
       open={open}
       onOpenChange={(newOpen: boolean) => {
-        if (!newOpen) {
-          setFiles(undefined)
-          setUploadProgress(null)
-          setIsUploading(false)
-          if (eventSource) {
-            eventSource.close()
-            setEventSource(null)
-          }
-        }
         setOpen(newOpen)
       }}
     >
@@ -195,43 +209,57 @@ const ImageDialog = ({
             Upload images or PDF files to share with others.
           </DialogDescription>
         </DialogHeader>
-
-        {/* 上传进度显示 */}
-        {isUploading && uploadProgress && (
-          <div className="mb-4 p-4 border rounded-lg bg-gray-50">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="font-medium">{uploadProgress.fileName}</span>
-              <span className="text-blue-600">{uploadProgress.progress}%</span>
-            </div>
-
-            {/* <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+        <div className="max-h-[400px] overflow-y-auto">
+          {isUploading.size > 0 &&
+            uploadProgress.size > 0 &&
+            files?.map((file) => (
               <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${uploadProgress.progress}%` }}
-              />
-            </div> */}
-            <Progress
-              value={uploadProgress.progress}
-              indicatorClassName="bg-blue-600"
-            />
+                key={file.name + new Date()}
+                className="mb-4 p-4 border rounded-lg bg-gray-50"
+              >
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="font-medium">
+                    {uploadProgress.get(file.name)?.fileName}
+                  </span>
+                  <span className="text-blue-600">
+                    {uploadProgress.get(file.name)?.progress}%
+                  </span>
+                </div>
 
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>
-                {Math.round(uploadProgress.uploadedBytes / 1024 / 1024)}MB /
-                {Math.round(uploadProgress.fileSize / 1024 / 1024)}MB
-              </span>
-              <span>
-                {uploadProgress.speed}MB/s - 剩余{' '}
-                {Math.round(uploadProgress.estimatedTimeLeft)}s
-              </span>
-            </div>
-          </div>
-        )}
+                <Progress
+                  value={uploadProgress.get(file.name)?.progress}
+                  indicatorClassName="bg-blue-600"
+                />
 
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>
+                    {Math.round(
+                      uploadProgress.get(file.name)?.uploadedBytes /
+                        1024 /
+                        1024,
+                    )}
+                    MB /
+                    {Math.round(
+                      uploadProgress.get(file.name)?.fileSize / 1024 / 1024,
+                    )}
+                    MB
+                  </span>
+                  <span>
+                    {uploadProgress.get(file.name)?.speed}MB/s - 剩余{' '}
+                    {Math.round(
+                      uploadProgress.get(file.name)?.estimatedTimeLeft,
+                    )}
+                    s
+                  </span>
+                </div>
+              </div>
+            ))}
+        </div>
         <Dropzone
           onDrop={handleDrop}
           src={files}
           accept={{ 'image/*': [], 'application/pdf': [] }}
+          maxFiles={8}
         >
           <DropzoneEmptyState />
           <DropzoneContent />
