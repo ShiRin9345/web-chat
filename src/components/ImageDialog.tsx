@@ -66,7 +66,12 @@ const ImageDialog = ({
     const ossInfo = response.data
     if (file.size > 1024 * 1024 * 100) {
       formdata.append('file', file)
+      const eventSource = new EventSource('/api/upload')
+      eventSource.onmessage = (event) => {
+        console.log(event.data)
+      }
       await axios.post('/api/upload', formdata)
+      eventSource.close()
     } else {
       formdata.append('key', file.name)
       formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
