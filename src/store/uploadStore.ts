@@ -10,97 +10,217 @@ export type UploadProgress = {
   [key: string]: any
 }
 
-type UploadStore = {
+export type ConversationUpload = {
   uploadProgress: Map<string, UploadProgress>
   isUploading: Map<string, boolean>
   eventSources: Map<string, EventSource>
   files: Array<File>
+}
 
-  setProgress: (key: string, data: UploadProgress) => void
-  setUploading: (key: string, uploading: boolean) => void
-  addEventSource: (key: string, es: EventSource) => void
-  removeEventSource: (key: string) => void
-  closeAllEventSources: () => void
-  setFiles: (files: Array<File>) => void
-  addFiles: (newFiles: Array<File>) => void
-  removeFile: (fileName: string) => void
+type UploadStore = {
+  // conversationId -> ConversationUpload
+  conversations: Map<string, ConversationUpload>
+
+  getConversationUpload: (conversationId: string) => ConversationUpload
+  setProgress: (
+    conversationId: string,
+    uploadId: string,
+    data: UploadProgress,
+  ) => void
+  setUploading: (
+    conversationId: string,
+    uploadId: string,
+    uploading: boolean,
+  ) => void
+  addEventSource: (
+    conversationId: string,
+    uploadId: string,
+    es: EventSource,
+  ) => void
+  removeEventSource: (conversationId: string, uploadId: string) => void
+  addFiles: (conversationId: string, newFiles: Array<File>) => void
+  removeFile: (conversationId: string, fileName: string) => void
+  closeConversationEventSources: (conversationId: string) => void
+  resetConversation: (conversationId: string) => void
   reset: () => void
 }
 
-export const useUploadStore = create<UploadStore>((set, get) => ({
+// 创建空的 ConversationUpload
+const createEmptyConversationUpload = (): ConversationUpload => ({
   uploadProgress: new Map(),
   isUploading: new Map(),
   eventSources: new Map(),
   files: [],
+})
 
-  setProgress: (key, data) =>
+export const useUploadStore = create<UploadStore>((set, get) => ({
+  conversations: new Map(),
+
+  getConversationUpload: (conversationId) => {
+    const { conversations } = get()
+    if (!conversations.has(conversationId)) {
+      set((state) => ({
+        conversations: new Map(state.conversations).set(
+          conversationId,
+          createEmptyConversationUpload(),
+        ),
+      }))
+      return createEmptyConversationUpload()
+    }
+    return conversations.get(conversationId)!
+  },
+
+  setProgress: (conversationId, uploadId, data) =>
     set((state) => {
-      const map = new Map(state.uploadProgress)
-      map.set(key, data)
-      return { uploadProgress: map }
+      const conversations = new Map(state.conversations)
+      const conversation =
+        conversations.get(conversationId) || createEmptyConversationUpload()
+      const uploadProgress = new Map(conversation.uploadProgress)
+      uploadProgress.set(uploadId, data)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        uploadProgress,
+      })
+
+      return { conversations }
     }),
 
-  setUploading: (key, uploading) =>
+  setUploading: (conversationId, uploadId, uploading) =>
     set((state) => {
-      const map = new Map(state.isUploading)
-      map.set(key, uploading)
-      return { isUploading: map }
+      const conversations = new Map(state.conversations)
+      const conversation =
+        conversations.get(conversationId) || createEmptyConversationUpload()
+      const isUploading = new Map(conversation.isUploading)
+      isUploading.set(uploadId, uploading)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        isUploading,
+      })
+
+      return { conversations }
     }),
 
-  addEventSource: (key, es) =>
+  addEventSource: (conversationId, uploadId, es) =>
     set((state) => {
-      const map = new Map(state.eventSources)
-      map.set(key, es)
-      return { eventSources: map }
+      const conversations = new Map(state.conversations)
+      const conversation =
+        conversations.get(conversationId) || createEmptyConversationUpload()
+      const eventSources = new Map(conversation.eventSources)
+      eventSources.set(uploadId, es)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        eventSources,
+      })
+
+      return { conversations }
     }),
 
-  removeEventSource: (key) =>
+  removeEventSource: (conversationId, uploadId) =>
     set((state) => {
-      const map = new Map(state.eventSources)
-      const es = map.get(key)
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (!conversation) return state
+
+      const eventSources = new Map(conversation.eventSources)
+      const es = eventSources.get(uploadId)
       if (es) {
         try {
           es.close()
         } catch {}
       }
-      map.delete(key)
-      return { eventSources: map }
+      eventSources.delete(uploadId)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        eventSources,
+      })
+
+      return { conversations }
     }),
 
-  closeAllEventSources: () => {
-    const { eventSources } = get()
-    eventSources.forEach((es) => {
-      try {
-        es.close()
-      } catch {}
-    })
-    set({ eventSources: new Map() })
-  },
-
-  setFiles: (files) => set({ files }),
-
-  addFiles: (newFiles) =>
+  addFiles: (conversationId, newFiles) =>
     set((state) => {
-      const existingFiles = state.files
+      const conversations = new Map(state.conversations)
+      const conversation =
+        conversations.get(conversationId) || createEmptyConversationUpload()
+      const existingFiles = conversation.files
       const filteredNewFiles = newFiles.filter(
         (newFile) =>
           !existingFiles.some(
             (existingFile) => existingFile.name === newFile.name,
           ),
       )
-      return { files: [...existingFiles, ...filteredNewFiles] }
+
+      conversations.set(conversationId, {
+        ...conversation,
+        files: [...existingFiles, ...filteredNewFiles],
+      })
+
+      return { conversations }
     }),
 
-  removeFile: (fileName) =>
-    set((state) => ({
-      files: state.files.filter((file) => file.name !== fileName),
-    })),
+  removeFile: (conversationId, fileName) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (!conversation) return state
+
+      conversations.set(conversationId, {
+        ...conversation,
+        files: conversation.files.filter((file) => file.name !== fileName),
+      })
+
+      return { conversations }
+    }),
+
+  closeConversationEventSources: (conversationId) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (!conversation) return state
+
+      conversation.eventSources.forEach((es) => {
+        try {
+          es.close()
+        } catch {}
+      })
+
+      conversations.set(conversationId, {
+        ...conversation,
+        eventSources: new Map(),
+      })
+
+      return { conversations }
+    }),
+
+  resetConversation: (conversationId) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (conversation) {
+        conversation.eventSources.forEach((es) => {
+          try {
+            es.close()
+          } catch {}
+        })
+      }
+
+      conversations.set(conversationId, createEmptyConversationUpload())
+      return { conversations }
+    }),
 
   reset: () =>
-    set({
-      uploadProgress: new Map(),
-      isUploading: new Map(),
-      eventSources: new Map(),
-      files: [],
+    set((state) => {
+      state.conversations.forEach((conversation) => {
+        conversation.eventSources.forEach((es) => {
+          try {
+            es.close()
+          } catch {}
+        })
+      })
+      return { conversations: new Map() }
     }),
 }))

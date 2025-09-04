@@ -1,5 +1,5 @@
 import { Image } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
@@ -43,9 +43,21 @@ const ImageDialog = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false)
 
-  const uploadProgress = useUploadStore((s) => s.uploadProgress)
-  const isUploading = useUploadStore((s) => s.isUploading)
-  const files = useUploadStore((s) => s.files)
+  // 生成会话ID
+  const getConversationId = useCallback(() => {
+    if (groupId) return `group_${groupId}`
+    if (friendUserId) return `friend_${friendUserId}`
+    return conversationId || 'default'
+  }, [groupId, friendUserId, conversationId])
+
+  const conversationIdKey = useMemo(
+    () => getConversationId(),
+    [getConversationId],
+  )
+
+  const conversations = useUploadStore((s) => s.conversations)
+  const currentConversation = conversations.get(conversationIdKey)
+
   const setProgress = useUploadStore((s) => s.setProgress)
   const setUploading = useUploadStore((s) => s.setUploading)
   const addEventSource = useUploadStore((s) => s.addEventSource)
@@ -74,8 +86,6 @@ const ImageDialog = ({
     const response = await axios.get<OssInfo>('/api/oss-signature')
     const ossInfo = response.data
     if (file.size > 1024 * 1024 * 100) {
-      setUploading(file.name, true)
-
       try {
         const formdata = new FormData()
         formdata.append('file', file)
@@ -84,9 +94,12 @@ const ImageDialog = ({
         const startUploadRes = await axios.post('/api/upload', formdata)
         const { uploadId } = startUploadRes.data
 
+        // 使用 uploadId 作为 key
+        setUploading(conversationIdKey, uploadId, true)
+
         // 2. 连接SSE监听进度（GET请求）
         const es = new EventSource(`/api/upload-progress/${uploadId}`)
-        addEventSource(file.name, es)
+        addEventSource(conversationIdKey, uploadId, es)
 
         es.onmessage = (event) => {
           const data = JSON.parse(event.data)
@@ -97,14 +110,14 @@ const ImageDialog = ({
               break
 
             case 'progress':
-              setProgress(file.name, data)
+              setProgress(conversationIdKey, uploadId, data)
               break
 
             case 'completed': {
-              setProgress(file.name, data)
-              setUploading(file.name, false)
+              setProgress(conversationIdKey, uploadId, data)
+              setUploading(conversationIdKey, uploadId, false)
               es.close()
-              removeEventSource(file.name)
+              removeEventSource(conversationIdKey, uploadId)
 
               // 上传完成，发送消息
               const targetUrl = ossInfo.host + '/' + file.name
@@ -114,15 +127,15 @@ const ImageDialog = ({
 
               mutateAsync({ content: targetUrl, type: type as MessageType })
               scrollBottom()
-              removeFile(file.name)
+              removeFile(conversationIdKey, file.name)
               break
             }
 
             case 'error': {
               console.error('Upload failed:', data.error)
-              setUploading(file.name, false)
+              setUploading(conversationIdKey, uploadId, false)
               es.close()
-              removeEventSource(file.name)
+              removeEventSource(conversationIdKey, uploadId)
               break
             }
           }
@@ -130,13 +143,12 @@ const ImageDialog = ({
 
         es.onerror = (error) => {
           console.error('EventSource failed:', error)
-          setUploading(file.name, false)
+          setUploading(conversationIdKey, uploadId, false)
           es.close()
-          removeEventSource(file.name)
+          removeEventSource(conversationIdKey, uploadId)
         }
       } catch (error) {
         console.error('Upload start failed:', error)
-        setUploading(file.name, false)
       }
     } else {
       // 小文件：直接上传到OSS
@@ -157,13 +169,13 @@ const ImageDialog = ({
 
       mutateAsync({ content: targetUrl, type: type as MessageType })
       scrollBottom()
-      removeFile(file.name)
+      removeFile(conversationIdKey, file.name)
     }
   }
   const handleDrop = (uploadFiles: Array<File>) => {
-    addFiles(uploadFiles)
+    addFiles(conversationIdKey, uploadFiles)
     for (const file of uploadFiles) {
-      if (files.some((f) => f.name === file.name)) {
+      if (currentConversation?.files.some((f) => f.name === file.name)) {
         continue
       }
       uploadFile(file)
@@ -188,57 +200,59 @@ const ImageDialog = ({
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[400px] overflow-y-auto">
-          {isUploading.size > 0 &&
-            uploadProgress.size > 0 &&
-            files.map((file) => (
-              <div
-                key={file.name}
-                className="mb-4 p-4 border rounded-lg bg-gray-50"
-              >
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="font-medium">
-                    {uploadProgress.get(file.name)?.fileName || file.name}
-                  </span>
-                  <span className="text-blue-600">
-                    {uploadProgress.get(file.name)?.progress ?? 0}%
-                  </span>
-                </div>
+          {(currentConversation?.isUploading.size ?? 0) > 0 &&
+            (currentConversation?.uploadProgress.size ?? 0) > 0 &&
+            currentConversation?.files.map((file) => {
+              // 需要找到与这个文件对应的 uploadId
+              const uploadId = Array.from(
+                currentConversation.uploadProgress.keys(),
+              ).find(
+                (id) =>
+                  currentConversation.uploadProgress.get(id)?.fileName ===
+                  file.name,
+              )
 
-                <Progress
-                  value={uploadProgress.get(file.name)?.progress ?? 0}
-                  className="h-2"
-                  indicatorClassName="bg-blue-600"
-                />
+              if (!uploadId) return null
 
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>
-                    {Math.round(
-                      (uploadProgress.get(file.name)?.uploadedBytes ?? 0) /
-                        1024 /
-                        1024,
-                    )}
-                    MB /
-                    {Math.round(
-                      (uploadProgress.get(file.name)?.fileSize ?? 0) /
-                        1024 /
-                        1024,
-                    )}
-                    MB
-                  </span>
-                  <span>
-                    {uploadProgress.get(file.name)?.speed ?? 0}MB/s - 剩余{' '}
-                    {Math.round(
-                      uploadProgress.get(file.name)?.estimatedTimeLeft ?? 0,
-                    )}
-                    s
-                  </span>
+              const progress = currentConversation.uploadProgress.get(uploadId)
+
+              return (
+                <div
+                  key={uploadId}
+                  className="mb-4 p-4 border rounded-lg bg-gray-50"
+                >
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="font-medium">
+                      {progress?.fileName || file.name}
+                    </span>
+                    <span className="text-blue-600">
+                      {progress?.progress ?? 0}%
+                    </span>
+                  </div>
+
+                  <Progress
+                    value={progress?.progress ?? 0}
+                    indicatorClassName="bg-blue-600"
+                  />
+
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>
+                      {Math.round((progress?.uploadedBytes ?? 0) / 1024 / 1024)}
+                      MB /{Math.round((progress?.fileSize ?? 0) / 1024 / 1024)}
+                      MB
+                    </span>
+                    <span>
+                      {progress?.speed ?? 0}MB/s - 剩余{' '}
+                      {Math.round(progress?.estimatedTimeLeft ?? 0)}s
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
         </div>
         <Dropzone
           onDrop={handleDrop}
-          src={files}
+          src={currentConversation?.files}
           accept={{ 'image/*': [], 'application/pdf': [] }}
           maxFiles={8}
         >
