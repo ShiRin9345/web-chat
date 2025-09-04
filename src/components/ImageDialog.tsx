@@ -1,5 +1,5 @@
 import { Image } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
@@ -23,6 +23,7 @@ import { messageType } from '@/components/chatInput.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
 import { Progress } from '@/components/ui/progress'
+import { useUploadStore } from '@/store/uploadStore'
 
 export type OssInfo = {
   OSSAccessKeyId: string
@@ -40,17 +41,17 @@ const ImageDialog = ({
   friendUserId?: string
   groupId?: string
 }) => {
-  const [files, setFiles] = useState<Array<File> | undefined>()
   const [open, setOpen] = useState<boolean>(false)
-  const [uploadProgress, setUploadProgress] = useState<Map<string, any>>(
-    new Map(),
-  )
-  const [isUploading, setIsUploading] = useState<Map<string, boolean>>(
-    new Map(),
-  )
-  const [eventSources, setEventSources] = useState<Map<string, EventSource>>(
-    new Map(),
-  )
+
+  const uploadProgress = useUploadStore((s) => s.uploadProgress)
+  const isUploading = useUploadStore((s) => s.isUploading)
+  const files = useUploadStore((s) => s.files)
+  const setProgress = useUploadStore((s) => s.setProgress)
+  const setUploading = useUploadStore((s) => s.setUploading)
+  const addEventSource = useUploadStore((s) => s.addEventSource)
+  const removeEventSource = useUploadStore((s) => s.removeEventSource)
+  const addFiles = useUploadStore((s) => s.addFiles)
+  const removeFile = useUploadStore((s) => s.removeFile)
 
   const { user } = useUser()
   const sender = {
@@ -69,31 +70,23 @@ const ImageDialog = ({
     }),
   )
 
-  useEffect(() => {
-    return () => {
-      eventSources.forEach((es) => {
-        es.close()
-      })
-    }
-  }, [])
-
   const uploadFile = async (file: File) => {
     const response = await axios.get<OssInfo>('/api/oss-signature')
     const ossInfo = response.data
     if (file.size > 1024 * 1024 * 100) {
-      setIsUploading((prev) => new Map(prev).set(file.name, true))
+      setUploading(file.name, true)
 
       try {
         const formdata = new FormData()
         formdata.append('file', file)
 
         // 1. 启动上传（POST请求）
-        const response = await axios.post('/api/upload', formdata)
-        const { uploadId } = response.data
+        const startUploadRes = await axios.post('/api/upload', formdata)
+        const { uploadId } = startUploadRes.data
 
         // 2. 连接SSE监听进度（GET请求）
         const es = new EventSource(`/api/upload-progress/${uploadId}`)
-        setEventSources((prev) => new Map(prev).set(file.name, es))
+        addEventSource(file.name, es)
 
         es.onmessage = (event) => {
           const data = JSON.parse(event.data)
@@ -104,18 +97,14 @@ const ImageDialog = ({
               break
 
             case 'progress':
-              setUploadProgress((prev) => new Map(prev).set(file.name, data))
+              setProgress(file.name, data)
               break
 
             case 'completed': {
-              setUploadProgress((prev) => new Map(prev).set(file.name, data))
-              setIsUploading((prev) => new Map(prev).set(file.name, false))
+              setProgress(file.name, data)
+              setUploading(file.name, false)
               es.close()
-              setEventSources((prev) => {
-                const newMap = new Map(prev)
-                newMap.delete(file.name)
-                return newMap
-              })
+              removeEventSource(file.name)
 
               // 上传完成，发送消息
               const targetUrl = ossInfo.host + '/' + file.name
@@ -125,19 +114,15 @@ const ImageDialog = ({
 
               mutateAsync({ content: targetUrl, type: type as MessageType })
               scrollBottom()
-              setFiles((prev) => prev?.filter((f) => f.name !== file.name))
+              removeFile(file.name)
               break
             }
 
             case 'error': {
               console.error('Upload failed:', data.error)
-              setIsUploading((prev) => new Map(prev).set(file.name, false))
+              setUploading(file.name, false)
               es.close()
-              setEventSources((prev) => {
-                const newMap = new Map(prev)
-                newMap.delete(file.name)
-                return newMap
-              })
+              removeEventSource(file.name)
               break
             }
           }
@@ -145,17 +130,13 @@ const ImageDialog = ({
 
         es.onerror = (error) => {
           console.error('EventSource failed:', error)
-          setIsUploading((prev) => new Map(prev).set(file.name, false))
+          setUploading(file.name, false)
           es.close()
-          setEventSources((prev) => {
-            const newMap = new Map(prev)
-            newMap.delete(file.name)
-            return newMap
-          })
+          removeEventSource(file.name)
         }
       } catch (error) {
         console.error('Upload start failed:', error)
-        setIsUploading((prev) => new Map(prev).set(file.name, false))
+        setUploading(file.name, false)
       }
     } else {
       // 小文件：直接上传到OSS
@@ -176,16 +157,13 @@ const ImageDialog = ({
 
       mutateAsync({ content: targetUrl, type: type as MessageType })
       scrollBottom()
-      setFiles((prev) => prev?.filter((f) => f.name !== file.name))
+      removeFile(file.name)
     }
   }
-  const handleDrop = async (uploadFiles: Array<File>) => {
-    setFiles((prev) => [
-      ...(prev || []),
-      ...uploadFiles.filter((f) => !prev?.some((p) => p.name === f.name)),
-    ])
+  const handleDrop = (uploadFiles: Array<File>) => {
+    addFiles(uploadFiles)
     for (const file of uploadFiles) {
-      if (files?.some((f) => f.name === file.name)) {
+      if (files.some((f) => f.name === file.name)) {
         continue
       }
       uploadFile(file)
@@ -212,42 +190,45 @@ const ImageDialog = ({
         <div className="max-h-[400px] overflow-y-auto">
           {isUploading.size > 0 &&
             uploadProgress.size > 0 &&
-            files?.map((file) => (
+            files.map((file) => (
               <div
-                key={file.name + new Date()}
+                key={file.name}
                 className="mb-4 p-4 border rounded-lg bg-gray-50"
               >
                 <div className="flex justify-between text-sm mb-2">
                   <span className="font-medium">
-                    {uploadProgress.get(file.name)?.fileName}
+                    {uploadProgress.get(file.name)?.fileName || file.name}
                   </span>
                   <span className="text-blue-600">
-                    {uploadProgress.get(file.name)?.progress}%
+                    {uploadProgress.get(file.name)?.progress ?? 0}%
                   </span>
                 </div>
 
                 <Progress
-                  value={uploadProgress.get(file.name)?.progress}
+                  value={uploadProgress.get(file.name)?.progress ?? 0}
+                  className="h-2"
                   indicatorClassName="bg-blue-600"
                 />
 
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>
                     {Math.round(
-                      uploadProgress.get(file.name)?.uploadedBytes /
+                      (uploadProgress.get(file.name)?.uploadedBytes ?? 0) /
                         1024 /
                         1024,
                     )}
                     MB /
                     {Math.round(
-                      uploadProgress.get(file.name)?.fileSize / 1024 / 1024,
+                      (uploadProgress.get(file.name)?.fileSize ?? 0) /
+                        1024 /
+                        1024,
                     )}
                     MB
                   </span>
                   <span>
-                    {uploadProgress.get(file.name)?.speed}MB/s - 剩余{' '}
+                    {uploadProgress.get(file.name)?.speed ?? 0}MB/s - 剩余{' '}
                     {Math.round(
-                      uploadProgress.get(file.name)?.estimatedTimeLeft,
+                      uploadProgress.get(file.name)?.estimatedTimeLeft ?? 0,
                     )}
                     s
                   </span>
