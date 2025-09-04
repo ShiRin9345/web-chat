@@ -1,4 +1,4 @@
-import { Image } from 'lucide-react'
+import { Image, Upload } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import axios from 'axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -23,6 +23,7 @@ import { messageType } from '@/components/chatInput.tsx'
 import { chatInputMutateOptions } from '@/features/reactQuery/options.ts'
 import { scrollBottom } from '@/lib/scroll.ts'
 import { Progress } from '@/components/ui/progress'
+import { Badge } from '@/components/ui/badge'
 import { useUploadStore } from '@/store/uploadStore'
 
 export type OssInfo = {
@@ -58,12 +59,22 @@ const ImageDialog = ({
   const conversations = useUploadStore((s) => s.conversations)
   const currentConversation = conversations.get(conversationIdKey)
 
+  // 计算当前正在上传的文件数量
+  const uploadingCount = useMemo(() => {
+    if (!currentConversation) return 0
+    return Array.from(currentConversation.isUploading.values()).filter(Boolean)
+      .length
+  }, [currentConversation])
+
   const setProgress = useUploadStore((s) => s.setProgress)
   const setUploading = useUploadStore((s) => s.setUploading)
   const addEventSource = useUploadStore((s) => s.addEventSource)
   const removeEventSource = useUploadStore((s) => s.removeEventSource)
+  const removeProgress = useUploadStore((s) => s.removeProgress)
   const addFiles = useUploadStore((s) => s.addFiles)
   const removeFile = useUploadStore((s) => s.removeFile)
+  const bindUploadId = useUploadStore((s) => s.bindUploadId)
+  const removeFileByUploadId = useUploadStore((s) => s.removeFileByUploadId)
 
   const { user } = useUser()
   const sender = {
@@ -96,6 +107,8 @@ const ImageDialog = ({
 
         // 使用 uploadId 作为 key
         setUploading(conversationIdKey, uploadId, true)
+        // 绑定 uploadId 和文件名，便于渲染查找
+        bindUploadId(conversationIdKey, uploadId, file.name)
 
         // 2. 连接SSE监听进度（GET请求）
         const es = new EventSource(`/api/upload-progress/${uploadId}`)
@@ -127,7 +140,10 @@ const ImageDialog = ({
 
               mutateAsync({ content: targetUrl, type: type as MessageType })
               scrollBottom()
-              removeFile(conversationIdKey, file.name)
+              removeFileByUploadId(conversationIdKey, uploadId)
+
+              // 清除进度状态，避免重复上传时显示旧进度
+              removeProgress(conversationIdKey, uploadId)
               break
             }
 
@@ -136,6 +152,10 @@ const ImageDialog = ({
               setUploading(conversationIdKey, uploadId, false)
               es.close()
               removeEventSource(conversationIdKey, uploadId)
+
+              // 清除进度状态
+              removeProgress(conversationIdKey, uploadId)
+              removeFileByUploadId(conversationIdKey, uploadId)
               break
             }
           }
@@ -146,6 +166,10 @@ const ImageDialog = ({
           setUploading(conversationIdKey, uploadId, false)
           es.close()
           removeEventSource(conversationIdKey, uploadId)
+
+          // 清除进度状态
+          removeProgress(conversationIdKey, uploadId)
+          removeFileByUploadId(conversationIdKey, uploadId)
         }
       } catch (error) {
         console.error('Upload start failed:', error)
@@ -190,7 +214,17 @@ const ImageDialog = ({
       }}
     >
       <DialogTrigger>
-        <Image className="chatInput_icon" />
+        <div className="relative">
+          <Image className="chatInput_icon" />
+          {uploadingCount > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -top-2 pointer-events-none -right-2 h-5 opacity-85 w-5 flex items-center justify-center p-0 text-xs"
+            >
+              <Upload className="size-1" />
+            </Badge>
+          )}
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -203,14 +237,10 @@ const ImageDialog = ({
           {(currentConversation?.isUploading.size ?? 0) > 0 &&
             (currentConversation?.uploadProgress.size ?? 0) > 0 &&
             currentConversation?.files.map((file) => {
-              // 需要找到与这个文件对应的 uploadId
+              // 优先通过绑定的 uploadId 映射查找
               const uploadId = Array.from(
-                currentConversation.uploadProgress.keys(),
-              ).find(
-                (id) =>
-                  currentConversation.uploadProgress.get(id)?.fileName ===
-                  file.name,
-              )
+                currentConversation.uploadIdToFileName.entries(),
+              ).find(([, name]) => name === file.name)?.[0]
 
               if (!uploadId) return null
 

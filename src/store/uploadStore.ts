@@ -15,6 +15,7 @@ export type ConversationUpload = {
   isUploading: Map<string, boolean>
   eventSources: Map<string, EventSource>
   files: Array<File>
+  uploadIdToFileName: Map<string, string>
 }
 
 type UploadStore = {
@@ -38,8 +39,15 @@ type UploadStore = {
     es: EventSource,
   ) => void
   removeEventSource: (conversationId: string, uploadId: string) => void
+  removeProgress: (conversationId: string, uploadId: string) => void
   addFiles: (conversationId: string, newFiles: Array<File>) => void
   removeFile: (conversationId: string, fileName: string) => void
+  bindUploadId: (
+    conversationId: string,
+    uploadId: string,
+    fileName: string,
+  ) => void
+  removeFileByUploadId: (conversationId: string, uploadId: string) => void
   closeConversationEventSources: (conversationId: string) => void
   resetConversation: (conversationId: string) => void
   reset: () => void
@@ -51,6 +59,7 @@ const createEmptyConversationUpload = (): ConversationUpload => ({
   isUploading: new Map(),
   eventSources: new Map(),
   files: [],
+  uploadIdToFileName: new Map(),
 })
 
 export const useUploadStore = create<UploadStore>((set, get) => ({
@@ -141,6 +150,27 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       return { conversations }
     }),
 
+  removeProgress: (conversationId, uploadId) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (!conversation) return state
+
+      const uploadProgress = new Map(conversation.uploadProgress)
+      const isUploading = new Map(conversation.isUploading)
+
+      uploadProgress.delete(uploadId)
+      isUploading.delete(uploadId)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        uploadProgress,
+        isUploading,
+      })
+
+      return { conversations }
+    }),
+
   addFiles: (conversationId, newFiles) =>
     set((state) => {
       const conversations = new Map(state.conversations)
@@ -171,6 +201,43 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
       conversations.set(conversationId, {
         ...conversation,
         files: conversation.files.filter((file) => file.name !== fileName),
+      })
+
+      return { conversations }
+    }),
+
+  bindUploadId: (conversationId, uploadId, fileName) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation =
+        conversations.get(conversationId) || createEmptyConversationUpload()
+      const uploadIdToFileName = new Map(conversation.uploadIdToFileName)
+      uploadIdToFileName.set(uploadId, fileName)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        uploadIdToFileName,
+      })
+
+      return { conversations }
+    }),
+
+  removeFileByUploadId: (conversationId, uploadId) =>
+    set((state) => {
+      const conversations = new Map(state.conversations)
+      const conversation = conversations.get(conversationId)
+      if (!conversation) return state
+
+      const uploadIdToFileName = new Map(conversation.uploadIdToFileName)
+      const fileName = uploadIdToFileName.get(uploadId)
+      if (!fileName) return state
+
+      uploadIdToFileName.delete(uploadId)
+
+      conversations.set(conversationId, {
+        ...conversation,
+        files: conversation.files.filter((file) => file.name !== fileName),
+        uploadIdToFileName,
       })
 
       return { conversations }
