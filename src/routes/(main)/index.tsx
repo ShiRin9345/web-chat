@@ -8,7 +8,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
-import { Loader } from 'lucide-react'
+import { Loader, X } from 'lucide-react'
 import imageCompression from 'browser-image-compression'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
@@ -101,6 +101,7 @@ function RouteComponent() {
             phone: value.phone,
             signature: value.signature,
             position: value.position,
+            tags: value.tags,
           },
         })
       } catch (e) {
@@ -227,6 +228,81 @@ function RouteComponent() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600 resize-none"
                     />
+                  </>
+                )}
+              />
+              <form.Field
+                name="tags"
+                children={(field) => (
+                  <>
+                    <span className="text-gray-700 dark:text-gray-300 orange:text-orange-800 font-medium">
+                      Tags
+                    </span>
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap gap-2">
+                        {field.state.value.map((tag, index) => (
+                          <div
+                            key={index}
+                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 orange:bg-orange-100 text-blue-800 dark:text-blue-300 orange:text-orange-800 text-sm rounded-full"
+                          >
+                            <span>{tag}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newTags = field.state.value.filter(
+                                  (_, i) => i !== index,
+                                )
+                                field.handleChange(newTags)
+                              }}
+                              className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-800/50 orange:hover:bg-orange-200 rounded-full p-0.5"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Add a tag..."
+                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              const input = e.target as HTMLInputElement
+                              const newTag = input.value.trim()
+                              if (
+                                newTag &&
+                                !field.state.value.includes(newTag)
+                              ) {
+                                field.handleChange([
+                                  ...field.state.value,
+                                  newTag,
+                                ])
+                                input.value = ''
+                              }
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const input = document.querySelector(
+                              'input[placeholder="Add a tag..."]',
+                            ) as HTMLInputElement
+                            const newTag = input.value.trim()
+                            if (newTag && !field.state.value.includes(newTag)) {
+                              field.handleChange([...field.state.value, newTag])
+                              input.value = ''
+                            }
+                          }}
+                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 hover:bg-gray-50 dark:hover:bg-gray-600 orange:hover:bg-orange-200"
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
                   </>
                 )}
               />
