@@ -115,6 +115,7 @@ export const chatInputMutateOptions = ({
                       content,
                       type,
                       sender,
+                      createdAt: new Date(),
                     },
                   ],
                 },
@@ -130,6 +131,7 @@ export const chatInputMutateOptions = ({
               content,
               type,
               sender,
+              createdAt: new Date(),
             }),
           }
           return {

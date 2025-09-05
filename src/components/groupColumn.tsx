@@ -5,16 +5,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useUser } from '@clerk/clerk-react'
 import {
-  ArrowLeft,
-  ArrowLeftCircle,
-  ArrowRight,
-  ArrowRightCircle,
   Crown,
   Edit,
   Loader,
   PanelLeftClose,
   PanelRightClose,
-  Settings,
   ShieldUser,
   UserIcon,
   Users,
@@ -74,10 +69,10 @@ const GroupColumn = () => {
       id="column"
       className="bg-white relative dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
     >
-      <div className="absolute -left-4 top-1/2 -translate-y-1/2 z-10">
+      <div className="absolute -left-4  top-1/2 -translate-y-1/2 z-10">
         <button
           onClick={changeOpen}
-          className="group relative flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-gray-800 orange:bg-orange-100 border border-gray-200 dark:border-gray-600 orange:border-orange-300 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 active:scale-95"
+          className="group relative flex items-center justify-center cursor-pointer w-8 h-8 rounded-full bg-white dark:bg-gray-800 orange:bg-orange-100 border border-gray-200 dark:border-gray-600 orange:border-orange-300 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 active:scale-95"
         >
           {open ? (
             <PanelRightClose className="w-4 h-4 text-gray-600 dark:text-gray-300 orange:text-orange-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 orange:group-hover:text-orange-600 transition-colors duration-200" />

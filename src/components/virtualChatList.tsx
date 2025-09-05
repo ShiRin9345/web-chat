@@ -3,6 +3,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Loader } from 'lucide-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { format } from 'date-fns'
 import type { UserResource } from '@clerk/types'
 import type { PrivateMessageWithSender } from '@/type'
 import useChatSocket from '@/hooks/useChatSocket.ts'
@@ -129,6 +130,7 @@ const VirtualChatList: React.FC<Props> = ({
                     type={message.type}
                     user={user as UserResource}
                     sender={message.sender}
+                    timestamp={format(message.createdAt, 'yyyy MM-dd HH:mm')}
                   />
                 )}
               </div>

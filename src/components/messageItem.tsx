@@ -1,13 +1,15 @@
 import { forwardRef, memo } from 'react'
-import { ArrowDownToLine } from 'lucide-react'
-import { Document, Page } from 'react-pdf'
+import { ArrowDownToLine, Crown } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
+import PDFDisplay from './PDFDisplay'
 import type { MessageType, User } from 'generated/index'
 import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
-import PendingPage from '@/components/pendingPage.tsx'
 import { cn } from '@/lib/utils.ts'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
-import PDFDisplay from './PDFDisplay'
+import { groupWithMembersAndModeratorsAndOwnerQueryOptions } from '@/features/reactQuery/options'
+import { Badge } from '@/components/ui/badge'
 
 interface MessageItemProps {
   content: string
@@ -15,12 +17,17 @@ interface MessageItemProps {
   user: UserResource
   index: number
   sender: User
+  timestamp: string
 }
 
 export const MessageItem = memo(
   forwardRef<HTMLDivElement, MessageItemProps>(
-    ({ content, type, user, index, sender }, ref) => {
+    ({ content, type, user, index, sender, timestamp }, ref) => {
       const isSelfMessage = sender.userId === user.id
+      const { groupId } = useParams({ from: '/(main)/group/$groupId' })
+      const { data: group } = useQuery(
+        groupWithMembersAndModeratorsAndOwnerQueryOptions(groupId),
+      )
       return (
         <div
           data-index={index}
@@ -37,15 +44,57 @@ export const MessageItem = memo(
             />
             <AvatarFallback>Avatar</AvatarFallback>
           </Avatar>
-          <div className="flex w-full space-y-2 flex-col ">
-            <span
+          <div className="flex space-y-2 flex-col">
+            <div
               className={cn(
-                'font-semibold text-gray-900 dark:text-white orange:text-orange-900',
-                isSelfMessage && 'ml-auto',
+                'flex items-center gap-2 ',
+                isSelfMessage && 'self-end',
+                !isSelfMessage && 'self-start',
               )}
             >
-              {sender.fullName}
-            </span>
+              {isSelfMessage && group?.owner.userId === sender.userId && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 orange:bg-orange-100 orange:text-orange-800"
+                >
+                  Owner
+                </Badge>
+              )}
+              {isSelfMessage &&
+                group?.moderators.some(
+                  (moderator) => moderator.userId === sender.userId,
+                ) && (
+                  <Badge
+                    variant="secondary"
+                    className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 orange:bg-emerald-100 orange:text-emerald-800"
+                  >
+                    Moderator
+                  </Badge>
+                )}
+              <span className="font-semibold text-gray-900 dark:text-white orange:text-orange-900">
+                {sender.fullName}
+              </span>
+              {!isSelfMessage && group?.owner.userId === sender.userId && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 orange:bg-orange-100 orange:text-orange-800"
+                >
+                  Owner
+                </Badge>
+              )}
+              {!isSelfMessage &&
+                group?.moderators.some(
+                  (moderator) => moderator.userId === sender.userId,
+                ) && (
+                  <Badge
+                    variant="secondary"
+                    className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 orange:bg-emerald-100 orange:text-emerald-800"
+                  >
+                    Moderator
+                  </Badge>
+                )}
+            </div>
+
             {type === 'TEXT' && (
               <p
                 className={cn(
