@@ -11,6 +11,7 @@ import { friendService } from '../services/friendService.ts'
 import { conversationService } from '../services/conversationService.ts'
 import { ossService } from '../services/ossService.ts'
 import { aiService } from '../services/aiService.ts'
+import { chromaService } from '../services/chromaService.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from '../../io.ts'
 import { __dirname, upload } from '../services/uploadService.ts'
 import { client } from '../../oss-client.ts'
@@ -207,6 +208,31 @@ router.patch(
     const { data } = req.body
     const profile = await userService.updateProfile(userId, data)
     res.json(profile)
+  }),
+)
+
+// Recommend friends by tags (Chroma)
+router.get(
+  '/recommend/:userId',
+  requireAuth(),
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params as { userId: string }
+    // Ensure user's vector exists or refresh from DB profile
+    const profile = await userService.getProfile(userId)
+    if (profile?.tags && Array.isArray(profile.tags)) {
+      await chromaService.upsertUser(userId, profile.tags)
+    }
+
+    const result = await chromaService.recommendByUser(userId, 4)
+    const payload = (result.ids?.[0] || []).map((id: string, idx: number) => ({
+      userId: id,
+      distance: result.distances?.[0]?.[idx],
+      similarity:
+        result.distances?.[0]?.[idx] != null
+          ? 1 - result.distances[0][idx]
+          : undefined,
+    }))
+    res.json(payload)
   }),
 )
 

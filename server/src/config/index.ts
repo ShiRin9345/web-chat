@@ -25,6 +25,12 @@ export const config = {
   // AI
   deepseekApiKey: process.env.DEEPSEEK_API_KEY,
 
+  // Vector DB - Chroma
+  chroma: {
+    url: process.env.CHROMA_URL || 'http://localhost:8000',
+    collection: process.env.CHROMA_COLLECTION || 'user_tags',
+  },
+
   // Logging
   logLevel: process.env.LOG_LEVEL || 'info',
 

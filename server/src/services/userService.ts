@@ -1,4 +1,5 @@
 import { clerkClient } from '@clerk/express'
+import { chromaService } from './chromaService.ts'
 import db from '../../db.ts'
 import { logger } from '../utils/logger.ts'
 import { generateCode } from '../../util/generateCode.ts'
@@ -134,6 +135,10 @@ export class UserService {
       })
 
       logger.info('Profile updated successfully', { userId, data })
+      // Update vector index when tags change (or on any profile update)
+      if (Array.isArray(profile.tags)) {
+        await chromaService.upsertUser(userId, profile.tags)
+      }
       return profile
     } catch (error) {
       logger.error('Failed to update profile', { userId, data }, error as Error)
