@@ -5,11 +5,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useUser } from '@clerk/clerk-react'
 import {
+  ArrowLeft,
   ArrowLeftCircle,
+  ArrowRight,
   ArrowRightCircle,
   Crown,
   Edit,
   Loader,
+  PanelLeftClose,
+  PanelRightClose,
   Settings,
   ShieldUser,
   UserIcon,
@@ -71,13 +75,13 @@ const GroupColumn = () => {
       className="bg-white relative dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
     >
       {open ? (
-        <ArrowRightCircle
-          className="absolute -left-4 top-1/2 cursor-pointer -translate-y-1/2 size-4"
+        <PanelRightClose
+          className="absolute -left-3 top-1/2 cursor-pointer bg-white -translate-y-1/2 size-4"
           onClick={changeOpen}
         />
       ) : (
-        <ArrowLeftCircle
-          className="absolute -left-4 top-1/2 cursor-pointer -translate-y-1/2 size-4"
+        <PanelLeftClose
+          className="absolute -left-3 top-1/2 cursor-pointer bg-white -translate-y-1/2 size-3"
           onClick={changeOpen}
         />
       )}
