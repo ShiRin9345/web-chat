@@ -14,6 +14,7 @@ import { aiService } from '../services/aiService.ts'
 import { getIo, groupUsers, groupVideoUsers, onlineUsers } from '../../io.ts'
 import { __dirname, upload } from '../services/uploadService.ts'
 import { client } from '../../oss-client.ts'
+import db from '../../db.ts'
 
 const router = express.Router()
 
@@ -474,8 +475,20 @@ router.post(
   asyncHandler(async (req, res) => {
     const { userId } = getAuth(req)
     const { imageUrl } = req.body
-    const { users } = clerkClient
-    await users.updateUserProfileImage(userId as string, imageUrl)
+    try {
+      const user = await db.user.update({
+        where: {
+          userId: userId as string,
+        },
+        data: {
+          imageUrl: imageUrl,
+        },
+      })
+      res.send(user)
+    } catch (error) {
+      console.error(error)
+    }
+    res.status(200).send('Avatar updated')
   }),
 )
 

@@ -23,7 +23,6 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from '@/components/ui/shadcn-io/dropzone'
-import { Progress } from '@/components/ui/progress'
 import {
   Dialog,
   DialogContent,
@@ -52,7 +51,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 function RouteComponent() {
   const { data } = useQuery(userProfileQueryOptions)
-  const { user } = useUser()
+
   const scopeRef = useRef<HTMLInputElement>(null)
   const bgImageRef = useRef<HTMLImageElement>(null)
   useGSAP(() => {
@@ -81,11 +80,11 @@ function RouteComponent() {
   }, [{ scope: scopeRef }])
   const form = useForm({
     defaultValues: {
-      email: data?.email,
-      position: data?.position,
+      email: data?.email ?? '',
+      position: data?.position ?? '',
       sex: data?.sex ?? 'man',
-      signature: data?.signature,
-      phone: data?.phone,
+      signature: data?.signature ?? '',
+      phone: data?.phone ?? '',
     },
     validators: {
       onChange: profileFormSchema,
@@ -263,7 +262,9 @@ function AvatarUpload() {
 
     await axios.post(ossInfo.host, formdata)
     const targetUrl = ossInfo.host + '/' + file.name
+    user?.setProfileImage({ file: targetUrl })
     await axios.post('/api/avatar', { imageUrl: targetUrl })
+    setOpen(false)
   }
   return (
     <Dialog
