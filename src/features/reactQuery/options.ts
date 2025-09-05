@@ -339,11 +339,7 @@ export const groupUserProfileQueryOptions = (userId: string) =>
   queryOptions({
     queryKey: ['userProfile', userId],
     queryFn: async () => {
-      const response = await axios.get<Profile>('/api/profile', {
-        params: {
-          userId,
-        },
-      })
+      const response = await axios.get<Profile>(`/api/profile/${userId}`)
       return response.data
     },
   })
