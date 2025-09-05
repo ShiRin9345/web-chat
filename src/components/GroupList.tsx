@@ -33,7 +33,6 @@ function LabelGroup({ group }: { group: Group }) {
     : []
   const lastMessage =
     messages.length > 0 ? messages[messages.length - 1].content : ''
-  const count = useCountSocket(group.id)
 
   return (
     <AnimatedLink url="/group/$groupId" groupId={group.id}>
@@ -57,12 +56,6 @@ function LabelGroup({ group }: { group: Group }) {
             : 'No messages yet'
         }
         iconBgColor="bg-transparent"
-        children={
-          <Pill className="bg-blue-50 dark:bg-blue-900/20 orange:bg-orange-100 text-blue-700 dark:text-blue-300 orange:text-orange-800 border-blue-200 dark:border-blue-700 orange:border-orange-300">
-            <PillIcon icon={UserIcon} />
-            <span className="text-xs font-medium">{count} users</span>
-          </Pill>
-        }
       />
     </AnimatedLink>
   )

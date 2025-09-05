@@ -4,7 +4,18 @@ import { useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { Crown, Edit, Loader, Settings, ShieldUser, Users } from 'lucide-react'
+import {
+  ArrowLeftCircle,
+  ArrowRightCircle,
+  Crown,
+  Edit,
+  Loader,
+  Settings,
+  ShieldUser,
+  UserIcon,
+  Users,
+} from 'lucide-react'
+import { Pill, PillIcon } from './ui/shadcn-io/pill'
 import type { User } from 'generated/index'
 import type { GroupWithMembersAndModeratorsAndOwner } from '@/type'
 import type { UserResource } from '@clerk/types'
@@ -31,13 +42,15 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx'
+import { useCountSocket } from '@/hooks/useCountSocket'
 
 const GroupColumn = () => {
-  const { open } = useGroupColumnStore()
+  const { open, changeOpen } = useGroupColumnStore()
   const { groupId } = useParams({ from: '/(main)/group/$groupId' })
   const { data: group } = useQuery(
     groupWithMembersAndModeratorsAndOwnerQueryOptions(groupId),
   )
+  const count = useCountSocket(groupId)
 
   useGSAP(() => {
     gsap.set('#column', {
@@ -55,9 +68,19 @@ const GroupColumn = () => {
   return (
     <div
       id="column"
-      className="bg-white dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
+      className="bg-white relative dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
     >
-      {/* Header */}
+      {open ? (
+        <ArrowRightCircle
+          className="absolute -left-4 top-1/2 cursor-pointer -translate-y-1/2 size-4"
+          onClick={changeOpen}
+        />
+      ) : (
+        <ArrowLeftCircle
+          className="absolute -left-4 top-1/2 cursor-pointer -translate-y-1/2 size-4"
+          onClick={changeOpen}
+        />
+      )}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 orange:border-orange-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 orange:from-orange-50 orange:to-orange-100">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -71,6 +94,10 @@ const GroupColumn = () => {
               Group Chat
             </p>
           </div>
+          <Pill className="bg-blue-50 dark:bg-blue-900/20 orange:bg-orange-100 text-blue-700 dark:text-blue-300 orange:text-orange-800 border-blue-200 dark:border-blue-700 orange:border-orange-300">
+            <PillIcon icon={UserIcon} />
+            <span className="text-xs font-medium">{count} online</span>
+          </Pill>
         </div>
 
         {/* Group Stats */}
@@ -97,13 +124,6 @@ const GroupColumn = () => {
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700 orange:border-orange-200 bg-gray-50 dark:bg-gray-800 orange:bg-orange-100">
-        <Button
-          variant="outline"
-          className="w-full bg-white dark:bg-gray-700 orange:bg-orange-50 hover:bg-gray-100 dark:hover:bg-gray-600 orange:hover:bg-orange-200 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-700 dark:text-gray-300 orange:text-orange-800"
-        >
-          <Settings className="w-4 h-4 mr-2" />
-          Group Settings
-        </Button>
         <Button
           variant="destructive"
           className="w-full mt-3 bg-red-500 hover:bg-red-600 text-white"

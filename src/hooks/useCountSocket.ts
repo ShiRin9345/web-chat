@@ -7,6 +7,7 @@ export const useCountSocket = (groupId: string) => {
   const [count, setCount] = useState<number>(0)
 
   useEffect(() => {
+    if (!socket) return
     const callback = (newCount: number) => {
       setCount(newCount)
     }

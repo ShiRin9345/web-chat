@@ -68,7 +68,7 @@ function RouteComponent() {
         </TooltipProvider>
         <main className="flex-1">
           <ResizablePanelGroup direction="horizontal">
-            <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+            <ResizablePanel defaultSize={20} minSize={15} maxSize={25}>
               <ChatSideBar />
             </ResizablePanel>
             <ResizableHandle />

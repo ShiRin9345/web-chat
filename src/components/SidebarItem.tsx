@@ -24,7 +24,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 }) => {
   return (
     <div
-      className={`w-full flex items-center gap-3 p-3 ${hoverBgColor} hover:shadow-sm transition-all duration-300 rounded-lg cursor-pointer group ${className}`}
+      className={`w-full flex items-center flex-wrap gap-3 p-3 ${hoverBgColor} hover:shadow-sm transition-all duration-300 rounded-lg cursor-pointer group ${className}`}
     >
       <div className="flex-shrink-0">
         <div
@@ -34,7 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 ">
         <span className="font-semibold text-gray-900 dark:text-white orange:text-orange-900 text-lg">
           {title}
         </span>
@@ -45,7 +45,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         )}
       </div>
 
-      {children && <div className="flex-shrink-0">{children}</div>}
+      {children && <div className="justify-self-center">{children}</div>}
     </div>
   )
 }
