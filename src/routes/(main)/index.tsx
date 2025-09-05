@@ -7,7 +7,8 @@ import axios from 'axios'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import type { OssInfo } from '@/components/ImageDialog'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
 import { RegionSelector } from '@/routes/test.tsx'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group.tsx'
@@ -17,7 +18,20 @@ import { Textarea } from '@/components/ui/textarea.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import WallpaperUpload from '@/components/wallpaperUpload.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
-import { FontSelector } from '@/components/fontSelector'
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from '@/components/ui/shadcn-io/dropzone'
+import { Progress } from '@/components/ui/progress'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 export const Route = createFileRoute('/(main)/')({
   component: RouteComponent,
@@ -120,12 +134,7 @@ function RouteComponent() {
                 id="card"
                 className="bg-white dark:bg-gray-700 orange:bg-orange-100 rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 border-gray-200 dark:border-gray-600 orange:border-orange-300 flex relative -top-8 p-2 shadow-md dark:shadow-gray-900/30 orange:shadow-orange-200/30"
               >
-                <Avatar className="size-32">
-                  <AvatarImage src={user?.imageUrl} alt="avatar" />
-                  <AvatarFallback className="bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
-                    avatar
-                  </AvatarFallback>
-                </Avatar>
+                <AvatarUpload />
                 <div className="right-2 top-16 absolute">
                   <WallpaperUpload />
                 </div>
@@ -231,5 +240,65 @@ function RouteComponent() {
         </div>
       </div>
     </div>
+  )
+}
+
+function AvatarUpload() {
+  const [open, setOpen] = useState(false)
+  const [files, setFiles] = useState<Array<File>>([])
+  const { user } = useUser()
+  const handleDrop = async (uploadFiles: Array<File>) => {
+    const file = uploadFiles[0]
+    setFiles(uploadFiles)
+    const formdata = new FormData()
+
+    const response = await axios.get<OssInfo>('/api/oss-signature')
+    const ossInfo = response.data
+    formdata.append('key', file.name)
+    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+    formdata.append('policy', ossInfo.policy)
+    formdata.append('signature', ossInfo.Signature)
+    formdata.append('success_action_status', '200')
+    formdata.append('file', file)
+
+    await axios.post(ossInfo.host, formdata)
+    const targetUrl = ossInfo.host + '/' + file.name
+    await axios.post('/api/avatar', { imageUrl: targetUrl })
+  }
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen: boolean) => {
+        setOpen(newOpen)
+      }}
+    >
+      <DialogTrigger>
+        <Avatar className="size-32">
+          <AvatarImage
+            src={user?.imageUrl}
+            alt="avatar"
+            className="cursor-pointer"
+          />
+          <AvatarFallback className="bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
+            avatar
+          </AvatarFallback>
+        </Avatar>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Upload Avatar</DialogTitle>
+          <DialogDescription>Upload avatar to your profile</DialogDescription>
+        </DialogHeader>
+        <Dropzone
+          onDrop={handleDrop}
+          src={files}
+          accept={{ 'image/*': [] }}
+          maxFiles={8}
+        >
+          <DropzoneEmptyState />
+          <DropzoneContent />
+        </Dropzone>
+      </DialogContent>
+    </Dialog>
   )
 }

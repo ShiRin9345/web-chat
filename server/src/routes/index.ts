@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import express from 'express'
-import { getAuth, requireAuth } from '@clerk/express'
+import { clerkClient, getAuth, requireAuth } from '@clerk/express'
 import { v4 as uuidv4 } from 'uuid'
 import { asyncHandler } from '../utils/errorHandler.ts'
 import { messageService } from '../services/messageService.ts'
@@ -465,6 +465,17 @@ router.post(
         }
       }
     })
+  }),
+)
+
+router.post(
+  '/avatar',
+  requireAuth(),
+  asyncHandler(async (req, res) => {
+    const { userId } = getAuth(req)
+    const { imageUrl } = req.body
+    const { users } = clerkClient
+    await users.updateUserProfileImage(userId as string, imageUrl)
   }),
 )
 
