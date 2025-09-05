@@ -335,7 +335,7 @@ export const kickMutationOptions = ({
     },
   })
 
-export const groupUserProfileQueryOptions = (userId: string) =>
+export const senderUserProfileQueryOptions = (userId: string) =>
   queryOptions({
     queryKey: ['userProfile', userId],
     queryFn: async () => {

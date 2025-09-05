@@ -9,7 +9,10 @@ import type { PrivateMessageWithSender } from '@/type'
 import useChatSocket from '@/hooks/useChatSocket.ts'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 import PendingPage from '@/components/pendingPage.tsx'
-import { MessageItem } from '@/components/messageItem.tsx'
+import {
+  GroupMessageItem,
+  PrivateMessageItem,
+} from '@/components/messageItem.tsx'
 
 interface Props {
   groupId?: string
@@ -123,15 +126,36 @@ const VirtualChatList: React.FC<Props> = ({
                     </span>
                   )
                 ) : (
-                  <MessageItem
-                    index={virtualRow.index}
-                    ref={rowVirtualizer.measureElement}
-                    content={message?.content}
-                    type={message.type}
-                    user={user as UserResource}
-                    sender={message.sender}
-                    timestamp={format(message.createdAt, 'yyyy MM-dd HH:mm')}
-                  />
+                  <>
+                    {groupId && (
+                      <GroupMessageItem
+                        index={virtualRow.index}
+                        ref={rowVirtualizer.measureElement}
+                        content={message?.content}
+                        type={message.type}
+                        user={user as UserResource}
+                        sender={message.sender}
+                        timestamp={format(
+                          message.createdAt,
+                          'yyyy MM-dd HH:mm',
+                        )}
+                      />
+                    )}
+                    {conversationId && (
+                      <PrivateMessageItem
+                        index={virtualRow.index}
+                        ref={rowVirtualizer.measureElement}
+                        content={message?.content}
+                        type={message.type}
+                        user={user as UserResource}
+                        sender={message.sender}
+                        timestamp={format(
+                          message.createdAt,
+                          'yyyy MM-dd HH:mm',
+                        )}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             )
