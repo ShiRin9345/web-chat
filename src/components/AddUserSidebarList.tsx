@@ -41,6 +41,9 @@ const AddUserSidebarList = () => {
 
   type Recommendation = {
     userId: string
+    code?: string
+    fullName?: string
+    imageUrl?: string
     distance?: number
     similarity?: number
   }
@@ -145,14 +148,18 @@ const AddUserSidebarList = () => {
                   className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 orange:hover:bg-orange-100 rounded-md transition-colors"
                 >
                   <Avatar className="h-8 w-8">
+                    <AvatarImage src={rec.imageUrl} alt="avatar" />
                     <AvatarFallback className="text-sm">
-                      {rec.userId.slice(0, 2).toUpperCase()}
+                      {(rec.fullName || rec.userId).slice(0, 1).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
-                      {rec.userId}
+                      {rec.fullName || rec.userId}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700 truncate">
+                      Code: {rec.code || '—'}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700 truncate">
                       Similarity:{' '}

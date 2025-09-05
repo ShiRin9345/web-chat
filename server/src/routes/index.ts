@@ -224,18 +224,30 @@ router.get(
     }
 
     const result = await chromaService.recommendByUser(userId, 4)
-    const user = await userService.getUser(userId)
-    const payload = (result.ids?.[0] || []).map((id: string, idx: number) => ({
-      userId: id,
-      code: user?.code,
-      fullName: user?.fullName,
-      imageUrl: user?.imageUrl,
-      distance: result.distances?.[0]?.[idx],
-      similarity:
-        result.distances?.[0]?.[idx] != null
-          ? 1 - result.distances[0][idx]
-          : undefined,
-    }))
+    const ids = (result.ids?.[0] || []) as Array<string>
+    if (ids.length === 0) {
+      res.json([])
+      return
+    }
+
+    const users = await db.user.findMany({
+      where: { userId: { in: ids } },
+      select: { userId: true, code: true, fullName: true, imageUrl: true },
+    })
+    const userById = new Map(users.map((u) => [u.userId, u]))
+
+    const payload = ids.map((id, idx) => {
+      const u = userById.get(id)
+      const d = result.distances?.[0]?.[idx]
+      return {
+        userId: id,
+        code: u?.code,
+        fullName: u?.fullName,
+        imageUrl: u?.imageUrl,
+        distance: d,
+        similarity: d != null ? 1 - d : undefined,
+      }
+    })
     res.json(payload)
   }),
 )
