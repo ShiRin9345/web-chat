@@ -74,17 +74,21 @@ const GroupColumn = () => {
       id="column"
       className="bg-white relative dark:bg-gray-900 orange:bg-orange-50 border-l border-gray-200 dark:border-gray-700 orange:border-orange-200 h-full flex flex-col w-[320px] shadow-lg"
     >
-      {open ? (
-        <PanelRightClose
-          className="absolute -left-3 top-1/2 cursor-pointer bg-white -translate-y-1/2 size-4"
+      <div className="absolute -left-4 top-1/2 -translate-y-1/2 z-10">
+        <button
           onClick={changeOpen}
-        />
-      ) : (
-        <PanelLeftClose
-          className="absolute -left-3 top-1/2 cursor-pointer bg-white -translate-y-1/2 size-3"
-          onClick={changeOpen}
-        />
-      )}
+          className="group relative flex items-center justify-center w-8 h-8 rounded-full bg-white dark:bg-gray-800 orange:bg-orange-100 border border-gray-200 dark:border-gray-600 orange:border-orange-300 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 active:scale-95"
+        >
+          {open ? (
+            <PanelRightClose className="w-4 h-4 text-gray-600 dark:text-gray-300 orange:text-orange-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 orange:group-hover:text-orange-600 transition-colors duration-200" />
+          ) : (
+            <PanelLeftClose className="w-4 h-4 text-gray-600 dark:text-gray-300 orange:text-orange-700 group-hover:text-blue-600 dark:group-hover:text-blue-400 orange:group-hover:text-orange-600 transition-colors duration-200" />
+          )}
+
+          {/* 悬停时的背景光晕效果 */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-indigo-500/20 dark:from-blue-400/20 dark:to-indigo-400/20 orange:from-orange-500/20 orange:to-orange-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+        </button>
+      </div>
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 orange:border-orange-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 orange:from-orange-50 orange:to-orange-100">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
