@@ -8,7 +8,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
-import { Loader, X } from 'lucide-react'
+import { Loader, Plus, X } from 'lucide-react'
 import imageCompression from 'browser-image-compression'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
@@ -47,7 +47,9 @@ const profileFormSchema = z.object({
   sex: z.enum(['man', 'woman']),
   phone: z.string(),
   signature: z.string(),
-  tags: z.array(z.string()),
+  tags: z
+    .array(z.string().max(6, 'Tag length cannot exceed 6 characters'))
+    .max(8, 'Maximum 8 tags allowed'),
 })
 
 gsap.registerPlugin(ScrollTrigger)
@@ -235,36 +237,92 @@ function RouteComponent() {
                 name="tags"
                 children={(field) => (
                   <>
-                    <span className="text-gray-700 dark:text-gray-300 orange:text-orange-800 font-medium">
-                      Tags
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-700 dark:text-gray-300 orange:text-orange-800 font-medium">
+                        Tags
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 orange:text-orange-600">
+                        {field.state.value.length}/8
+                      </span>
+                    </div>
                     <div className="space-y-2">
                       <div className="flex flex-wrap gap-2">
-                        {field.state.value.map((tag, index) => (
-                          <div
-                            key={index}
-                            className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 orange:bg-orange-100 text-blue-800 dark:text-blue-300 orange:text-orange-800 text-sm rounded-full"
-                          >
-                            <span>{tag}</span>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newTags = field.state.value.filter(
-                                  (_, i) => i !== index,
-                                )
-                                field.handleChange(newTags)
-                              }}
-                              className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-800/50 orange:hover:bg-orange-200 rounded-full p-0.5"
-                            >
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
+                        {(() => {
+                          const savedTags = data?.tags ?? []
+                          const currentTags = field.state.value
+                          const combined = Array.from(
+                            new Set([...savedTags, ...currentTags]),
+                          )
+                          return combined.map((tag) => {
+                            const isSaved = savedTags.includes(tag)
+                            const inCurrent = currentTags.includes(tag)
+                            const baseClasses =
+                              'inline-flex items-center gap-1 px-2 py-1 text-sm rounded-full'
+                            const savedClasses =
+                              'bg-blue-100 dark:bg-blue-900/30 orange:bg-orange-100 text-blue-800 dark:text-blue-300 orange:text-orange-800'
+                            const addClasses =
+                              'bg-emerald-100 dark:bg-emerald-900/30 orange:bg-green-100 text-emerald-800 dark:text-emerald-300 orange:text-green-800'
+                            const removeClasses =
+                              'bg-gray-200 dark:bg-gray-700 orange:bg-orange-200 text-gray-600 dark:text-gray-300 orange:text-orange-700 line-through opacity-60'
+
+                            return (
+                              <div
+                                key={tag}
+                                className={`${baseClasses} ${
+                                  inCurrent && isSaved
+                                    ? savedClasses
+                                    : inCurrent && !isSaved
+                                      ? addClasses
+                                      : removeClasses
+                                }`}
+                              >
+                                <span>{tag}</span>
+                                {inCurrent ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newTags = currentTags.filter(
+                                        (t) => t !== tag,
+                                      )
+                                      field.handleChange(newTags)
+                                    }}
+                                    className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-800/50 orange:hover:bg-orange-200 rounded-full p-0.5"
+                                    aria-label="Remove tag"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (
+                                        currentTags.length < 8 &&
+                                        !currentTags.includes(tag)
+                                      ) {
+                                        field.handleChange([
+                                          ...currentTags,
+                                          tag,
+                                        ])
+                                      }
+                                    }}
+                                    className="ml-1 hover:bg-emerald-200 dark:hover:bg-emerald-800/50 orange:hover:bg-green-200 rounded-full p-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    aria-label="Add tag back"
+                                    disabled={currentTags.length >= 8}
+                                  >
+                                    <Plus className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
+                            )
+                          })
+                        })()}
                       </div>
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Add a tag..."
-                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600"
+                          placeholder="Add a tag... (max 6 chars, 8 tags)"
+                          maxLength={6}
+                          disabled={field.state.value.length >= 8}
+                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               e.preventDefault()
@@ -272,6 +330,8 @@ function RouteComponent() {
                               const newTag = input.value.trim()
                               if (
                                 newTag &&
+                                newTag.length <= 6 &&
+                                field.state.value.length < 8 &&
                                 !field.state.value.includes(newTag)
                               ) {
                                 field.handleChange([
@@ -287,17 +347,23 @@ function RouteComponent() {
                           type="button"
                           variant="outline"
                           size="sm"
+                          disabled={field.state.value.length >= 8}
                           onClick={() => {
                             const input = document.querySelector(
-                              'input[placeholder="Add a tag..."]',
+                              'input[placeholder="Add a tag... (max 6 chars, 8 tags)"]',
                             ) as HTMLInputElement
                             const newTag = input.value.trim()
-                            if (newTag && !field.state.value.includes(newTag)) {
+                            if (
+                              newTag &&
+                              newTag.length <= 6 &&
+                              field.state.value.length < 8 &&
+                              !field.state.value.includes(newTag)
+                            ) {
                               field.handleChange([...field.state.value, newTag])
                               input.value = ''
                             }
                           }}
-                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 hover:bg-gray-50 dark:hover:bg-gray-600 orange:hover:bg-orange-200"
+                          className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 hover:bg-gray-50 dark:hover:bg-gray-600 orange:hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Add
                         </Button>
