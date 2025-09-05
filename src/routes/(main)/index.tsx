@@ -48,7 +48,7 @@ const profileFormSchema = z.object({
   phone: z.string(),
   signature: z.string(),
   tags: z
-    .array(z.string().max(6, 'Tag length cannot exceed 6 characters'))
+    .array(z.string().max(20, 'Tag length cannot exceed 20 characters'))
     .max(8, 'Maximum 8 tags allowed'),
 })
 
@@ -260,7 +260,7 @@ function RouteComponent() {
                       </span>
                     </div>
                     <div className="space-y-2">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 w-full max-w-[20rem]">
                         {(() => {
                           const savedTags = data?.tags ?? []
                           const currentTags = field.state.value
@@ -334,7 +334,7 @@ function RouteComponent() {
                       <div className="flex gap-2">
                         <Input
                           placeholder="Add a tag..."
-                          maxLength={6}
+                          maxLength={20}
                           disabled={field.state.value.length >= 8}
                           className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                           onKeyDown={(e) => {
@@ -344,7 +344,7 @@ function RouteComponent() {
                               const newTag = input.value.trim()
                               if (
                                 newTag &&
-                                newTag.length <= 6 &&
+                                newTag.length <= 20 &&
                                 field.state.value.length < 8 &&
                                 !field.state.value.includes(newTag)
                               ) {
@@ -369,7 +369,7 @@ function RouteComponent() {
                             const newTag = input.value.trim()
                             if (
                               newTag &&
-                              newTag.length <= 6 &&
+                              newTag.length <= 20 &&
                               field.state.value.length < 8 &&
                               !field.state.value.includes(newTag)
                             ) {
