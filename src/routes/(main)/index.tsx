@@ -7,7 +7,7 @@ import axios from 'axios'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Loader, Plus, X } from 'lucide-react'
 import imageCompression from 'browser-image-compression'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
@@ -106,11 +106,24 @@ function RouteComponent() {
             tags: value.tags,
           },
         })
+        console.log('uplaod success')
       } catch (e) {
         console.error(e)
       }
     },
   })
+
+  useEffect(() => {
+    if (!data) return
+    form.reset({
+      email: data.email,
+      position: data.position,
+      sex: data.sex === 'man' || data.sex === 'woman' ? data.sex : 'man',
+      signature: data.signature,
+      phone: data.phone,
+      tags: data.tags,
+    })
+  }, [data, form])
   return (
     <div
       className="overflow-y-auto overflow-x-hidden scrollbar-none h-dvh"
@@ -128,10 +141,11 @@ function RouteComponent() {
         )}
         <div className="flex flex-col ">
           <form
-            onSubmit={async (e) => {
+            noValidate
+            onSubmit={(e) => {
               e.preventDefault()
-              await form.handleSubmit()
-              console.log(form.state.values)
+              console.log('submit clicked')
+              form.handleSubmit()
             }}
           >
             <div className="grid grid-cols-[100px_1fr] bg-white dark:bg-gray-800 orange:bg-orange-50 px-4 py-2 rounded-md gap-5 shadow-lg dark:shadow-gray-900/50 orange:shadow-orange-200/50">
@@ -319,7 +333,7 @@ function RouteComponent() {
                       </div>
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Add a tag... (max 6 chars, 8 tags)"
+                          placeholder="Add a tag..."
                           maxLength={6}
                           disabled={field.state.value.length >= 8}
                           className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -350,7 +364,7 @@ function RouteComponent() {
                           disabled={field.state.value.length >= 8}
                           onClick={() => {
                             const input = document.querySelector(
-                              'input[placeholder="Add a tag... (max 6 chars, 8 tags)"]',
+                              'input[placeholder="Add a tag..."]',
                             ) as HTMLInputElement
                             const newTag = input.value.trim()
                             if (
