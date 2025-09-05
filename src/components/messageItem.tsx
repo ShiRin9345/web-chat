@@ -1,12 +1,13 @@
 import { forwardRef, memo, useState } from 'react'
 import {
   ArrowDownToLine,
-  Heart,
   Loader,
   Mail,
   MapPin,
+  Mars,
   Phone,
   Quote,
+  Venus,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
@@ -298,7 +299,7 @@ export function UserProfile({
   sender,
 }: {
   userId: string
-  sender: Pick<User, 'userId' | 'fullName' | 'imageUrl'>
+  sender: Pick<User, 'userId' | 'fullName' | 'imageUrl' | 'code'>
 }) {
   const { data: profile } = useQuery(senderUserProfileQueryOptions(userId))
 
@@ -340,14 +341,27 @@ export function UserProfile({
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white orange:text-orange-900">
             {sender.fullName}
           </h1>
+          {sender.code && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700 font-mono">
+              #{sender.code}
+            </p>
+          )}
           <div className="flex items-center justify-center gap-2">
-            <Badge
-              variant="secondary"
-              className="bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300 orange:bg-pink-100 orange:text-pink-800"
-            >
-              <Heart className="w-3 h-3 mr-1" />
-              {profile.sex === 'man' ? '男' : '女'}
-            </Badge>
+            {profile.sex === 'man' ? (
+              <Badge
+                variant="secondary"
+                className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 orange:bg-blue-100 orange:text-blue-800"
+              >
+                <Mars className="w-3 h-3" />
+              </Badge>
+            ) : (
+              <Badge
+                variant="secondary"
+                className="bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300 orange:bg-pink-100 orange:text-pink-800"
+              >
+                <Venus className="w-3 h-3" />
+              </Badge>
+            )}
           </div>
         </div>
       </div>
