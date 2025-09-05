@@ -492,6 +492,16 @@ router.post(
   }),
 )
 
+router.get(
+  '/profile/:userId',
+  requireAuth(),
+  asyncHandler(async (req, res) => {
+    const { userId } = req.params as { userId: string }
+    const profile = await userService.getProfile(userId)
+    res.json(profile)
+  }),
+)
+
 // AI Chat
 router.post(
   '/chat',

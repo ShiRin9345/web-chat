@@ -8,8 +8,13 @@ import type { UserResource } from '@clerk/types'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import { cn } from '@/lib/utils.ts'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
-import { groupWithMembersAndModeratorsAndOwnerQueryOptions } from '@/features/reactQuery/options'
+import {
+  groupUserProfileQueryOptions,
+  groupWithMembersAndModeratorsAndOwnerQueryOptions,
+  userProfileQueryOptions,
+} from '@/features/reactQuery/options'
 import { Badge } from '@/components/ui/badge'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 
 interface MessageItemProps {
   content: string
@@ -37,13 +42,21 @@ export const MessageItem = memo(
           )}
           ref={ref}
         >
-          <Avatar className="ml-2 size-12">
-            <AvatarImage
-              src={isSelfMessage ? user.imageUrl : sender.imageUrl}
-              alt="avatar"
-            />
-            <AvatarFallback>Avatar</AvatarFallback>
-          </Avatar>
+          <Popover>
+            <PopoverTrigger>
+              <Avatar className="ml-2 size-12">
+                <AvatarImage
+                  src={isSelfMessage ? user.imageUrl : sender.imageUrl}
+                  alt="avatar"
+                />
+                <AvatarFallback>Avatar</AvatarFallback>
+              </Avatar>
+            </PopoverTrigger>
+            <PopoverContent side={isSelfMessage ? 'left' : 'right'}>
+              <UserProfile userId={sender.userId} />
+            </PopoverContent>
+          </Popover>
+
           <div className="flex space-y-2 flex-col">
             <div
               className={cn(
@@ -160,3 +173,19 @@ export const MessageItem = memo(
     },
   ),
 )
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data: profile } = useQuery(groupUserProfileQueryOptions(userId))
+  console.log(profile)
+  return (
+    <div>
+      <h1>{profile?.fullName}</h1>
+      <p>{profile?.email}</p>
+      <p>{profile?.phone}</p>
+      <p>{profile?.signature}</p>
+      <p>{profile?.position}</p>
+      <p>{profile?.sex}</p>
+      <p>{profile?.bgImageUrl}</p>
+    </div>
+  )
+}

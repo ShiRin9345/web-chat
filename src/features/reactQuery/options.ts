@@ -219,7 +219,7 @@ export const chatMessageInfiniteQueryOptions = ({
   })
 
 export const userProfileQueryOptions = queryOptions({
-  queryKey: ['userProfile'],
+  queryKey: ['userProfile', 'self'],
   queryFn: async () => {
     const response = await axios.get<Profile>('/api/profile')
     return response.data
@@ -332,5 +332,18 @@ export const kickMutationOptions = ({
         ['groupWithMembersAndModeratorsAndOwner', groupId],
         newGroup,
       )
+    },
+  })
+
+export const groupUserProfileQueryOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ['userProfile', userId],
+    queryFn: async () => {
+      const response = await axios.get<Profile>('/api/profile', {
+        params: {
+          userId,
+        },
+      })
+      return response.data
     },
   })
