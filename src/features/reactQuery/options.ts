@@ -51,7 +51,7 @@ export const profileWallpaperMutationOptions = ({
       }
     },
     onSuccess: (profile) => {
-      queryClient.setQueryData(['userProfile'], profile)
+      queryClient.setQueryData(['userProfile', 'self'], profile)
     },
   })
 

@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
@@ -53,7 +53,6 @@ gsap.registerPlugin(ScrollTrigger)
 
 function RouteComponent() {
   const { data } = useQuery(userProfileQueryOptions)
-
   const scopeRef = useRef<HTMLInputElement>(null)
   const bgImageRef = useRef<HTMLImageElement>(null)
   useGSAP(() => {

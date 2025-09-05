@@ -197,7 +197,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/jiayuhao/Desktop/practice/tanstack-router/generated",
+      "value": "/Users/jiayuhao/Desktop/cursor/web-chat/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -211,7 +211,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/jiayuhao/Desktop/practice/tanstack-router/server/prisma/schema.prisma",
+    "sourceFilePath": "/Users/jiayuhao/Desktop/cursor/web-chat/server/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
