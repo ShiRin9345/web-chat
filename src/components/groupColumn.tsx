@@ -262,7 +262,6 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
             <StatusIndicator />
           </Status>
         </div>
-        <div className="bg-white  dark:bg-gray-700 orange:bg-orange-100 rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 border-gray-200 dark:border-gray-600 orange:border-orange-300 flex  absolute -right-2 p-2 shadow-md dark:shadow-gray-900/30 orange:shadow-orange-200/30 invisible group-hover:visible"></div>
       </div>
 
       <div className="flex-1 min-w-0">
