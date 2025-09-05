@@ -47,7 +47,7 @@ export const PrivateMessageItem = memo(
         >
           <Popover>
             <PopoverTrigger>
-              <Avatar className="ml-2 size-12">
+              <Avatar className="ml-2 size-12 cursor-pointer">
                 <AvatarImage
                   src={isSelfMessage ? user.imageUrl : sender.imageUrl}
                   alt="avatar"
@@ -160,7 +160,7 @@ export const GroupMessageItem = memo(
         >
           <Popover>
             <PopoverTrigger>
-              <Avatar className="ml-2 size-12">
+              <Avatar className="ml-2 size-12 cursor-pointer">
                 <AvatarImage
                   src={isSelfMessage ? user.imageUrl : sender.imageUrl}
                   alt="avatar"
@@ -293,7 +293,13 @@ export const GroupMessageItem = memo(
   ),
 )
 
-function UserProfile({ userId, sender }: { userId: string; sender: User }) {
+export function UserProfile({
+  userId,
+  sender,
+}: {
+  userId: string
+  sender: Pick<User, 'userId' | 'fullName' | 'imageUrl'>
+}) {
   const { data: profile } = useQuery(senderUserProfileQueryOptions(userId))
 
   if (!profile) {

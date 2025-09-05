@@ -20,6 +20,12 @@ import { Button } from '@/components/ui/button.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { UserProfile } from '@/components/messageItem.tsx'
 
 const addUserFormSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -147,12 +153,32 @@ const AddUserSidebarList = () => {
                   key={rec.userId}
                   className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 orange:hover:bg-orange-100 rounded-md transition-colors"
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={rec.imageUrl} alt="avatar" />
-                    <AvatarFallback className="text-sm">
-                      {(rec.fullName || rec.userId).slice(0, 1).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={rec.imageUrl}
+                          alt="avatar"
+                          className="cursor-pointer"
+                        />
+                        <AvatarFallback className="text-sm">
+                          {(rec.fullName || rec.userId)
+                            .slice(0, 1)
+                            .toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </PopoverTrigger>
+                    <PopoverContent side="right" className="p-0">
+                      <UserProfile
+                        userId={rec.userId}
+                        sender={{
+                          userId: rec.userId,
+                          fullName: rec.fullName || rec.userId,
+                          imageUrl: rec.imageUrl || '',
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
