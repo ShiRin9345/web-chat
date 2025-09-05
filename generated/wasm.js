@@ -128,7 +128,8 @@ exports.Prisma.ProfileScalarFieldEnum = {
   email: 'email',
   signature: 'signature',
   userId: 'userId',
-  bgImageUrl: 'bgImageUrl'
+  bgImageUrl: 'bgImageUrl',
+  tags: 'tags'
 };
 
 exports.Prisma.UserScalarFieldEnum = {

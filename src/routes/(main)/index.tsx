@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
@@ -47,6 +47,7 @@ const profileFormSchema = z.object({
   sex: z.enum(['man', 'woman']),
   phone: z.string(),
   signature: z.string(),
+  tags: z.array(z.string()),
 })
 
 gsap.registerPlugin(ScrollTrigger)
@@ -86,6 +87,7 @@ function RouteComponent() {
       sex: data?.sex ?? 'man',
       signature: data?.signature ?? '',
       phone: data?.phone ?? '',
+      tags: data?.tags ?? [],
     },
     validators: {
       onChange: profileFormSchema,

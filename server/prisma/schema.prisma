@@ -24,6 +24,7 @@ model Profile {
   userId     String @unique
   user       User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   bgImageUrl String @default("")
+  tags       String[] @default([])
 
   @@index([userId])
 }
