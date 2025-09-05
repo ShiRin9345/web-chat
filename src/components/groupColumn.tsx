@@ -223,11 +223,15 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="relative">
-        <Avatar className="w-10 h-10 ring-2 ring-white dark:ring-gray-800 orange:ring-orange-100">
-          <AvatarImage src={user.imageUrl} alt={user.fullName} />
+      <div className="relative group">
+        <Avatar className="w-10  h-10 ring-2 ring-white dark:ring-gray-800 orange:ring-orange-100">
+          <AvatarImage
+            src={user.imageUrl}
+            alt={user.fullName}
+            className="object-cover"
+          />
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-medium">
-            {(user.fullName && user.fullName.charAt(0).toUpperCase()) || 'U'}
+            <Loader className="animate-spin" />
           </AvatarFallback>
         </Avatar>
         <div className="absolute -bottom-1 -right-1">
@@ -235,6 +239,7 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
             <StatusIndicator />
           </Status>
         </div>
+        <div className="bg-white  dark:bg-gray-700 orange:bg-orange-100 rounded-lg w-[25rem] justify-self-center h-[9rem]  col-span-2 border-1 border-gray-200 dark:border-gray-600 orange:border-orange-300 flex  absolute -right-2 p-2 shadow-md dark:shadow-gray-900/30 orange:shadow-orange-200/30 invisible group-hover:visible"></div>
       </div>
 
       <div className="flex-1 min-w-0">
@@ -283,23 +288,17 @@ const AvatarLabel: React.FC<AvatarLabelProps> = ({ user, type, role }) => {
                   onClick={() => mutate(user.userId)}
                   className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
                 >
-                  <span className="mr-2">🚫</span>
                   Remove Member
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    <span className="mr-2">👑</span>
-                    Change Role
-                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubTrigger>Change Role</DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent>
                       <DropdownMenuItem onClick={() => roleMutate('member')}>
-                        <span className="mr-2">👤</span>
                         Member
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => roleMutate('moderator')}>
-                        <span className="mr-2">🛡️</span>
                         Moderator
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>

@@ -39,7 +39,10 @@ function LabelGroup({ group }: { group: Group }) {
     <AnimatedLink url="/group/$groupId" groupId={group.id}>
       <SidebarItem
         icon={
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+          // <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+          //   {group.name.charAt(0).toUpperCase()}
+          // </div>
+          <div className="w-10 h-10  rounded-full aspect-square border orange:border-orange-300 dark:border-white flex items-center justify-center ">
             {group.name.charAt(0).toUpperCase()}
           </div>
         }
@@ -54,8 +57,6 @@ function LabelGroup({ group }: { group: Group }) {
             : 'No messages yet'
         }
         iconBgColor="bg-transparent"
-        iconTextColor="text-transparent"
-        hoverIconBgColor=""
         children={
           <Pill className="bg-blue-50 dark:bg-blue-900/20 orange:bg-orange-100 text-blue-700 dark:text-blue-300 orange:text-orange-800 border-blue-200 dark:border-blue-700 orange:border-orange-300">
             <PillIcon icon={UserIcon} />

@@ -484,11 +484,11 @@ router.post(
           imageUrl: imageUrl,
         },
       })
-      res.send(user)
+      return res.status(200).json(user)
     } catch (error) {
       console.error(error)
+      return res.status(500).json({ message: 'Failed to update avatar' })
     }
-    res.status(200).send('Avatar updated')
   }),
 )
 

@@ -8,7 +8,9 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { useRef, useState } from 'react'
-import type { OssInfo } from '@/components/ImageDialog'
+import { Loader } from 'lucide-react'
+import imageCompression from 'browser-image-compression'
+import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { userProfileQueryOptions } from '@/features/reactQuery/options.ts'
 import { RegionSelector } from '@/routes/test.tsx'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group.tsx'
@@ -251,18 +253,29 @@ function AvatarUpload() {
     setFiles(uploadFiles)
     const formdata = new FormData()
 
+    const options = {
+      maxSizeMB: 1, // 最大文件大小1MB
+      maxWidthOrHeight: 1920, // 最大宽度或高度1920px
+      useWebWorker: true, // 使用Web Worker提升性能
+      fileType: 'image/webp', // 输出WebP格式
+    }
+
+    const compressedFile = await imageCompression(file, options)
+
     const response = await axios.get<OssInfo>('/api/oss-signature')
+
     const ossInfo = response.data
     formdata.append('key', file.name)
     formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
     formdata.append('policy', ossInfo.policy)
     formdata.append('signature', ossInfo.Signature)
     formdata.append('success_action_status', '200')
-    formdata.append('file', file)
+    formdata.append('file', compressedFile)
 
+    const fileName = file.name.replace(/\.[^/.]+$/, '.webp')
     await axios.post(ossInfo.host, formdata)
-    const targetUrl = ossInfo.host + '/' + file.name
-    user?.setProfileImage({ file: targetUrl })
+    const targetUrl = ossInfo.host + '/' + fileName
+    await user?.setProfileImage({ file: compressedFile })
     await axios.post('/api/avatar', { imageUrl: targetUrl })
     setOpen(false)
   }
@@ -278,10 +291,10 @@ function AvatarUpload() {
           <AvatarImage
             src={user?.imageUrl}
             alt="avatar"
-            className="cursor-pointer"
+            className="cursor-pointer object-cover"
           />
           <AvatarFallback className="bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
-            avatar
+            <Loader className="animate-spin" />
           </AvatarFallback>
         </Avatar>
       </DialogTrigger>
