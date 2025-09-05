@@ -1,11 +1,20 @@
 import { clerkClient } from '@clerk/express'
-import { chromaService } from './chromaService.ts'
 import db from '../../db.ts'
 import { logger } from '../utils/logger.ts'
 import { generateCode } from '../../util/generateCode.ts'
+import { chromaService } from './chromaService.ts'
 import type { UpdateProfileRequest } from '../types/index.ts'
 
 export class UserService {
+  async getUser(userId: string) {
+    try {
+      return await db.user.findUnique({ where: { userId } })
+    } catch (error) {
+      logger.error('Failed to fetch user', { userId }, error as Error)
+      throw error
+    }
+  }
+
   async getFriends(userId: string) {
     try {
       const userWithFriends = await db.user.findUnique({

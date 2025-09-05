@@ -224,8 +224,12 @@ router.get(
     }
 
     const result = await chromaService.recommendByUser(userId, 4)
+    const user = await userService.getUser(userId)
     const payload = (result.ids?.[0] || []).map((id: string, idx: number) => ({
       userId: id,
+      code: user?.code,
+      fullName: user?.fullName,
+      imageUrl: user?.imageUrl,
       distance: result.distances?.[0]?.[idx],
       similarity:
         result.distances?.[0]?.[idx] != null
