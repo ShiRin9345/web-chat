@@ -19,7 +19,6 @@ import db from '../../db.ts'
 
 const router = express.Router()
 
-// 存储上传进度的Map
 const uploadProgress = new Map()
 
 // SSE进度推送端点 - 单独的GET接口

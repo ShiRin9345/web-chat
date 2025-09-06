@@ -2,10 +2,10 @@ import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { ArrowRight, Loader } from 'lucide-react'
 import type { User } from 'generated/index'
 import { Button } from '@/components/ui/button.tsx'
 import { Input } from '@/components/ui/input.tsx'
-import { ArrowRight, Loader } from 'lucide-react'
 
 interface Props {
   currentUserId?: string

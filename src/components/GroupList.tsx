@@ -1,12 +1,9 @@
 import React from 'react'
-import type { Group, GroupMessage } from 'generated/index'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { UserIcon } from 'lucide-react'
+import type { Group, GroupMessage } from 'generated/index'
 import AnimatedLink from '@/components/animatedLink.tsx'
-import { Pill, PillIcon } from '@/components/ui/shadcn-io/pill'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
 import { isImage, isPDF } from '@/lib/checkFileType.ts'
-import { useCountSocket } from '@/hooks/useCountSocket.ts'
 import SidebarItem from '@/components/SidebarItem.tsx'
 
 interface GroupListProps {
