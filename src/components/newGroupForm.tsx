@@ -26,8 +26,8 @@ const groupSchema = z.object({
 
 const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
   const queryClient = useQueryClient()
-  const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
-  const [isUploading, setIsUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined)
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm({
@@ -39,41 +39,50 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
       onChange: groupSchema,
     },
     onSubmit: async ({ value }) => {
+      let uploadedUrl: string | undefined
+      if (selectedFile) {
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+            fileType: 'image/webp',
+          }
+          const compressedFile = await imageCompression(selectedFile, options)
+          const response = await axios.get<OssInfo>('/api/oss-signature')
+          const ossInfo = response.data
+          const formdata = new FormData()
+          formdata.append('key', selectedFile.name)
+          formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+          formdata.append('policy', ossInfo.policy)
+          formdata.append('signature', ossInfo.Signature)
+          formdata.append('success_action_status', '200')
+          formdata.append('file', compressedFile)
+          const fileName = selectedFile.name.replace(/\.[^/.]+$/, '.webp')
+          await axios.post(ossInfo.host, formdata)
+          uploadedUrl = ossInfo.host + '/' + fileName
+        } catch (error) {
+          console.error('Upload failed:', error)
+        }
+      }
+
       await axios.post<Group>('/api/group', {
         name: value.name,
-        imageUrl,
+        imageUrl: uploadedUrl,
       })
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+      setPreviewUrl(undefined)
+      setSelectedFile(undefined)
       queryClient.invalidateQueries(sidebarListQueryOptions)
       setOpen(false)
     },
   })
 
-  const handleSelect = async (file: File) => {
-    const formdata = new FormData()
-
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-      fileType: 'image/webp',
-    }
-
-    const compressedFile = await imageCompression(file, options)
-
-    const response = await axios.get<OssInfo>('/api/oss-signature')
-    const ossInfo = response.data
-
-    formdata.append('key', file.name)
-    formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
-    formdata.append('policy', ossInfo.policy)
-    formdata.append('signature', ossInfo.Signature)
-    formdata.append('success_action_status', '200')
-    formdata.append('file', compressedFile)
-
-    const fileName = file.name.replace(/\.[^/.]+$/, '.webp')
-    await axios.post(ossInfo.host, formdata)
-    const targetUrl = ossInfo.host + '/' + fileName
-    setImageUrl(targetUrl)
+  const handleSelect = (file: File) => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setSelectedFile(file)
+    const url = URL.createObjectURL(file)
+    setPreviewUrl(url)
   }
 
   return (
@@ -91,11 +100,10 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
           onChange={async (e) => {
             const f = e.target.files?.[0]
             if (f) {
-              setIsUploading(true)
               try {
                 await handleSelect(f)
-              } finally {
-                setIsUploading(false)
+              } catch (error) {
+                console.error('Upload failed:', error)
               }
             }
           }}
@@ -105,16 +113,16 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
           onClick={() => fileInputRef.current?.click()}
           className="relative w-20 h-20 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 orange:border-orange-300 flex items-center justify-center bg-gray-50 dark:bg-gray-800 orange:bg-orange-100"
         >
-          {imageUrl ? (
+          {previewUrl ? (
             <img
-              src={imageUrl}
+              src={previewUrl}
               alt="group-cover"
               className="w-full h-full object-cover"
             />
           ) : (
             <UserIcon className="w-8 h-8 text-gray-500 dark:text-gray-400 orange:text-orange-700" />
           )}
-          {isUploading && (
+          {form.state.isSubmitting && (
             <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
               <Loader className="w-5 h-5 text-white animate-spin" />
             </div>
@@ -166,7 +174,11 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
             selector={(state) => [state.canSubmit]}
             children={([canSubmit]) => (
               <Button type="submit" disabled={!canSubmit} variant="send">
-                Submit
+                {form.state.isSubmitting ? (
+                  <Loader className="animate-spin" />
+                ) : (
+                  'Create'
+                )}
               </Button>
             )}
           />
