@@ -3,7 +3,6 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import type { Group, GroupMessage } from 'generated/index'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import { chatMessageInfiniteQueryOptions } from '@/features/reactQuery/options.ts'
-import { isImage, isPDF } from '@/lib/checkFileType.ts'
 import SidebarItem from '@/components/SidebarItem.tsx'
 
 interface GroupListProps {
@@ -28,8 +27,7 @@ function LabelGroup({ group }: { group: Group }) {
   const messages = data
     ? data.pages.flatMap((page) => page.messages as Array<GroupMessage>)
     : []
-  const lastMessage =
-    messages.length > 0 ? messages[messages.length - 1].content : ''
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null
 
   return (
     <AnimatedLink url="/group/$groupId" groupId={group.id}>
@@ -50,11 +48,11 @@ function LabelGroup({ group }: { group: Group }) {
         title={group.name}
         subtitle={
           lastMessage
-            ? isImage(lastMessage)
-              ? isPDF(lastMessage)
-                ? '📄 PDF file'
-                : '🖼️ Image'
-              : lastMessage
+            ? lastMessage.type === 'PDF'
+              ? '📄 PDF file'
+              : lastMessage.type === 'IMAGE'
+                ? ' 🖼️ Image'
+                : lastMessage.content
             : 'No messages yet'
         }
         iconBgColor="bg-transparent"
