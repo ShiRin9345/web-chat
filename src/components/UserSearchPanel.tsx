@@ -3,12 +3,12 @@ import { z } from 'zod'
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { toast } from 'sonner'
-import type { User, Group } from 'generated/index'
+import { ArrowRight, Check, Loader, UserIcon, Users } from 'lucide-react'
+import type { Group, User } from 'generated/index'
 import { Button } from '@/components/ui/button.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
-import { ArrowRight, Loader, Check, UserIcon, Users } from 'lucide-react'
 
 interface Props {
   currentUserId?: string
@@ -32,6 +32,33 @@ export default function UserSearchPanel({
   const [userResults, setUserResults] = useState<Array<User>>([])
   const [groupResults, setGroupResults] = useState<Array<Group>>([])
   const [isSearching, setIsSearching] = useState(false)
+  const [groupMembershipStatus, setGroupMembershipStatus] = useState<
+    Record<string, boolean>
+  >({})
+
+  // 检查群组成员状态
+  const checkGroupMembership = async (groupId: string) => {
+    try {
+      const response = await axios.get('/api/checkGroupMembership', {
+        params: { groupId },
+      })
+      return response.data.isMember
+    } catch (error) {
+      console.error('Failed to check group membership:', error)
+      return false
+    }
+  }
+
+  // 批量检查群组成员状态
+  const checkAllGroupMemberships = async (groups: Array<Group>) => {
+    const statusMap: Record<string, boolean> = {}
+    const promises = groups.map(async (group) => {
+      const isMember = await checkGroupMembership(group.id)
+      statusMap[group.id] = isMember
+    })
+    await Promise.all(promises)
+    setGroupMembershipStatus(statusMap)
+  }
 
   const form = useForm({
     defaultValues: { name: '' },
@@ -55,6 +82,11 @@ export default function UserSearchPanel({
         )
         setUserResults(filteredUsers)
         setGroupResults(groupResponse.data)
+
+        // 检查群组成员状态
+        if (groupResponse.data.length > 0) {
+          await checkAllGroupMemberships(groupResponse.data)
+        }
       } catch (error) {
         toast.error('Failed to search')
       } finally {
@@ -190,9 +222,7 @@ export default function UserSearchPanel({
                       </p>
                     </div>
 
-                    {currentGroups?.some(
-                      (currentGroup) => currentGroup.id === group.id,
-                    ) ? (
+                    {groupMembershipStatus[group.id] ? (
                       <div className="flex items-center gap-1 text-green-600 dark:text-green-400 orange:text-green-700 bg-green-50 dark:bg-green-900/20 orange:bg-green-100 px-3 py-1 rounded-md border border-green-200 dark:border-green-700 orange:border-green-300">
                         <Check className="h-3 w-3" />
                         <span className="text-xs font-medium">Joined</span>

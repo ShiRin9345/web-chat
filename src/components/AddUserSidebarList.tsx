@@ -3,7 +3,7 @@ import { useUser } from '@clerk/clerk-react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import axios from 'axios'
-import type { User, Group } from 'generated/index'
+import type { Group, User } from 'generated/index'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import UserSearchPanel from '@/components/UserSearchPanel.tsx'
 import RecommendationsList from '@/components/RecommendationsList.tsx'
@@ -49,8 +49,9 @@ const AddUserSidebarList = () => {
       })
       if (response.data.success) {
         toast.success(response.data.message)
-        // Refresh sent group join requests data
+        // Refresh sent group join requests data and groups list
         queryClient.invalidateQueries({ queryKey: ['sentGroupJoinRequests'] })
+        queryClient.invalidateQueries({ queryKey: ['groups'] })
       } else {
         toast.error(response.data.message)
       }
