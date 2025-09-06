@@ -655,6 +655,66 @@ router.get(
         group: true,
         user: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+    res.json(requests)
+  }),
+)
+
+// Check if user is member of group
+router.get(
+  '/checkGroupMembership',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+    const { groupId } = req.query as { groupId: string }
+
+    if (!groupId) {
+      return res.status(400).json({ error: 'Group ID is required' })
+    }
+
+    const group = await db.group.findUnique({
+      where: { id: groupId },
+      include: {
+        members: true,
+        moderators: true,
+        owner: true,
+      },
+    })
+
+    if (!group) {
+      return res.status(404).json({ error: 'Group not found' })
+    }
+
+    const isMember =
+      group.owner.userId === userId ||
+      group.moderators.some((m) => m.userId === userId) ||
+      group.members.some((m) => m.userId === userId)
+
+    res.json({ isMember })
+  }),
+)
+
+// Get sent group join requests
+router.get(
+  '/sentGroupJoinRequests',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+
+    const requests = await db.groupJoinRequest.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        group: true,
+        user: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
     res.json(requests)
   }),
