@@ -1,8 +1,8 @@
 import { ArrowDownToLine } from 'lucide-react'
+import type { MessageType } from 'generated/index'
 import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom'
 import PDFDisplay from '@/components/PDFDisplay'
 import { cn } from '@/lib/utils'
-import type { MessageType } from 'generated/index'
 
 interface Props {
   type: MessageType

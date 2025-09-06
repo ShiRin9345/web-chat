@@ -71,6 +71,7 @@ enum MessageType {
   IMAGE
   TEXT
   PDF
+  SYSTEM
 }
 
 enum RequestState {
