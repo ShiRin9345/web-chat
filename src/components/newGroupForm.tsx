@@ -9,16 +9,13 @@ import type { Group } from 'generated/index'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { sidebarListQueryOptions } from '@/routes/(main)/route.tsx'
 import {
-  DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog.tsx'
 import { Label } from '@/components/ui/label.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import { Dialog } from '@radix-ui/react-dialog'
 
 interface Props {
   setOpen: (open: boolean) => void
