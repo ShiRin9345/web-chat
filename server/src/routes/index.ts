@@ -287,8 +287,11 @@ router.post(
   requireAuth(),
   asyncHandler(async (req, res) => {
     const { userId } = getAuth(req)
-    const { name } = req.body
-    const group = await groupService.createGroup({ name }, userId as string)
+    const { name, imageUrl } = req.body
+    const group = await groupService.createGroup(
+      { name, imageUrl },
+      userId as string,
+    )
 
     groupUsers.set(group.id, 1)
     res.json(group)

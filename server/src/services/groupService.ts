@@ -1,10 +1,11 @@
 import db from '../../db.ts'
+import { generateCode } from '../../util/generateCode.ts'
 import { logger } from '../utils/logger.ts'
 import type {
-  GroupWithRelations,
   CreateGroupRequest,
-  UpdateRoleRequest,
+  GroupWithRelations,
   KickUserRequest,
+  UpdateRoleRequest,
 } from '../types/index.ts'
 
 export class GroupService {
@@ -62,10 +63,20 @@ export class GroupService {
 
   async createGroup(data: CreateGroupRequest, ownerId: string) {
     try {
+      // Generate unique code in [2000000, 3000000]
+      let code = ''
+      let existing: any = null
+      do {
+        code = generateCode(2000000, 3000000)
+        existing = await db.group.findUnique({ where: { code } })
+      } while (existing)
+
       const group = await db.group.create({
         data: {
           name: data.name,
           ownerId,
+          code,
+          imageUrl: data.imageUrl || undefined,
         },
       })
 
@@ -73,6 +84,7 @@ export class GroupService {
         groupId: group.id,
         name: data.name,
         ownerId,
+        code,
       })
       return group
     } catch (error) {
