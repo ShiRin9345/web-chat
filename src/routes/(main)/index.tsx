@@ -96,6 +96,7 @@ function RouteComponent() {
     },
     onSubmit: async ({ value }) => {
       try {
+        console.log('Form submitting with values:', value)
         await axios.patch('/api/profile', {
           data: {
             email: value.email,
@@ -106,22 +107,24 @@ function RouteComponent() {
             tags: value.tags,
           },
         })
-        console.log('uplaod success')
+        console.log('Upload success')
       } catch (e) {
-        console.error(e)
+        console.error('Upload failed:', e)
+        throw e // 重新抛出错误，让 TanStack Form 知道提交失败
       }
     },
   })
 
   useEffect(() => {
     if (!data) return
+    const safeTags = Array.isArray((data as any).tags) ? (data as any).tags : []
     form.reset({
       email: data.email,
       position: data.position,
       sex: data.sex === 'man' || data.sex === 'woman' ? data.sex : 'man',
       signature: data.signature,
       phone: data.phone,
-      tags: data.tags,
+      tags: safeTags,
     })
   }, [data, form])
   return (
@@ -142,10 +145,12 @@ function RouteComponent() {
         <div className="flex flex-col ">
           <form
             noValidate
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault()
               console.log('submit clicked')
-              form.handleSubmit()
+              console.log('Form state:', form.state)
+              console.log('Form errors:', form.state.errors)
+              await form.handleSubmit()
             }}
           >
             <div className="grid grid-cols-[100px_1fr] bg-white dark:bg-gray-800 orange:bg-orange-50 px-4 py-2 rounded-md gap-5 shadow-lg dark:shadow-gray-900/50 orange:shadow-orange-200/50">
@@ -229,6 +234,16 @@ function RouteComponent() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600"
                     />
+                    {!field.state.meta.isValid && (
+                      <em
+                        role="alert"
+                        className="text-xs text-red-500 mt-1 inline-block"
+                      >
+                        {field.state.meta.errors
+                          .map((error) => error?.message)
+                          .join(' ')}
+                      </em>
+                    )}
                   </>
                 )}
               />
@@ -387,12 +402,22 @@ function RouteComponent() {
                 )}
               />
 
-              <Button
-                className="col-span-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 orange:bg-orange-600 orange:hover:bg-orange-700 text-white"
-                type="submit"
-              >
-                Change
-              </Button>
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    className="col-span-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 orange:bg-orange-600 orange:hover:bg-orange-700 text-white"
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <Loader className="animate-spin" />
+                    ) : (
+                      'Change'
+                    )}
+                  </Button>
+                )}
+              />
             </div>
           </form>
         </div>
