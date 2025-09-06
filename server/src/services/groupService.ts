@@ -321,7 +321,12 @@ export class GroupService {
     requestId: string,
     userId: string,
     state: 'agreed' | 'rejected',
-  ): Promise<{ success: boolean; message: string }> {
+  ): Promise<{
+    success: boolean
+    message: string
+    addedUserId?: string
+    groupId?: string
+  }> {
     try {
       // Find the join request
       const joinRequest = await db.groupJoinRequest.findUnique({
@@ -364,6 +369,8 @@ export class GroupService {
         return {
           success: true,
           message: `Accepted ${joinRequest.user.fullName} to join ${joinRequest.group.name}`,
+          addedUserId: joinRequest.userId,
+          groupId: joinRequest.groupId,
         }
       } else {
         logger.info('Join request rejected', {

@@ -19,6 +19,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge.tsx'
 import AnimatedLink from '@/components/animatedLink.tsx'
 
+// Helper function to format date
+const formatDate = (date: Date | string) => {
+  const dateObj = typeof date === 'string' ? new Date(date) : date
+  return dateObj.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 type RequestWithFrom = NewFriendRequest & {
   from: User
   to: User
@@ -237,9 +249,14 @@ function RouteComponent() {
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
-                            Code: {request.from.code}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
+                              Code: {request.from.code}
+                            </p>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 orange:text-orange-600">
+                              • {formatDate(request.createdAt)}
+                            </span>
+                          </div>
                         </div>
 
                         <div className="flex gap-2">
@@ -321,9 +338,14 @@ function RouteComponent() {
                               {request.user.fullName}
                             </h3>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700 mb-2">
-                            Code: {request.user.code}
-                          </p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700">
+                              Code: {request.user.code}
+                            </p>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 orange:text-orange-600">
+                              • {formatDate(request.createdAt)}
+                            </span>
+                          </div>
                           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 orange:text-orange-600">
                             <Users className="h-4 w-4" />
                             <span>Group: {request.group.name}</span>
@@ -431,9 +453,14 @@ function RouteComponent() {
                             </Badge>
                           </div>
 
-                          <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
-                            Code: {request.to.code}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 orange:text-orange-700">
+                              Code: {request.to.code}
+                            </p>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 orange:text-orange-600">
+                              • {formatDate(request.createdAt)}
+                            </span>
+                          </div>
                         </div>
 
                         <div className="flex gap-2">
@@ -492,9 +519,14 @@ function RouteComponent() {
                               {request.group.name}
                             </h3>
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700 mb-2">
-                            Code: {request.group.code}
-                          </p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700">
+                              Code: {request.group.code}
+                            </p>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 orange:text-orange-600">
+                              • {formatDate(request.createdAt)}
+                            </span>
+                          </div>
                           <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 orange:text-orange-600">
                             <UserIcon className="h-4 w-4" />
                             <span>Requested to join</span>

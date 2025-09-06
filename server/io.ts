@@ -113,3 +113,22 @@ export function updateGroupUsersOnUserRemoval(userId: string, groupId: string) {
     io.to(groupId).emit(`${groupId}_count`, newCount)
   }
 }
+
+// Helper function to update groupUsers map when user is added to a specific group
+export function updateGroupUsersOnUserAddition(
+  userId: string,
+  groupId: string,
+) {
+  // Check if the user is currently online
+  const isUserOnline = onlineUsers.has(userId)
+
+  if (isUserOnline) {
+    // If user is online, increase the count for this specific group
+    const oldCount = groupUsers.get(groupId) || 0
+    const newCount = oldCount + 1
+    groupUsers.set(groupId, newCount)
+
+    // Emit the updated count only to the specific group room
+    io.to(groupId).emit(`${groupId}_count`, newCount)
+  }
+}

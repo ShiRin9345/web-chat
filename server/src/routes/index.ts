@@ -17,6 +17,7 @@ import {
   groupUsers,
   groupVideoUsers,
   onlineUsers,
+  updateGroupUsersOnUserAddition,
   updateGroupUsersOnUserRemoval,
 } from '../../io.ts'
 import { __dirname, upload } from '../services/uploadService.ts'
@@ -653,6 +654,17 @@ router.post(
       userId,
       state,
     )
+
+    // If user was added to group, update groupUsers map
+    if (
+      result.success &&
+      state === 'agreed' &&
+      result.addedUserId &&
+      result.groupId
+    ) {
+      updateGroupUsersOnUserAddition(result.addedUserId, result.groupId)
+    }
+
     res.json(result)
   }),
 )
