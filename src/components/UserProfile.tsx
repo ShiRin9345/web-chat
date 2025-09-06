@@ -1,4 +1,4 @@
-import { Loader, Mail, MapPin, Mars, Phone, Quote, Venus } from 'lucide-react'
+import { Loader, Mail, MapPin, Mars, Quote, Venus, Phone } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import type { User } from 'generated/index'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
@@ -38,7 +38,11 @@ export function UserProfile({
       <div className="text-center pb-4 px-6">
         <div className="relative -mt-16 mb-4">
           <Avatar className="w-24 h-24 mx-auto border-4 border-white dark:border-gray-900 orange:border-orange-50 shadow-lg">
-            <AvatarImage src={sender.imageUrl} alt="User" />
+            <AvatarImage
+              src={sender.imageUrl}
+              alt="User"
+              className="object-cover"
+            />
             <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xl font-semibold">
               <Loader className="animate-spin" />
             </AvatarFallback>
