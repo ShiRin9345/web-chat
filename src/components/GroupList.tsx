@@ -49,9 +49,9 @@ function LabelGroup({ group }: { group: Group }) {
         subtitle={
           lastMessage
             ? lastMessage.type === 'PDF'
-              ? '📄 PDF file'
+              ? '📄 [pdf]'
               : lastMessage.type === 'IMAGE'
-                ? ' 🖼️ Image'
+                ? ' 🖼️ [image]'
                 : lastMessage.content
             : 'No messages yet'
         }
