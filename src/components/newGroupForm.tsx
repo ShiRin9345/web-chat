@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import axios from 'axios'
 import { useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
+import imageCompression from 'browser-image-compression'
+import { Loader, User as UserIcon } from 'lucide-react'
 import type { Group } from 'generated/index'
+import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { sidebarListQueryOptions } from '@/routes/(main)/route.tsx'
 import {
   DialogFooter,
@@ -13,13 +16,6 @@ import {
 import { Label } from '@/components/ui/label.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
-import imageCompression from 'browser-image-compression'
-import type { OssInfo } from '@/components/ImageDialog.tsx'
-import {
-  Dropzone,
-  DropzoneContent,
-  DropzoneEmptyState,
-} from '@/components/ui/shadcn-io/dropzone'
 
 interface Props {
   setOpen: (open: boolean) => void
@@ -31,7 +27,8 @@ const groupSchema = z.object({
 const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
   const queryClient = useQueryClient()
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined)
-  const [files, setFiles] = useState<Array<File>>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm({
     defaultValues: {
@@ -51,9 +48,7 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
     },
   })
 
-  const handleDrop = async (uploadFiles: Array<File>) => {
-    const file = uploadFiles[0]
-    setFiles(uploadFiles)
+  const handleSelect = async (file: File) => {
     const formdata = new FormData()
 
     const options = {
@@ -87,25 +82,47 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
       <DialogHeader>
         <DialogTitle>Group name</DialogTitle>
       </DialogHeader>
-      {imageUrl && (
-        <div className="px-1">
-          <img
-            src={imageUrl}
-            alt="group-cover"
-            className="w-full max-h-40 object-cover rounded-md border"
-          />
-        </div>
-      )}
-      <div className="px-1">
-        <Dropzone
-          onDrop={handleDrop}
-          src={files}
-          accept={{ 'image/*': [] }}
-          maxFiles={1}
+      <div className="px-1 py-2">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={async (e) => {
+            const f = e.target.files?.[0]
+            if (f) {
+              setIsUploading(true)
+              try {
+                await handleSelect(f)
+              } finally {
+                setIsUploading(false)
+              }
+            }
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="relative w-20 h-20 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 orange:border-orange-300 flex items-center justify-center bg-gray-50 dark:bg-gray-800 orange:bg-orange-100"
         >
-          <DropzoneEmptyState />
-          <DropzoneContent />
-        </Dropzone>
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="group-cover"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <UserIcon className="w-8 h-8 text-gray-500 dark:text-gray-400 orange:text-orange-700" />
+          )}
+          {isUploading && (
+            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+              <Loader className="w-5 h-5 text-white animate-spin" />
+            </div>
+          )}
+        </button>
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700">
+          Optional cover. Click the icon to upload.
+        </div>
       </div>
       <form
         onSubmit={async (e) => {
