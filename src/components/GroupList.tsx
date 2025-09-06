@@ -35,12 +35,17 @@ function LabelGroup({ group }: { group: Group }) {
     <AnimatedLink url="/group/$groupId" groupId={group.id}>
       <SidebarItem
         icon={
-          // <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
-          //   {group.name.charAt(0).toUpperCase()}
-          // </div>
-          <div className="w-10 h-10  rounded-full aspect-square border orange:border-orange-300 dark:border-white flex items-center justify-center ">
-            {group.name.charAt(0).toUpperCase()}
-          </div>
+          group.imageUrl ? (
+            <img
+              src={group.imageUrl}
+              alt={group.name}
+              className="w-10 h-10 rounded-full object-cover border orange:border-orange-300 dark:border-white"
+            />
+          ) : (
+            <div className="w-10 h-10  rounded-full aspect-square border orange:border-orange-300 dark:border-white flex items-center justify-center ">
+              {group.name.charAt(0).toUpperCase()}
+            </div>
+          )
         }
         title={group.name}
         subtitle={
