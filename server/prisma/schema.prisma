@@ -59,7 +59,7 @@ model Group {
   owner         User           @relation("owner", fields: [ownerId], references: [userId])
   ownerId       String
   code          String         @unique
-  imageUrl      String?         
+  imageUrl      String         
   moderators User[] @relation("moderator")
 
   @@index(name)

@@ -101,7 +101,7 @@ const GroupColumn = () => {
               {group?.name || 'Group'}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700">
-              Group Chat
+              # {group?.code}
             </p>
           </div>
           <Pill className="bg-blue-50 dark:bg-blue-900/20 orange:bg-orange-100 text-blue-700 dark:text-blue-300 orange:text-orange-800 border-blue-200 dark:border-blue-700 orange:border-orange-300">

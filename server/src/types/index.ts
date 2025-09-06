@@ -53,7 +53,7 @@ export interface KickUserRequest {
 
 export interface CreateGroupRequest {
   name: string
-  imageUrl?: string
+  imageUrl: string
 }
 
 export interface UpdateRoleRequest {

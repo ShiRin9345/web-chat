@@ -4299,7 +4299,7 @@ export namespace Prisma {
     updatedAt: Date
     ownerId: string
     code: string
-    imageUrl: string | null
+    imageUrl: string
     _count: GroupCountAggregateOutputType | null
     _min: GroupMinAggregateOutputType | null
     _max: GroupMaxAggregateOutputType | null
@@ -4396,7 +4396,7 @@ export namespace Prisma {
       updatedAt: Date
       ownerId: string
       code: string
-      imageUrl: string | null
+      imageUrl: string
     }, ExtArgs["result"]["group"]>
     composites: {}
   }
@@ -9790,14 +9790,6 @@ export namespace Prisma {
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-  export const NullsOrder: {
-    first: 'first',
-    last: 'last'
-  };
-
-  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
   /**
    * Field references
    */
@@ -10049,7 +10041,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Group"> | Date | string
     ownerId?: StringFilter<"Group"> | string
     code?: StringFilter<"Group"> | string
-    imageUrl?: StringNullableFilter<"Group"> | string | null
+    imageUrl?: StringFilter<"Group"> | string
     groupMessages?: GroupMessageListRelationFilter
     members?: UserListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10063,7 +10055,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     ownerId?: SortOrder
     code?: SortOrder
-    imageUrl?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
     groupMessages?: GroupMessageOrderByRelationAggregateInput
     members?: UserOrderByRelationAggregateInput
     owner?: UserOrderByWithRelationInput
@@ -10080,7 +10072,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
     ownerId?: StringFilter<"Group"> | string
-    imageUrl?: StringNullableFilter<"Group"> | string | null
+    imageUrl?: StringFilter<"Group"> | string
     groupMessages?: GroupMessageListRelationFilter
     members?: UserListRelationFilter
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -10094,7 +10086,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     ownerId?: SortOrder
     code?: SortOrder
-    imageUrl?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
     _count?: GroupCountOrderByAggregateInput
     _max?: GroupMaxOrderByAggregateInput
     _min?: GroupMinOrderByAggregateInput
@@ -10110,7 +10102,7 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
     ownerId?: StringWithAggregatesFilter<"Group"> | string
     code?: StringWithAggregatesFilter<"Group"> | string
-    imageUrl?: StringNullableWithAggregatesFilter<"Group"> | string | null
+    imageUrl?: StringWithAggregatesFilter<"Group"> | string
   }
 
   export type NewFriendRequestWhereInput = {
@@ -10561,7 +10553,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageCreateNestedManyWithoutGroupInput
     members?: UserCreateNestedManyWithoutMemberGroupInput
     owner: UserCreateNestedOneWithoutOwnerGroupInput
@@ -10575,7 +10567,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     ownerId: string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageUncheckedCreateNestedManyWithoutGroupInput
     members?: UserUncheckedCreateNestedManyWithoutMemberGroupInput
     moderators?: UserUncheckedCreateNestedManyWithoutModeratorGroupInput
@@ -10587,7 +10579,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUpdateManyWithoutGroupNestedInput
     members?: UserUpdateManyWithoutMemberGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnerGroupNestedInput
@@ -10601,7 +10593,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUncheckedUpdateManyWithoutGroupNestedInput
     members?: UserUncheckedUpdateManyWithoutMemberGroupNestedInput
     moderators?: UserUncheckedUpdateManyWithoutModeratorGroupNestedInput
@@ -10614,7 +10606,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     ownerId: string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
   }
 
   export type GroupUpdateManyMutationInput = {
@@ -10623,7 +10615,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupUncheckedUpdateManyInput = {
@@ -10633,7 +10625,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type NewFriendRequestCreateInput = {
@@ -11069,26 +11061,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
   export type GroupCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -11131,24 +11103,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumRequestStateFilter<$PrismaModel = never> = {
@@ -11852,10 +11806,6 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
-  }
-
   export type GroupMessageUpdateManyWithoutGroupNestedInput = {
     create?: XOR<GroupMessageCreateWithoutGroupInput, GroupMessageUncheckedCreateWithoutGroupInput> | GroupMessageCreateWithoutGroupInput[] | GroupMessageUncheckedCreateWithoutGroupInput[]
     connectOrCreate?: GroupMessageCreateOrConnectWithoutGroupInput | GroupMessageCreateOrConnectWithoutGroupInput[]
@@ -12183,20 +12133,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -12209,34 +12145,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedEnumRequestStateFilter<$PrismaModel = never> = {
@@ -12643,7 +12551,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageCreateNestedManyWithoutGroupInput
     members?: UserCreateNestedManyWithoutMemberGroupInput
     owner: UserCreateNestedOneWithoutOwnerGroupInput
@@ -12656,7 +12564,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     ownerId: string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageUncheckedCreateNestedManyWithoutGroupInput
     members?: UserUncheckedCreateNestedManyWithoutMemberGroupInput
   }
@@ -12672,7 +12580,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageCreateNestedManyWithoutGroupInput
     owner: UserCreateNestedOneWithoutOwnerGroupInput
     moderators?: UserCreateNestedManyWithoutModeratorGroupInput
@@ -12685,7 +12593,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     ownerId: string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageUncheckedCreateNestedManyWithoutGroupInput
     moderators?: UserUncheckedCreateNestedManyWithoutModeratorGroupInput
   }
@@ -12701,7 +12609,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageCreateNestedManyWithoutGroupInput
     members?: UserCreateNestedManyWithoutMemberGroupInput
     moderators?: UserCreateNestedManyWithoutModeratorGroupInput
@@ -12713,7 +12621,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     groupMessages?: GroupMessageUncheckedCreateNestedManyWithoutGroupInput
     members?: UserUncheckedCreateNestedManyWithoutMemberGroupInput
     moderators?: UserUncheckedCreateNestedManyWithoutModeratorGroupInput
@@ -12975,7 +12883,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Group"> | Date | string
     ownerId?: StringFilter<"Group"> | string
     code?: StringFilter<"Group"> | string
-    imageUrl?: StringNullableFilter<"Group"> | string | null
+    imageUrl?: StringFilter<"Group"> | string
   }
 
   export type GroupUpsertWithWhereUniqueWithoutMembersInput = {
@@ -13454,7 +13362,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     members?: UserCreateNestedManyWithoutMemberGroupInput
     owner: UserCreateNestedOneWithoutOwnerGroupInput
     moderators?: UserCreateNestedManyWithoutModeratorGroupInput
@@ -13467,7 +13375,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     ownerId: string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
     members?: UserUncheckedCreateNestedManyWithoutMemberGroupInput
     moderators?: UserUncheckedCreateNestedManyWithoutModeratorGroupInput
   }
@@ -13537,7 +13445,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     members?: UserUpdateManyWithoutMemberGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnerGroupNestedInput
     moderators?: UserUpdateManyWithoutModeratorGroupNestedInput
@@ -13550,7 +13458,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     members?: UserUncheckedUpdateManyWithoutMemberGroupNestedInput
     moderators?: UserUncheckedUpdateManyWithoutModeratorGroupNestedInput
   }
@@ -13988,7 +13896,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     code: string
-    imageUrl?: string | null
+    imageUrl: string
   }
 
   export type GroupMessageUpdateWithoutSenderInput = {
@@ -14244,7 +14152,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUpdateManyWithoutGroupNestedInput
     members?: UserUpdateManyWithoutMemberGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnerGroupNestedInput
@@ -14257,7 +14165,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUncheckedUpdateManyWithoutGroupNestedInput
     members?: UserUncheckedUpdateManyWithoutMemberGroupNestedInput
   }
@@ -14269,7 +14177,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupUpdateWithoutMembersInput = {
@@ -14278,7 +14186,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUpdateManyWithoutGroupNestedInput
     owner?: UserUpdateOneRequiredWithoutOwnerGroupNestedInput
     moderators?: UserUpdateManyWithoutModeratorGroupNestedInput
@@ -14291,7 +14199,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUncheckedUpdateManyWithoutGroupNestedInput
     moderators?: UserUncheckedUpdateManyWithoutModeratorGroupNestedInput
   }
@@ -14303,7 +14211,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupUpdateWithoutOwnerInput = {
@@ -14312,7 +14220,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUpdateManyWithoutGroupNestedInput
     members?: UserUpdateManyWithoutMemberGroupNestedInput
     moderators?: UserUpdateManyWithoutModeratorGroupNestedInput
@@ -14324,7 +14232,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
     groupMessages?: GroupMessageUncheckedUpdateManyWithoutGroupNestedInput
     members?: UserUncheckedUpdateManyWithoutMemberGroupNestedInput
     moderators?: UserUncheckedUpdateManyWithoutModeratorGroupNestedInput
@@ -14336,7 +14244,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     code?: StringFieldUpdateOperationsInput | string
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
   }
 
   export type GroupMessageCreateManyGroupInput = {

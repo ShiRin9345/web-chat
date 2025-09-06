@@ -296,12 +296,12 @@ router.get('/users', requireAuth(), async (req, res) => {
               mode: 'insensitive',
             },
           },
-                  {
-          code: {
-            startsWith: name as string,
-            mode: 'insensitive',
+          {
+            code: {
+              startsWith: name as string,
+              mode: 'insensitive',
+            },
           },
-        },
         ],
       },
     })
@@ -407,11 +407,26 @@ router.get('/groupCount', requireAuth(), async (req, res) => {
 
 router.post('/group', requireAuth(), async (req, res) => {
   const { userId } = getAuth(req)
-  const { name } = req.body
+  const { name, imageUrl } = req.body
+
+  if (!imageUrl) {
+    return res.status(400).json({ error: 'Group avatar is required' })
+  }
+
+  // Generate unique code
+  let code = ''
+  let existing: any = null
+  do {
+    code = generateCode(2000000, 3000000)
+    existing = await db.group.findUnique({ where: { code } })
+  } while (existing)
+
   const group = await db.group.create({
     data: {
       name,
       ownerId: userId as string,
+      code,
+      imageUrl,
     },
   })
   groupUsers.set(group.id, 1)
@@ -488,15 +503,6 @@ router.post('/initialUser', requireAuth(), async (req, res) => {
         },
       },
     })
-    const clientUser = await clerkClient.users.getUser(userId as string)
-    const userName = clientUser.fullName
-    const group = await db.group.create({
-      data: {
-        name: userName as string,
-        ownerId: userId as string,
-      },
-    })
-    groupUsers.set(group.id, 1)
     return res.json(user)
   } catch (e) {
     console.log(e)

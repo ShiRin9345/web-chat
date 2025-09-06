@@ -22,48 +22,48 @@ interface Props {
 }
 const groupSchema = z.object({
   name: z.string().min(1),
+  imageFile: z.instanceof(File, { message: 'Group avatar is required' }),
 })
 
 const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
   const queryClient = useQueryClient()
-  const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined)
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm({
     defaultValues: {
       name: '',
+      imageFile: undefined as any,
     },
     validators: {
       onSubmit: groupSchema,
       onChange: groupSchema,
     },
     onSubmit: async ({ value }) => {
-      let uploadedUrl: string | undefined
-      if (selectedFile) {
-        try {
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-            fileType: 'image/webp',
-          }
-          const compressedFile = await imageCompression(selectedFile, options)
-          const response = await axios.get<OssInfo>('/api/oss-signature')
-          const ossInfo = response.data
-          const formdata = new FormData()
-          formdata.append('key', selectedFile.name)
-          formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
-          formdata.append('policy', ossInfo.policy)
-          formdata.append('signature', ossInfo.Signature)
-          formdata.append('success_action_status', '200')
-          formdata.append('file', compressedFile)
-          const fileName = selectedFile.name.replace(/\.[^/.]+$/, '.webp')
-          await axios.post(ossInfo.host, formdata)
-          uploadedUrl = ossInfo.host + '/' + fileName
-        } catch (error) {
-          console.error('Upload failed:', error)
+      let uploadedUrl: string
+      try {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+          fileType: 'image/webp',
         }
+        const compressedFile = await imageCompression(value.imageFile, options)
+        const response = await axios.get<OssInfo>('/api/oss-signature')
+        const ossInfo = response.data
+        const formdata = new FormData()
+        formdata.append('key', value.imageFile.name)
+        formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
+        formdata.append('policy', ossInfo.policy)
+        formdata.append('signature', ossInfo.Signature)
+        formdata.append('success_action_status', '200')
+        formdata.append('file', compressedFile)
+        const fileName = value.imageFile.name.replace(/\.[^/.]+$/, '.webp')
+        await axios.post(ossInfo.host, formdata)
+        uploadedUrl = ossInfo.host + '/' + fileName
+      } catch (error) {
+        console.error('Upload failed:', error)
+        throw new Error('Failed to upload group avatar')
       }
 
       await axios.post<Group>('/api/group', {
@@ -72,7 +72,6 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
       })
       if (previewUrl) URL.revokeObjectURL(previewUrl)
       setPreviewUrl(undefined)
-      setSelectedFile(undefined)
       queryClient.invalidateQueries(sidebarListQueryOptions)
       setOpen(false)
     },
@@ -80,7 +79,6 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
 
   const handleSelect = (file: File) => {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
-    setSelectedFile(file)
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
   }
@@ -90,7 +88,7 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
       <DialogHeader>
         <DialogTitle>Create Group</DialogTitle>
         <DialogDescription>
-          Create a group with a name and an optional cover image.
+          Create a group with a name and a required group avatar.
         </DialogDescription>
       </DialogHeader>
       <div className="px-1  flex flex-col items-center">
@@ -104,6 +102,7 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
             if (f) {
               try {
                 await handleSelect(f)
+                form.setFieldValue('imageFile', f)
               } catch (error) {
                 console.error('Upload failed:', error)
               }
@@ -131,7 +130,7 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
           )}
         </button>
         <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 orange:text-orange-700">
-          Optional cover. Click the icon to upload.
+          Required group avatar. Click the icon to upload.
         </div>
       </div>
       <form
@@ -163,11 +162,25 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
                 {!field.state.meta.isValid && (
                   <em role="alert" className="text-red-400">
                     {field.state.meta.errors
-                      .map((error) => error?.message)
+                      .map((error) => (error as any)?.message)
                       .join(' ')}
                   </em>
                 )}
               </div>
+            </>
+          )}
+        />
+        <form.Field
+          name="imageFile"
+          children={(field) => (
+            <>
+              {!field.state.meta.isValid && (
+                <em role="alert" className="text-red-400">
+                  {field.state.meta.errors
+                    .map((error) => (error as any)?.message)
+                    .join(' ')}
+                </em>
+              )}
             </>
           )}
         />

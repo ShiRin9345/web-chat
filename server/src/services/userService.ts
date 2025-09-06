@@ -103,28 +103,9 @@ export class UserService {
         },
       })
 
-      // Create personal group with unique code and optional imageUrl
-      let groupCode = ''
-      let existingGroup: any = null
-      do {
-        groupCode = generateCode(2000000, 3000000)
-        existingGroup = await db.group.findUnique({
-          where: { code: groupCode },
-        })
-      } while (existingGroup)
-
-      const group = await db.group.create({
-        data: {
-          name: clerkUser.fullName as string,
-          ownerId: userId,
-          code: groupCode,
-        },
-      })
-
       logger.info('User initialized successfully', {
         userId,
         code,
-        groupId: group.id,
       })
       return user
     } catch (error) {

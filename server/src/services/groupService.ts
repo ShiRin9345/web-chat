@@ -76,7 +76,7 @@ export class GroupService {
           name: data.name,
           ownerId,
           code,
-          imageUrl: data.imageUrl || undefined,
+          imageUrl: data.imageUrl,
         },
       })
 
