@@ -12,7 +12,13 @@ import { conversationService } from '../services/conversationService.ts'
 import { ossService } from '../services/ossService.ts'
 import { aiService } from '../services/aiService.ts'
 import { chromaService } from '../services/chromaService.ts'
-import { getIo, groupUsers, groupVideoUsers, onlineUsers } from '../../io.ts'
+import {
+  getIo,
+  groupUsers,
+  groupVideoUsers,
+  onlineUsers,
+  updateGroupUsersOnUserRemoval,
+} from '../../io.ts'
 import { __dirname, upload } from '../services/uploadService.ts'
 import { client } from '../../oss-client.ts'
 import db from '../../db.ts'
@@ -320,6 +326,9 @@ router.patch(
   asyncHandler(async (req, res) => {
     const { groupId, userId } = req.body
     const updatedGroup = await groupService.kickUser({ groupId, userId })
+
+    updateGroupUsersOnUserRemoval(userId, groupId)
+
     res.json(updatedGroup)
   }),
 )
@@ -583,6 +592,10 @@ router.delete(
     // If group was deleted, remove from groupUsers map
     if (result.deleted) {
       groupUsers.delete(groupId)
+    } else {
+      // If user just left the group (not deleted), update groupUsers map
+      const { updateGroupUsersOnUserRemoval } = await import('../../io.js')
+      updateGroupUsersOnUserRemoval(userId, groupId)
     }
 
     res.json(result)

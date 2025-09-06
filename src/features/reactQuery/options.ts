@@ -332,6 +332,7 @@ export const kickMutationOptions = ({
         ['groupWithMembersAndModeratorsAndOwner', groupId],
         newGroup,
       )
+      console.log('newGroup', newGroup)
     },
   })
 

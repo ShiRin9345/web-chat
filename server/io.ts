@@ -53,10 +53,10 @@ export function initIo(server: HttpServer) {
     console.log(`socket ${socket.id} connected`)
   })
 }
-export default io
 export function getIo() {
   return io
 }
+export default getIo
 
 async function changeGroupOnlineCount(socket: Socket, changeNum: number) {
   const userId = socket.handshake.auth.userId as string
@@ -86,7 +86,7 @@ async function changeGroupOnlineCount(socket: Socket, changeNum: number) {
   for (const group of groups) {
     const oldCount = groupUsers.get(group.id) || 0
     groupUsers.set(group.id, oldCount + changeNum)
-    io.emit(`${group.id}_count`, oldCount + changeNum)
+    io.to(group.id).emit(`${group.id}_count`, oldCount + changeNum)
   }
 }
 
@@ -96,4 +96,20 @@ function changeUserReference(socket: Socket, changeNum: number) {
   const userId = socket.handshake.auth.userId as string
   onlineUsers.set(userId, newRefCount)
   return newRefCount
+}
+
+// Helper function to update groupUsers map when user is removed from a specific group
+export function updateGroupUsersOnUserRemoval(userId: string, groupId: string) {
+  // Check if the user is currently online
+  const isUserOnline = onlineUsers.has(userId)
+
+  if (isUserOnline) {
+    // If user is online, decrease the count for this specific group
+    const oldCount = groupUsers.get(groupId) || 0
+    const newCount = Math.max(0, oldCount - 1)
+    groupUsers.set(groupId, newCount)
+
+    // Emit the updated count only to the specific group room
+    io.to(groupId).emit(`${groupId}_count`, newCount)
+  }
 }
