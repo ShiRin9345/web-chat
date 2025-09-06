@@ -1,8 +1,16 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { useParams } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
-import { PanelLeftClose, PanelRightClose, UserIcon, Users } from 'lucide-react'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  Loader,
+  PanelLeftClose,
+  PanelRightClose,
+  UserIcon,
+  Users,
+} from 'lucide-react'
+import { useUser } from '@clerk/clerk-react'
+import axios from 'axios'
 import { Pill, PillIcon } from './ui/shadcn-io/pill'
 import { MemberList } from './group/MemberList'
 import { useGroupColumnStore } from '@/store/useGroupColumnStore.ts'
@@ -17,6 +25,38 @@ const GroupColumn = () => {
     groupWithMembersAndModeratorsAndOwnerQueryOptions(groupId),
   )
   const count = useCountSocket(groupId)
+  const navigate = useNavigate()
+  const { user } = useUser()
+  const queryClient = useQueryClient()
+
+  const { mutate: leaveGroupMutate, isPending: isLeavingGroup } = useMutation({
+    mutationFn: async (targetGroupId: string) => {
+      await axios.delete('/api/leaveGroup', {
+        data: { groupId: targetGroupId },
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+      navigate({ to: '/' })
+    },
+    onError: (error) => {
+      console.error('Failed to leave group:', error)
+      alert('Failed to leave group. Please try again.')
+    },
+  })
+
+  const handleLeaveGroup = () => {
+    if (!group || !user) return
+
+    const isOwner = group.ownerId === user.id
+    const confirmationMessage = isOwner
+      ? 'Are you sure you want to delete this group? This action cannot be undone.'
+      : 'Are you sure you want to leave this group?'
+
+    if (window.confirm(confirmationMessage)) {
+      leaveGroupMutate(group.id)
+    }
+  }
 
   useGSAP(() => {
     gsap.set('#column', {
@@ -97,8 +137,10 @@ const GroupColumn = () => {
         <Button
           variant="destructive"
           className="w-full mt-3 bg-red-500 hover:bg-red-600 text-white"
+          onClick={handleLeaveGroup}
+          disabled={isLeavingGroup}
         >
-          Leave Group
+          {isLeavingGroup ? <Loader className="animate-spin" /> : 'Leave Group'}
         </Button>
       </div>
     </div>

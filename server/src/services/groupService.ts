@@ -221,6 +221,59 @@ export class GroupService {
     const videoRoomId = `video_${groupId}`
     return groupVideoUsers.get(videoRoomId) || 0
   }
+
+  async leaveGroup(
+    data: { groupId: string },
+    userId: string,
+  ): Promise<{ success: boolean; deleted?: boolean }> {
+    try {
+      const group = await db.group.findUnique({
+        where: { id: data.groupId },
+        include: { owner: true, members: true, moderators: true },
+      })
+
+      if (!group) {
+        throw new Error('Group not found')
+      }
+
+      if (group.ownerId === userId) {
+        // User is the owner, delete the entire group
+        await db.group.delete({
+          where: { id: data.groupId },
+        })
+        logger.info('Group deleted by owner', {
+          groupId: data.groupId,
+          ownerId: userId,
+        })
+        return { success: true, deleted: true }
+      } else {
+        // User is a member or moderator, remove them from the group
+        const isModerator = group.moderators.some((m) => m.userId === userId)
+        const isMember = group.members.some((m) => m.userId === userId)
+
+        if (!isMember && !isModerator) {
+          throw new Error('User is not a member or moderator of this group')
+        }
+
+        await db.group.update({
+          where: { id: data.groupId },
+          data: {
+            members: {
+              disconnect: isMember ? { userId } : undefined,
+            },
+            moderators: {
+              disconnect: isModerator ? { userId } : undefined,
+            },
+          },
+        })
+        logger.info('User left group', { groupId: data.groupId, userId })
+        return { success: true, deleted: false }
+      }
+    } catch (error) {
+      logger.error('Failed to leave group', { data, userId }, error as Error)
+      throw error
+    }
+  }
 }
 
 export const groupService = new GroupService()

@@ -555,4 +555,22 @@ router.post(
   }),
 )
 
+// Leave Group
+router.delete(
+  '/leaveGroup',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+    const { groupId } = req.body
+    const result = await groupService.leaveGroup({ groupId }, userId)
+
+    // If group was deleted, remove from groupUsers map
+    if (result.deleted) {
+      groupUsers.delete(groupId)
+    }
+
+    res.json(result)
+  }),
+)
+
 export default router
