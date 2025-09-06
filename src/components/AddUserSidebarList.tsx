@@ -32,6 +32,21 @@ const AddUserSidebarList = () => {
     }
   }
 
+  const sendGroupJoinRequest = async (groupId: string) => {
+    try {
+      const response = await axios.post('/api/sendGroupJoinRequest', {
+        groupId,
+      })
+      if (response.data.success) {
+        toast.success(response.data.message)
+      } else {
+        toast.error(response.data.message)
+      }
+    } catch (error) {
+      toast.error('Failed to send join request')
+    }
+  }
+
   return (
     <div className="px-2 space-y-4">
       <div className="space-y-2">
@@ -46,6 +61,7 @@ const AddUserSidebarList = () => {
           currentUserId={currentUser?.id}
           currentFriends={currentFriends}
           onAdd={sendFriendRequest}
+          onJoinGroup={sendGroupJoinRequest}
         />
       </div>
       <RecommendationsList

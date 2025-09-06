@@ -47,6 +47,7 @@ model User {
   moderatorGroup          Group[]            @relation("moderator")
   memberGroup             Group[]            @relation("member")
   ownerGroup              Group[]            @relation("owner")
+  groupJoinRequests       GroupJoinRequest[]
 }
 
 model Group {
@@ -60,7 +61,8 @@ model Group {
   ownerId       String
   code          String         @unique
   imageUrl      String         
-  moderators User[] @relation("moderator")
+  moderators    User[]         @relation("moderator")
+  joinRequests  GroupJoinRequest[]
 
   @@index(name)
 }
@@ -89,6 +91,20 @@ model NewFriendRequest {
 
   @@index([fromUserId])
   @@index([toUserId])
+}
+
+model GroupJoinRequest {
+  id        String       @id @default(uuid())
+  groupId   String
+  group     Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  state     RequestState
+
+  @@index([groupId])
+  @@index([userId])
 }
 
 model GroupMessage {

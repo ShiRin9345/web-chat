@@ -4,7 +4,7 @@ import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Check, Loader, UserPlus, Users, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { useUser } from '@clerk/clerk-react'
-import type { NewFriendRequest, User } from 'generated/index'
+import type { NewFriendRequest, User, Group } from 'generated/index'
 import { Button } from '@/components/ui/button.tsx'
 import { Separator } from '@/components/ui/separator.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
@@ -16,6 +16,17 @@ type RequestWithFrom = NewFriendRequest & {
   to: User
 }
 
+type GroupJoinRequestWithDetails = {
+  id: string
+  groupId: string
+  userId: string
+  state: 'PENDING' | 'AGREED' | 'REJECTED'
+  createdAt: Date
+  updatedAt: Date
+  group: Group
+  user: User
+}
+
 const requestQueryOptions = queryOptions({
   queryKey: ['request'],
   queryFn: async () => {
@@ -25,15 +36,28 @@ const requestQueryOptions = queryOptions({
   },
 })
 
+const groupJoinRequestQueryOptions = queryOptions({
+  queryKey: ['groupJoinRequests'],
+  queryFn: async () => {
+    const response = await axios.get<Array<GroupJoinRequestWithDetails>>(
+      '/api/groupJoinRequests',
+    )
+    return response.data
+  },
+})
+
 export const Route = createFileRoute('/(main)/friendRequest/')({
   component: RouteComponent,
   loader: ({ context }) => {
     context.queryClient.ensureQueryData(requestQueryOptions)
+    context.queryClient.ensureQueryData(groupJoinRequestQueryOptions)
   },
 })
 
 function RouteComponent() {
   const { isLoading, data } = useQuery(requestQueryOptions)
+  const { isLoading: isLoadingGroupRequests, data: groupJoinRequests } =
+    useQuery(groupJoinRequestQueryOptions)
   const queryClient = useQueryClient()
 
   // 分离自己发送的请求和收到的请求
@@ -46,6 +70,14 @@ function RouteComponent() {
     data?.filter((request) => request.fromUserId === currentUserId) || []
   const receivedRequests =
     data?.filter((request) => request.toUserId === currentUserId) || []
+
+  // Filter group join requests for groups owned by current user
+  const receivedGroupJoinRequests =
+    groupJoinRequests?.filter((request) => {
+      return (
+        request.group.ownerId === currentUserId && request.state === 'PENDING'
+      )
+    }) || []
 
   const handleRequest = async (
     request: RequestWithFrom,
@@ -70,6 +102,29 @@ function RouteComponent() {
     }
   }
 
+  const handleGroupJoinRequest = async (
+    request: GroupJoinRequestWithDetails,
+    state: 'agreed' | 'rejected',
+  ) => {
+    try {
+      await axios.post('/api/handleGroupJoinRequest', {
+        requestId: request.id,
+        state,
+      })
+
+      // 刷新数据
+      await queryClient.invalidateQueries({ queryKey: ['groupJoinRequests'] })
+
+      toast.success(
+        state === 'agreed'
+          ? `Accepted join request from ${request.user.fullName} to ${request.group.name}`
+          : `Rejected join request from ${request.user.fullName} to ${request.group.name}`,
+      )
+    } catch (error) {
+      toast.error('Operation failed, please try again')
+    }
+  }
+
   return (
     <div className="flex relative flex-col h-screen bg-gray-50 dark:bg-gray-900 orange:bg-orange-50">
       {/* Header */}
@@ -84,9 +139,14 @@ function RouteComponent() {
           <span className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">
             Friend Requests
           </span>
-          {sentRequests.length + receivedRequests.length > 0 && (
+          {sentRequests.length +
+            receivedRequests.length +
+            receivedGroupJoinRequests.length >
+            0 && (
             <Badge variant="secondary" className="ml-2">
-              {sentRequests.length + receivedRequests.length}
+              {sentRequests.length +
+                receivedRequests.length +
+                receivedGroupJoinRequests.length}
             </Badge>
           )}
         </div>
@@ -99,7 +159,9 @@ function RouteComponent() {
           <div className="flex items-center justify-center h-32">
             <Loader className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400 orange:text-orange-600" />
           </div>
-        ) : sentRequests.length > 0 || receivedRequests.length > 0 ? (
+        ) : sentRequests.length > 0 ||
+          receivedRequests.length > 0 ||
+          receivedGroupJoinRequests.length > 0 ? (
           <div className="space-y-6">
             {/* 收到的请求 */}
             {receivedRequests.length > 0 && (
@@ -192,6 +254,83 @@ function RouteComponent() {
                                 : 'Request Rejected'}
                             </Badge>
                           )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 群组加入请求 */}
+            {receivedGroupJoinRequests.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white orange:text-orange-900 mb-4 flex items-center gap-2">
+                  <Users className="h-5 w-5 text-purple-600 dark:text-purple-400 orange:text-orange-600" />
+                  Group Join Requests
+                </h3>
+                <div className="space-y-4">
+                  {receivedGroupJoinRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="bg-white dark:bg-gray-800 orange:bg-orange-100 rounded-lg border border-gray-200 dark:border-gray-700 orange:border-orange-300 p-4 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center gap-4">
+                        <Avatar className="h-16 w-16">
+                          <AvatarImage
+                            src={request.user.imageUrl}
+                            alt="avatar"
+                          />
+                          <AvatarFallback className="text-lg bg-gray-200 dark:bg-gray-600 orange:bg-orange-200 text-gray-700 dark:text-gray-300 orange:text-orange-800">
+                            {request.user.fullName
+                              ? request.user.fullName.charAt(0)
+                              : 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white orange:text-orange-900">
+                              {request.user.fullName}
+                            </h3>
+                            <Badge variant="outline" className="text-xs">
+                              Wants to join
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 orange:text-orange-700 mb-2">
+                            Code: {request.user.code}
+                          </p>
+                          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 orange:text-orange-600">
+                            <Users className="h-4 w-4" />
+                            <span>Group: {request.group.name}</span>
+                            <span>•</span>
+                            <span>Code: {request.group.code}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() =>
+                              handleGroupJoinRequest(request, 'agreed')
+                            }
+                            variant="outline"
+                            size="sm"
+                            className="border-green-300 dark:border-green-600 orange:border-green-400 text-green-600 dark:text-green-400 orange:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 orange:hover:bg-green-100"
+                          >
+                            <Check className="h-4 w-4 mr-1" />
+                            Accept
+                          </Button>
+                          <Button
+                            onClick={() =>
+                              handleGroupJoinRequest(request, 'rejected')
+                            }
+                            variant="outline"
+                            size="sm"
+                            className="border-red-300 dark:border-red-600 orange:border-red-400 text-red-600 dark:text-red-400 orange:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 orange:hover:bg-red-100"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                            Reject
+                          </Button>
                         </div>
                       </div>
                     </div>

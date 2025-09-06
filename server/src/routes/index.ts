@@ -573,4 +573,81 @@ router.delete(
   }),
 )
 
+// Search Groups
+router.get(
+  '/searchGroups',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { query } = req.query
+    if (!query || typeof query !== 'string') {
+      return res.status(400).json({ error: 'Query parameter is required' })
+    }
+
+    const groups = await groupService.searchGroups(query)
+    res.json(groups)
+  }),
+)
+
+// Send Group Join Request
+router.post(
+  '/sendGroupJoinRequest',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+    const { groupId } = req.body
+
+    if (!groupId) {
+      return res.status(400).json({ error: 'Group ID is required' })
+    }
+
+    const result = await groupService.sendJoinRequest(groupId, userId)
+    res.json(result)
+  }),
+)
+
+// Handle Group Join Request
+router.post(
+  '/handleGroupJoinRequest',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+    const { requestId, state } = req.body
+
+    if (!requestId || !state) {
+      return res
+        .status(400)
+        .json({ error: 'Request ID and state are required' })
+    }
+
+    const result = await groupService.handleGroupJoinRequest(
+      requestId,
+      userId,
+      state,
+    )
+    res.json(result)
+  }),
+)
+
+// Get Group Join Requests
+router.get(
+  '/groupJoinRequests',
+  requireAuth(),
+  asyncHandler(async (req: any, res: any) => {
+    const { userId } = getAuth(req) as { userId: string }
+
+    const requests = await db.groupJoinRequest.findMany({
+      where: {
+        group: {
+          ownerId: userId,
+        },
+      },
+      include: {
+        group: true,
+        user: true,
+      },
+    })
+    res.json(requests)
+  }),
+)
+
 export default router

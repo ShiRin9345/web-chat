@@ -59,7 +59,6 @@ export class FriendService {
           to: true,
         },
       })
-
       return requests
     } catch (error) {
       logger.error(

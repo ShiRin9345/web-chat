@@ -222,6 +222,169 @@ export class GroupService {
     return groupVideoUsers.get(videoRoomId) || 0
   }
 
+  async searchGroups(query: string): Promise<Array<GroupWithRelations>> {
+    try {
+      const groups = await db.group.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              code: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+        include: {
+          members: true,
+          owner: true,
+          moderators: true,
+        },
+        take: 10, // Limit results
+      })
+
+      return groups
+    } catch (error) {
+      logger.error('Failed to search groups', { query }, error as Error)
+      throw error
+    }
+  }
+
+  async sendJoinRequest(
+    groupId: string,
+    userId: string,
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      // Check if group exists
+      const group = await db.group.findUnique({
+        where: { id: groupId },
+        include: { members: true, moderators: true },
+      })
+
+      if (!group) {
+        return { success: false, message: 'Group not found' }
+      }
+
+      // Check if user is already a member, moderator, or owner
+      const isOwner = group.ownerId === userId
+      const isMember = group.members.some((m) => m.userId === userId)
+      const isModerator = group.moderators.some((m) => m.userId === userId)
+
+      if (isOwner || isMember || isModerator) {
+        return {
+          success: false,
+          message: 'You are already a member of this group',
+        }
+      }
+
+      // Check if join request already exists
+      const existingRequest = await db.groupJoinRequest.findFirst({
+        where: {
+          groupId,
+          userId,
+          state: 'PENDING',
+        },
+      })
+
+      if (existingRequest) {
+        return { success: false, message: 'Join request already sent' }
+      }
+
+      // Create join request
+      await db.groupJoinRequest.create({
+        data: {
+          groupId,
+          userId,
+          state: 'PENDING',
+        },
+      })
+
+      logger.info('Group join request sent', { groupId, userId })
+      return { success: true, message: 'Join request sent successfully' }
+    } catch (error) {
+      logger.error(
+        'Failed to send join request',
+        { groupId, userId },
+        error as Error,
+      )
+      throw error
+    }
+  }
+
+  async handleGroupJoinRequest(
+    requestId: string,
+    userId: string,
+    state: 'agreed' | 'rejected',
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      // Find the join request
+      const joinRequest = await db.groupJoinRequest.findUnique({
+        where: { id: requestId },
+        include: { group: true, user: true },
+      })
+
+      if (!joinRequest) {
+        return { success: false, message: 'Join request not found' }
+      }
+
+      // Check if current user is the group owner
+      if (joinRequest.group.ownerId !== userId) {
+        return {
+          success: false,
+          message: 'Only group owner can handle join requests',
+        }
+      }
+
+      // Update request state
+      await db.groupJoinRequest.update({
+        where: { id: requestId },
+        data: { state: state === 'agreed' ? 'AGREED' : 'REJECTED' },
+      })
+
+      if (state === 'agreed') {
+        // Add user to group members
+        await db.group.update({
+          where: { id: joinRequest.groupId },
+          data: {
+            members: {
+              connect: { userId: joinRequest.userId },
+            },
+          },
+        })
+        logger.info('User added to group', {
+          groupId: joinRequest.groupId,
+          userId: joinRequest.userId,
+        })
+        return {
+          success: true,
+          message: `Accepted ${joinRequest.user.fullName} to join ${joinRequest.group.name}`,
+        }
+      } else {
+        logger.info('Join request rejected', {
+          groupId: joinRequest.groupId,
+          userId: joinRequest.userId,
+        })
+        return {
+          success: true,
+          message: `Rejected ${joinRequest.user.fullName}'s request to join ${joinRequest.group.name}`,
+        }
+      }
+    } catch (error) {
+      logger.error(
+        'Failed to handle group join request',
+        { requestId, userId, state },
+        error as Error,
+      )
+      throw error
+    }
+  }
+
   async leaveGroup(
     data: { groupId: string },
     userId: string,
