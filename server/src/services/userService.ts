@@ -57,6 +57,7 @@ export class UserService {
             },
           ],
         },
+        take: 10,
       })
 
       return users

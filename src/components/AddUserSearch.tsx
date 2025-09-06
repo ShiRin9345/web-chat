@@ -31,7 +31,7 @@ export default function AddUserSearch({
       if (!value.name.trim()) return
       setIsSearching(true)
       try {
-        const response = await axios.get<Array<User>>('/api/users', {
+        const response = await axios.get<Array<User>>('/api/searchUsers', {
           params: { name: value.name },
         })
         const filteredResults = response.data.filter(

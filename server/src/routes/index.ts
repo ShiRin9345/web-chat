@@ -170,6 +170,16 @@ router.get(
   }),
 )
 
+router.get(
+  '/searchUsers',
+  requireAuth(),
+  asyncHandler(async (req, res) => {
+    const { name } = req.query
+    const users = await userService.searchUsers(name as string)
+    res.json(users)
+  }),
+)
+
 router.post(
   '/initialUser',
   requireAuth(),
