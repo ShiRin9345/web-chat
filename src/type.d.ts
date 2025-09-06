@@ -34,3 +34,12 @@ export type GroupWithMembersAndModeratorsAndOwner = Group & {
   owner: User
   moderators: Array<User>
 }
+
+export type Recommendation = {
+  userId: string
+  code?: string
+  fullName?: string
+  imageUrl?: string
+  distance?: number
+  similarity?: number
+}

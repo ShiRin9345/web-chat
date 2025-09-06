@@ -1,4 +1,5 @@
 import { Plus, X } from 'lucide-react'
+import { useMemo } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -9,16 +10,17 @@ interface Props {
 }
 
 const TagsField: React.FC<Props> = ({ savedTags, currentTags, onChange }) => {
-  const combined = Array.from(
-    new Set([...(savedTags || []), ...(currentTags || [])]),
+  const combined = useMemo(
+    () => Array.from(new Set([...savedTags, ...currentTags])),
+    [savedTags, currentTags],
   )
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2 w-full max-w-[20rem]">
         {combined.map((tag) => {
-          const isSaved = (savedTags || []).includes(tag)
-          const inCurrent = (currentTags || []).includes(tag)
+          const isSaved = savedTags.includes(tag)
+          const inCurrent = currentTags.includes(tag)
           const baseClasses =
             'inline-flex items-center gap-1 px-2 py-1 text-sm rounded-full'
           const savedClasses =
@@ -94,7 +96,7 @@ const TagsField: React.FC<Props> = ({ savedTags, currentTags, onChange }) => {
             const input = document.querySelector(
               'input[placeholder="Add a tag..."]',
             ) as HTMLInputElement
-            const newTag = input?.value?.trim()
+            const newTag = input.value.trim()
             if (
               newTag &&
               newTag.length <= 20 &&

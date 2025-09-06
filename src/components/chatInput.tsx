@@ -1,7 +1,7 @@
 import { useForm } from '@tanstack/react-form'
 import { CirclePlus } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useUser } from '@clerk/clerk-react'
 import type { User } from 'generated/index'
 import EmojiPicker from '@/components/emojiPicker.tsx'
@@ -31,11 +31,14 @@ const ChatInput: React.FC<Props> = ({
   const queryClient = useQueryClient()
   const { user } = useUser()
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const sender = {
-    imageUrl: user?.imageUrl,
-    fullName: user?.fullName,
-    userId: user?.id,
-  }
+  const sender = useMemo(
+    () => ({
+      imageUrl: user?.imageUrl,
+      fullName: user?.fullName,
+      userId: user?.id,
+    }),
+    [user],
+  )
   const { mutateAsync } = useMutation(
     chatInputMutateOptions({
       groupId,
