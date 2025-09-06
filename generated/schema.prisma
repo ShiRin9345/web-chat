@@ -59,8 +59,9 @@ model Group {
   updatedAt     DateTime       @updatedAt
   owner         User           @relation("owner", fields: [ownerId], references: [userId])
   ownerId       String
-
-  moderators User[] @relation("moderator")
+  code          String         @unique
+  imageUrl      String?
+  moderators    User[]         @relation("moderator")
 
   @@index(name)
 }

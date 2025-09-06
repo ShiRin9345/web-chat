@@ -145,7 +145,9 @@ exports.Prisma.GroupScalarFieldEnum = {
   name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  ownerId: 'ownerId'
+  ownerId: 'ownerId',
+  code: 'code',
+  imageUrl: 'imageUrl'
 };
 
 exports.Prisma.NewFriendRequestScalarFieldEnum = {
@@ -192,6 +194,11 @@ exports.Prisma.SortOrder = {
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 exports.RequestState = exports.$Enums.RequestState = {
   PENDING: 'PENDING',

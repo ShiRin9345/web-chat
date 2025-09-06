@@ -1,4 +1,4 @@
-import { Loader, Mail, MapPin, Mars, Quote, Venus, Phone } from 'lucide-react'
+import { Loader, Mail, MapPin, Mars, Phone, Quote, Venus } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import type { User } from 'generated/index'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
