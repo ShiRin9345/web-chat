@@ -45,9 +45,6 @@ function RouteComponent() {
             noValidate
             onSubmit={async (e) => {
               e.preventDefault()
-              console.log('submit clicked')
-              console.log('Form state:', form.state)
-              console.log('Form errors:', form.state.errors)
               await form.handleSubmit()
             }}
           >
@@ -134,17 +131,6 @@ function RouteComponent() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       className="bg-white dark:bg-gray-700 orange:bg-orange-100 border-gray-300 dark:border-gray-600 orange:border-orange-300 text-gray-900 dark:text-white orange:text-orange-900 placeholder:text-gray-500 dark:placeholder:text-gray-400 orange:placeholder:text-orange-600"
                     />
-                    {!field.state.meta.isValid &&
-                      Array.isArray(field.state.meta.errors) && (
-                        <em
-                          role="alert"
-                          className="text-xs text-red-500 mt-1 inline-block"
-                        >
-                          {field.state.meta.errors
-                            .map((error: any) => error?.message)
-                            .join(' ')}
-                        </em>
-                      )}
                   </>
                 )}
               />

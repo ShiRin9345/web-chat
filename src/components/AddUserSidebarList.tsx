@@ -1,21 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import axios from 'axios'
-import type { User } from 'generated/index'
+import type { User, Group } from 'generated/index'
 import AnimatedLink from '@/components/animatedLink.tsx'
 import UserSearchPanel from '@/components/UserSearchPanel.tsx'
 import RecommendationsList from '@/components/RecommendationsList.tsx'
 
 const AddUserSidebarList = () => {
   const { user: currentUser } = useUser()
+  const queryClient = useQueryClient()
 
   // 获取当前好友列表，用于过滤搜索结果
   const { data: currentFriends } = useQuery({
     queryKey: ['friends'],
     queryFn: async () => {
       const response = await axios.get<Array<User>>('/api/friends')
+      return response.data
+    },
+  })
+
+  // 获取当前用户加入的群组列表
+  const { data: currentGroups } = useQuery({
+    queryKey: ['groups'],
+    queryFn: async () => {
+      const response = await axios.get<Array<Group>>('/api/groups')
       return response.data
     },
   })
@@ -39,6 +49,8 @@ const AddUserSidebarList = () => {
       })
       if (response.data.success) {
         toast.success(response.data.message)
+        // Refresh sent group join requests data
+        queryClient.invalidateQueries({ queryKey: ['sentGroupJoinRequests'] })
       } else {
         toast.error(response.data.message)
       }
@@ -60,6 +72,7 @@ const AddUserSidebarList = () => {
         <UserSearchPanel
           currentUserId={currentUser?.id}
           currentFriends={currentFriends}
+          currentGroups={currentGroups}
           onAdd={sendFriendRequest}
           onJoinGroup={sendGroupJoinRequest}
         />

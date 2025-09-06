@@ -13,6 +13,7 @@ import { ArrowRight, Loader, Check, UserIcon, Users } from 'lucide-react'
 interface Props {
   currentUserId?: string
   currentFriends?: Array<User>
+  currentGroups?: Array<Group>
   onAdd: (userId: string) => Promise<void>
   onJoinGroup?: (groupId: string) => Promise<void>
 }
@@ -24,6 +25,7 @@ const schema = z.object({
 export default function UserSearchPanel({
   currentUserId,
   currentFriends,
+  currentGroups,
   onAdd,
   onJoinGroup,
 }: Props) {
@@ -117,12 +119,15 @@ export default function UserSearchPanel({
                     className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 orange:hover:bg-orange-100 rounded-md transition-colors"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.imageUrl} alt="avatar" />
+                      <AvatarImage
+                        src={user.imageUrl}
+                        alt="avatar"
+                        className="object-cover"
+                      />
                       <AvatarFallback className="text-sm">
                         {user.fullName ? user.fullName.charAt(0) : 'U'}
                       </AvatarFallback>
                     </Avatar>
-
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900 dark:text-white orange:text-orange-900 truncate">
                         {user.fullName}
@@ -131,7 +136,6 @@ export default function UserSearchPanel({
                         Code: {user.code}
                       </p>
                     </div>
-
                     {currentFriends?.some(
                       (friend) => friend.userId === user.userId,
                     ) ? (
@@ -167,7 +171,11 @@ export default function UserSearchPanel({
                     className="flex items-center gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-gray-700 orange:hover:bg-orange-100 rounded-md transition-colors"
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={group.imageUrl} alt="group avatar" />
+                      <AvatarImage
+                        src={group.imageUrl}
+                        alt="group avatar"
+                        className="object-cover"
+                      />
                       <AvatarFallback className="text-sm">
                         <Users className="h-4 w-4" />
                       </AvatarFallback>
@@ -182,16 +190,25 @@ export default function UserSearchPanel({
                       </p>
                     </div>
 
-                    {onJoinGroup && (
-                      <Button
-                        onClick={() => onJoinGroup(group.id)}
-                        size="sm"
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        <Users className="h-3 w-3 mr-1" />
-                        Join
-                      </Button>
+                    {currentGroups?.some(
+                      (currentGroup) => currentGroup.id === group.id,
+                    ) ? (
+                      <div className="flex items-center gap-1 text-green-600 dark:text-green-400 orange:text-green-700 bg-green-50 dark:bg-green-900/20 orange:bg-green-100 px-3 py-1 rounded-md border border-green-200 dark:border-green-700 orange:border-green-300">
+                        <Check className="h-3 w-3" />
+                        <span className="text-xs font-medium">Joined</span>
+                      </div>
+                    ) : (
+                      onJoinGroup && (
+                        <Button
+                          onClick={() => onJoinGroup(group.id)}
+                          size="sm"
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          <Users className="h-3 w-3 mr-1" />
+                          Join
+                        </Button>
+                      )
                     )}
                   </div>
                 ))}
