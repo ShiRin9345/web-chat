@@ -52,13 +52,13 @@ const NewGroupForm: React.FC<Props> = ({ setOpen }) => {
         const response = await axios.get<OssInfo>('/api/oss-signature')
         const ossInfo = response.data
         const formdata = new FormData()
-        formdata.append('key', value.imageFile.name)
+        const fileName = value.imageFile.name.replace(/\.[^/.]+$/, '.webp')
+        formdata.append('key', fileName)
         formdata.append('OSSAccessKeyId', ossInfo.OSSAccessKeyId)
         formdata.append('policy', ossInfo.policy)
         formdata.append('signature', ossInfo.Signature)
         formdata.append('success_action_status', '200')
         formdata.append('file', compressedFile)
-        const fileName = value.imageFile.name.replace(/\.[^/.]+$/, '.webp')
         await axios.post(ossInfo.host, formdata)
         uploadedUrl = ossInfo.host + '/' + fileName
       } catch (error) {

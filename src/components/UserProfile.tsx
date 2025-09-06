@@ -4,6 +4,7 @@ import type { User } from 'generated/index'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import { Badge } from '@/components/ui/badge'
 import { senderUserProfileQueryOptions } from '@/features/reactQuery/options'
+import { getLocationName } from '@/lib/locationUtils'
 
 export function UserProfile({
   userId,
@@ -104,7 +105,7 @@ export function UserProfile({
             <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 orange:bg-orange-100">
               <MapPin className="w-4 h-4 text-gray-500 dark:text-gray-400 orange:text-orange-600" />
               <span className="text-sm text-gray-700 dark:text-gray-300 orange:text-orange-800">
-                {profile.position}
+                {getLocationName(profile.position)}
               </span>
             </div>
           )}

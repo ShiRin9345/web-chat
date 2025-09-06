@@ -3,6 +3,7 @@ import { useUser } from '@clerk/clerk-react'
 import axios from 'axios'
 import imageCompression from 'browser-image-compression'
 import { Loader } from 'lucide-react'
+import { toast } from 'sonner'
 import type { OssInfo } from '@/components/ImageDialog.tsx'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx'
 import {
@@ -26,7 +27,11 @@ const AvatarUpload = () => {
 
   const handleDrop = async (uploadFiles: Array<File>) => {
     const file = uploadFiles[0]
-    setFiles(uploadFiles)
+    setOpen(false)
+    setFiles([])
+
+    toast.loading('Uploading avatar...')
+
     const formdata = new FormData()
 
     const options = {
@@ -53,7 +58,9 @@ const AvatarUpload = () => {
     const targetUrl = ossInfo.host + '/' + fileName
     await user?.setProfileImage({ file: compressedFile })
     await axios.post('/api/avatar', { imageUrl: targetUrl })
-    setOpen(false)
+
+    toast.dismiss()
+    toast.success('Avatar uploaded successfully')
   }
 
   return (
@@ -61,6 +68,7 @@ const AvatarUpload = () => {
       open={open}
       onOpenChange={(newOpen: boolean) => {
         setOpen(newOpen)
+        setFiles([])
       }}
     >
       <DialogTrigger>
