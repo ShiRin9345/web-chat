@@ -247,8 +247,9 @@ function RouteComponent() {
                             <>
                               <Button
                                 onClick={() => handleRequest(request, 'agreed')}
-                                className="bg-green-600 hover:bg-green-700 text-white"
+                                variant="outline"
                                 size="sm"
+                                className="border-green-300 dark:border-green-600 orange:border-green-400 text-green-600 dark:text-green-400 orange:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20 orange:hover:bg-green-100"
                               >
                                 <Check className="h-4 w-4 mr-1" />
                                 Accept

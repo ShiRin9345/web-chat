@@ -257,6 +257,12 @@ router.get(
         similarity: d != null ? 1 - d : undefined,
       }
     })
+    payload.sort((a, b) => {
+      if (a.similarity === undefined && b.similarity === undefined) return 0
+      if (a.similarity === undefined) return 1
+      if (b.similarity === undefined) return -1
+      return a.similarity - b.similarity
+    })
     res.json(payload)
   }),
 )

@@ -36,7 +36,9 @@ export function UserProfile({
       )}
 
       <div className="text-center pb-4 px-6">
-        <div className="relative -mt-16 mb-4">
+        <div
+          className={`relative mb-4 ${profile.bgImageUrl ? '-mt-16' : 'mt-6'}`}
+        >
           <Avatar className="w-24 h-24 mx-auto border-4 border-white dark:border-gray-900 orange:border-orange-50 shadow-lg">
             <AvatarImage
               src={sender.imageUrl}
