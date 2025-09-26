@@ -11,3 +11,5 @@ count.txt
 /generated/prisma
 
 /generated/prisma
+*.pdf
+server/src/services/uploads/
